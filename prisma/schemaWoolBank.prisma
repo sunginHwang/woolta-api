@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/woolBank"
+
+}
+
+datasource woolbank {
+  provider = "mysql"
+  url      = env("WOOLBANK_DATABASE_URL")
+}
+
+model User {
+  @@map("user")
+
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  password   String
+  loginType  String   @map("login_type")
+  socialId   String   @map("social_id")
+  profileImg String   @map("profile_img")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+}
+

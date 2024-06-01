@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/blog"
+
+}
+
+datasource blog {
+  provider = "mysql"
+  url      = env("BLOG_DATABASE_URL")
+}
+
+
+model User {
+  @@map("user")
+
+  no        Int     @id @default(autoincrement())
+  userId    String  @unique @map("user_id")
+  userName  String? @map("user_name")
+  nickName  String? @map("nick_name")
+  email     String?
+  password  String
+  imageUrl  String @map("image_url")
+  isAdmin   Boolean @default(false) @map("is_admin")
+}
+
