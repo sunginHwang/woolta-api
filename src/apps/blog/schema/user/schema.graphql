@@ -1,0 +1,10 @@
+type Query
+
+extend type Query {
+  user(id: ID!): User
+}
+type User {
+  id: ID!
+  userId: String!
+  userName: String!
+}

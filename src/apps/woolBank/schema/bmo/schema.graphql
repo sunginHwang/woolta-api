@@ -1,0 +1,10 @@
+type Query
+
+extend type Query {
+    Bmo(id: ID!): Bmo
+}
+type Bmo {
+    id: ID!
+    name: String!
+    email: String!
+}
