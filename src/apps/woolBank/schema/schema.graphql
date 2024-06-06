@@ -1,0 +1,200 @@
+type Query
+
+scalar DateTime
+
+extend type Query {
+    account(id: ID!): MinAccount
+#    users: [User!]!
+#    user(id: ID!): User
+#    userShareCodes: [UserShareCode!]!
+#    userShareCode(id: ID!): UserShareCode
+#    savingTypes: [SavingType!]!
+#    savingType(id: ID!): SavingType
+#    accounts: [Account!]!
+#    account(id: ID!): Account
+#    accountBooks: [AccountBook!]!
+#    accountBook(id: ID!): AccountBook
+#    accountBookCategories: [AccountBookCategory!]!
+#    accountBookCategory(id: ID!): AccountBookCategory
+#    deposits: [Deposit!]!
+#    deposit(id: ID!): Deposit
+#    accountBookCategoryImages: [AccountBookCategoryImage!]!
+#    accountBookCategoryImage(id: ID!): AccountBookCategoryImage
+#    bucketLists: [BucketList!]!
+#    bucketList(id: ID!): BucketList
+#    regularExpenditures: [RegularExpenditure!]!
+#    regularExpenditure(id: ID!): RegularExpenditure
+#    todos: [Todo!]!
+#    todo(id: ID!): Todo
+}
+
+type MinAccount {
+    id: ID!
+    taxType: String!
+    regularTransferDate: Int!
+    rate: Float!
+    title: String!
+    amount: Int!
+}
+
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    loginType: String!
+    socialId: String!
+    profileImg: String!
+    accounts: [Account!]!
+    bucketLists: [BucketList!]!
+    deposits: [Deposit!]!
+    todos: [Todo!]!
+    accountBooks: [AccountBook!]!
+    accountBookCategories: [AccountBookCategory!]!
+    accountBookCategoryImages: [AccountBookCategoryImage!]!
+    regularExpenditures: [RegularExpenditure!]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type UserShareCode {
+    id: ID!
+    userId: Int!
+    shareCode: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type SavingType {
+    id: ID!
+    name: String!
+    type: Float!
+    accounts: [Account!]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Account {
+    id: ID!
+    taxType: String!
+    regularTransferDate: Int!
+    rate: Float!
+    title: String!
+    amount: Int!
+    currentAmount: Int!
+    user: User!
+    userId: Int!
+    isExpiration: Boolean!
+    startDate: DateTime!
+    endDate: DateTime!
+    savingTypeId: Int!
+    savingType: SavingType!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    deposits: [Deposit!]!
+}
+
+type AccountBook {
+    id: ID!
+    title: String!
+    amount: Int!
+    memo: String!
+    type: AccountBookCategoryType!
+    isRegularExpenditure: Boolean!
+    registerDateTime: DateTime!
+    userId: Int!
+    user: User!
+    accountBookCategoryId: Int!
+    accountBookCategory: AccountBookCategory!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+enum AccountBookCategoryType {
+    EXPENDITURE
+    INCOME
+}
+
+type AccountBookCategory {
+    id: ID!
+    name: String!
+    delYn: Boolean!
+    type: AccountBookCategoryType!
+    useStatistic: Boolean!
+    userId: Int!
+    user: User!
+    accountBookCategoryImageId: Int!
+    accountBooks: [AccountBook!]!
+    regularExpenditures: [RegularExpenditure!]!
+    accountBookCategoryImage: AccountBookCategoryImage!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Deposit {
+    id: ID!
+    amount: Int!
+    prevTotalAmount: Int!
+    userId: Int!
+    user: User!
+    accountId: Int!
+    account: Account!
+    depositDate: DateTime!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type AccountBookCategoryImage {
+    id: ID!
+    name: String!
+    imageUrl: String!
+    userId: Int!
+    user: User!
+    type: Float!
+    accountBookCategories: [AccountBookCategory!]!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type BucketList {
+    id: ID!
+    isComplete: Boolean!
+    title: String!
+    description: String!
+    userId: Int!
+    user: User!
+    todoList: [Todo!]!
+    completeDate: DateTime!
+    thumbImageUrl: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type RegularExpenditure {
+    id: ID!
+    amount: Int!
+    regularDate: Int!
+    title: String!
+    isAutoExpenditure: Boolean!
+    userId: Int!
+    user: User!
+    accountBookCategoryId: Int!
+    accountBookCategory: AccountBookCategory!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type Todo {
+    id: ID!
+    isComplete: Boolean!
+    userId: Int!
+    user: User!
+    title: String!
+    bucketListId: Int!
+    bucketList: BucketList!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+
