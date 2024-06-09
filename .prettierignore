@@ -1,0 +1,6 @@
+apps/**/api/*.ts
+apps/**/api2/*.ts
+static
+tools/external-schemas
+
+/.nx/cache

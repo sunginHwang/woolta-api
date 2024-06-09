@@ -1,15 +1,15 @@
 import express, { Request, Response} from "express";
 import {PrismaClient as BlogPrismaClient, User} from "../prisma/generated/blog";
 import {PrismaClient as WoolBankPrismaClient, User as WooltaUser} from "../prisma/generated/woolBank";
-import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-
+import { ApolloServer } from '@apollo/server';
 import { typeDefs as WoolBankTypeDefs } from './apps/woolBank/generates/typeDefs.generated'
 import { resolvers as WoolBankResolvers } from './apps/woolBank/generates/resolvers.generated'
 
 import { typeDefs as BlogTypeDefs } from './apps/blog/generates/typeDefs.generated'
 import { resolvers as BlogResolvers } from './apps/blog/generates/resolvers.generated'
-
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 
 async function startServer() {
     const prismaB = new BlogPrismaClient();
@@ -18,23 +18,34 @@ async function startServer() {
     const app: express.Application = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    const blogServer = new ApolloServer<any>({ typeDefs: BlogTypeDefs, resolvers: BlogResolvers});
-    const woolBankServer = new ApolloServer<any>({ typeDefs: WoolBankTypeDefs, resolvers: WoolBankResolvers});
+    app.use(cookieParser());
+    const blogServer = new ApolloServer<any>({
+        typeDefs: BlogTypeDefs,
+        resolvers: BlogResolvers,
+
+    });
+    const woolBankServer = new ApolloServer<any>({
+        typeDefs: WoolBankTypeDefs,
+        resolvers: WoolBankResolvers,
+    });
 
     await blogServer.start();
     await woolBankServer.start();
 
-
     app.use(
         '/blog/graphql',
-        express.json(),
+        bodyParser.json(),
         expressMiddleware(blogServer),
     );
 
     app.use(
         '/woolBank/graphql',
-        express.json(),
-        expressMiddleware(woolBankServer),
+        bodyParser.json(),
+        expressMiddleware(woolBankServer, {
+            context: async (res) => {
+                return res
+            },
+        }),
     );
 
 
