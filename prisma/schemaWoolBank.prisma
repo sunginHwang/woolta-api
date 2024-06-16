@@ -49,7 +49,7 @@ model SavingType {
 
   id        Int      @id @default(autoincrement())
   name      String
-  type  Float
+  type      String
   accounts  Account[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -143,7 +143,6 @@ model AccountBookCategoryImage {
   imageUrl  String   @map("image_url")
   userId    Int      @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
-  type  Float
   accountBookCategorys AccountBookCategory[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

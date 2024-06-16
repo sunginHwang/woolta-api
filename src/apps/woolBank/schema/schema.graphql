@@ -1,9 +1,47 @@
 type Query
-
+type Mutation
 scalar DateTime
+
+extend type Mutation {
+    createAccountBookCategory(
+        name: String!
+        type: AccountBookCategoryType!
+        useStatistic: Boolean!
+        accountBookCategoryImageId: Int!
+    ): AccountBookCategory!
+    deleteAccountBookCategory(id: ID!): Boolean!
+    createAccountBook(
+        title: String!
+        amount: Int!
+        memo: String
+        type: AccountBookCategoryType!
+        registerDateTime: DateTime!
+        categoryId: Int!
+    ): AccountBook!
+    updateAccountBook(
+        id: ID!
+        title: String
+        amount: Int
+        memo: String
+        type: AccountBookCategoryType
+        registerDateTime: DateTime
+        categoryId: Int
+    ): AccountBook!
+    deleteAccountBook(id: ID!): Int!
+}
 
 extend type Query {
     account(id: ID!): MinAccount
+    account_list: [Account!]
+    accountBookList(dateTime: DateTime!): [AccountBook!]
+    accountBook(id: ID!): AccountBook
+    accountBookImageList: [AccountBookCategoryImage!]
+    accountBookCategoryList: [AccountBookCategory!]
+    accountBookStatisticList(
+        startDate: DateTime!
+        endDate: DateTime!
+        type: AccountBookCategoryType!
+    ): [Statistic!]
 #    users: [User!]!
 #    user(id: ID!): User
 #    userShareCodes: [UserShareCode!]!
@@ -26,6 +64,22 @@ extend type Query {
 #    regularExpenditure(id: ID!): RegularExpenditure
 #    todos: [Todo!]!
 #    todo(id: ID!): Todo
+}
+
+type Statistic {
+    amount: Int!
+    percentage: Float!
+    accountBookCategory: AccountBookCategory!
+    useStatistic: Boolean!
+    categoryName: String!
+    categoryId: String!
+    list: [StatisticItem!]
+}
+
+type StatisticItem {
+    title: String!
+    amount: Int!
+    registerDateTime: DateTime!
 }
 
 type MinAccount {
@@ -69,8 +123,7 @@ type UserShareCode {
 type SavingType {
     id: ID!
     name: String!
-    type: Float!
-    accounts: [Account!]!
+    type: String!
     createdAt: DateTime!
     updatedAt: DateTime!
 }
@@ -83,7 +136,6 @@ type Account {
     title: String!
     amount: Int!
     currentAmount: Int!
-    user: User!
     userId: Int!
     isExpiration: Boolean!
     startDate: DateTime!
@@ -92,7 +144,6 @@ type Account {
     savingType: SavingType!
     createdAt: DateTime!
     updatedAt: DateTime!
-    deposits: [Deposit!]!
 }
 
 type AccountBook {
@@ -104,7 +155,6 @@ type AccountBook {
     isRegularExpenditure: Boolean!
     registerDateTime: DateTime!
     userId: Int!
-    user: User!
     accountBookCategoryId: Int!
     accountBookCategory: AccountBookCategory!
     createdAt: DateTime!
@@ -112,8 +162,8 @@ type AccountBook {
 }
 
 enum AccountBookCategoryType {
-    EXPENDITURE
-    INCOME
+    expenditure
+    income
 }
 
 type AccountBookCategory {
@@ -123,10 +173,7 @@ type AccountBookCategory {
     type: AccountBookCategoryType!
     useStatistic: Boolean!
     userId: Int!
-    user: User!
     accountBookCategoryImageId: Int!
-    accountBooks: [AccountBook!]!
-    regularExpenditures: [RegularExpenditure!]!
     accountBookCategoryImage: AccountBookCategoryImage!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -137,7 +184,6 @@ type Deposit {
     amount: Int!
     prevTotalAmount: Int!
     userId: Int!
-    user: User!
     accountId: Int!
     account: Account!
     depositDate: DateTime!
@@ -150,9 +196,6 @@ type AccountBookCategoryImage {
     name: String!
     imageUrl: String!
     userId: Int!
-    user: User!
-    type: Float!
-    accountBookCategories: [AccountBookCategory!]!
     createdAt: DateTime!
     updatedAt: DateTime!
 }
@@ -178,9 +221,7 @@ type RegularExpenditure {
     title: String!
     isAutoExpenditure: Boolean!
     userId: Int!
-    user: User!
     accountBookCategoryId: Int!
-    accountBookCategory: AccountBookCategory!
     createdAt: DateTime!
     updatedAt: DateTime!
 }
