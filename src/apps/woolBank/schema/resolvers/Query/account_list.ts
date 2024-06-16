@@ -1,6 +1,5 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
 import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-import { account } from './account';
 const prisma = new WoolBankPrismaClient();
 
 export const account_list: NonNullable<QueryResolvers['account_list']> = async (_parent, _arg, _ctx) => {

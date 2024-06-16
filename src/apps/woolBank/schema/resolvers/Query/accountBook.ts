@@ -4,7 +4,7 @@ import { isAuthenticated } from '../../../middlewares/isAuthenticated';
 const prisma = new WoolBankPrismaClient();
 
 export const accountBook: NonNullable<QueryResolvers['accountBook']> = isAuthenticated(async (_parent, _arg, _ctx) => {
-  const accountBook = await prisma.accountBook.findUnique({
+  return prisma.accountBook.findUnique({
     where: { id: Number(_arg.id) },
     include: {
       accountBookCategory: {
@@ -14,6 +14,4 @@ export const accountBook: NonNullable<QueryResolvers['accountBook']> = isAuthent
       },
     },
   });
-
-  return accountBook;
 });
