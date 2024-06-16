@@ -1,0 +1,203 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/woolBank"
+}
+
+datasource woolbank {
+  provider = "mysql"
+  url      = env("WOOLBANK_DATABASE_URL")
+}
+
+model User {
+
+  id                        Int                        @id @default(autoincrement())
+  name                      String
+  email                     String
+  password                  String
+  loginType                 String                     @map("login_type")
+  socialId                  String                     @map("social_id")
+  profileImg                String                     @map("profile_img")
+  accounts                  Account[]
+  bucketLists               BucketList[]
+  deposits                  Deposit[]
+  todos                     Todo[]
+  accountBooks              AccountBook[]
+  accountBookCategories     AccountBookCategory[]
+  accountBookCategoryImages AccountBookCategoryImage[]
+  regularExpenditures       RegularExpenditure[]
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model UserShareCode {
+
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  shareCode String   @map("share_code")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_share_code")
+}
+
+model SavingType {
+
+  id        Int       @id @default(autoincrement())
+  name      String
+  type      String
+  accounts  Account[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("saving_type")
+}
+
+model Account {
+
+  id                  Int        @id @default(autoincrement())
+  taxType             String     @map("tax_type")
+  regularTransferDate Int        @map("regular_transfer_date")
+  rate                Float
+  title               String
+  amount              Int
+  currentAmount       Int        @map("current_amount")
+  user                User       @relation(fields: [userId], references: [id])
+  userId              Int        @map("user_id")
+  isExpiration        Boolean    @map("is_expiration")
+  startDate           DateTime   @map("start_date")
+  endDate             DateTime   @map("end_date")
+  savingTypeId        Int        @map("saving_type_id")
+  savingType          SavingType @relation(fields: [savingTypeId], references: [id])
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @updatedAt @map("updated_at")
+  deposits            Deposit[]
+
+  @@map("account")
+}
+
+model AccountBook {
+
+  id                    Int                     @id @default(autoincrement())
+  title                 String
+  amount                Int
+  memo                  String
+  type                  AccountBookCategoryType
+  isRegularExpenditure  Boolean                 @map("is_regular_expenditure")
+  registerDateTime      DateTime                @map("register_date_time")
+  userId                Int                     @map("user_id")
+  user                  User                    @relation(fields: [userId], references: [id])
+  accountBookCategoryId Int                     @map("account_book_category_id")
+  accountBookCategory   AccountBookCategory     @relation(fields: [accountBookCategoryId], references: [id])
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+
+  @@map("account_book")
+}
+
+enum AccountBookCategoryType {
+  expenditure
+  income
+}
+
+model AccountBookCategory {
+
+  id                         Int                      @id @default(autoincrement())
+  name                       String
+  delYn                      Boolean                  @map("del_yn")
+  type                       AccountBookCategoryType
+  useStatistic               Boolean                  @map("use_statistic")
+  userId                     Int                      @map("user_id")
+  user                       User                     @relation(fields: [userId], references: [id])
+  accountBookCategoryImageId Int                      @map("account_book_category_image_id")
+  accountBooks               AccountBook[]
+  RegularExpenditures        RegularExpenditure[]
+  accountBookCategoryImage   AccountBookCategoryImage @relation(fields: [accountBookCategoryImageId], references: [id])
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+
+  @@map("account_book_category")
+}
+
+model Deposit {
+
+  id              Int      @id @default(autoincrement())
+  amount          Int
+  prevTotalAmount Int      @map("prev_total_amount")
+  userId          Int      @map("user_id")
+  user            User     @relation(fields: [userId], references: [id])
+  accountId       Int      @map("account_id")
+  account         Account  @relation(fields: [accountId], references: [id])
+  depositDate     DateTime @map("deposit_date")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("deposit")
+}
+
+model AccountBookCategoryImage {
+
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  imageUrl             String                @map("image_url")
+  userId               Int                   @map("user_id")
+  user                 User                  @relation(fields: [userId], references: [id])
+  accountBookCategorys AccountBookCategory[]
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
+
+  @@map("account_book_category_image")
+}
+
+model BucketList {
+
+  isComplete    Boolean  @map("is_complete")
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String
+  userId        Int      @map("user_id")
+  user          User     @relation(fields: [userId], references: [id])
+  todoList      Todo[]
+  completeDate  DateTime @map("complete_date")
+  thumbImageUrl String   @map("thumb_image_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("bucket_list")
+}
+
+model RegularExpenditure {
+
+  id                    Int                 @id @default(autoincrement())
+  amount                Int
+  regularDate           Int                 @map("regular_date")
+  title                 String
+  isAutoExpenditure     Boolean             @map("is_auto_expenditure")
+  userId                Int                 @map("user_id")
+  user                  User                @relation(fields: [userId], references: [id])
+  accountBookCategoryId Int                 @map("account_book_category_id")
+  accountBookCategory   AccountBookCategory @relation(fields: [accountBookCategoryId], references: [id])
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  @@map("regular_expenditure")
+}
+
+model Todo {
+
+  id           Int        @id @default(autoincrement())
+  isComplete   Boolean    @map("is_complete")
+  userId       Int        @map("user_id")
+  user         User       @relation(fields: [userId], references: [id])
+  title        String
+  bucketListId Int        @map("bucket_list_id")
+  bucketList   BucketList @relation(fields: [bucketListId], references: [id])
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  @@map("todo")
+}
