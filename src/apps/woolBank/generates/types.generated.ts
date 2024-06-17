@@ -95,6 +95,29 @@ export type BucketList = {
   userId: Scalars['Int']['output'];
 };
 
+export type CustomRegularExpenditure = {
+  __typename?: 'CustomRegularExpenditure';
+  accountBookCategory: AccountBookCategory;
+  accountBookCategoryId: Scalars['Int']['output'];
+  amount: Scalars['Int']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  isAutoExpenditure: Scalars['Boolean']['output'];
+  regularDate: Scalars['Int']['output'];
+  regularExpenditureDay: Scalars['DateTime']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  userId: Scalars['Int']['output'];
+};
+
+export type CustomRegularExpenditureResponse = {
+  __typename?: 'CustomRegularExpenditureResponse';
+  imageUrl: Scalars['String']['output'];
+  list?: Maybe<Array<CustomRegularExpenditure>>;
+  name: Scalars['String']['output'];
+  type: AccountBookCategoryType;
+};
+
 export type Deposit = {
   __typename?: 'Deposit';
   account: Account;
@@ -122,8 +145,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   createAccountBook: AccountBook;
   createAccountBookCategory: AccountBookCategory;
+  createRegularExpenditure: Scalars['Int']['output'];
   deleteAccountBook: Scalars['Int']['output'];
   deleteAccountBookCategory: Scalars['Boolean']['output'];
+  deleteRegularExpenditure: Scalars['Int']['output'];
   updateAccountBook: AccountBook;
 };
 
@@ -146,12 +171,26 @@ export type MutationcreateAccountBookCategoryArgs = {
 };
 
 
+export type MutationcreateRegularExpenditureArgs = {
+  amount: Scalars['Int']['input'];
+  categoryId: Scalars['Int']['input'];
+  isAutoExpenditure: Scalars['Boolean']['input'];
+  regularDate: Scalars['Int']['input'];
+  title: Scalars['String']['input'];
+};
+
+
 export type MutationdeleteAccountBookArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type MutationdeleteAccountBookCategoryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationdeleteRegularExpenditureArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -175,6 +214,7 @@ export type Query = {
   accountBookList?: Maybe<Array<AccountBook>>;
   accountBookStatisticList?: Maybe<Array<Statistic>>;
   account_list?: Maybe<Array<Account>>;
+  regularExpenditureList?: Maybe<Array<CustomRegularExpenditureResponse>>;
 };
 
 
@@ -199,8 +239,14 @@ export type QueryaccountBookStatisticListArgs = {
   type: AccountBookCategoryType;
 };
 
+
+export type QueryregularExpenditureListArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type RegularExpenditure = {
   __typename?: 'RegularExpenditure';
+  accountBookCategory: AccountBookCategory;
   accountBookCategoryId: Scalars['Int']['output'];
   amount: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -223,7 +269,6 @@ export type SavingType = {
 
 export type Statistic = {
   __typename?: 'Statistic';
-  accountBookCategory: AccountBookCategory;
   amount: Scalars['Int']['output'];
   categoryId: Scalars['String']['output'];
   categoryName: Scalars['String']['output'];
@@ -364,6 +409,8 @@ export type ResolversTypes = {
   AccountBookCategoryImage: ResolverTypeWrapper<AccountBookCategoryImage>;
   AccountBookCategoryType: AccountBookCategoryType;
   BucketList: ResolverTypeWrapper<BucketList>;
+  CustomRegularExpenditure: ResolverTypeWrapper<CustomRegularExpenditure>;
+  CustomRegularExpenditureResponse: ResolverTypeWrapper<CustomRegularExpenditureResponse>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
   Deposit: ResolverTypeWrapper<Deposit>;
   MinAccount: ResolverTypeWrapper<MinAccount>;
@@ -390,6 +437,8 @@ export type ResolversParentTypes = {
   AccountBookCategory: AccountBookCategory;
   AccountBookCategoryImage: AccountBookCategoryImage;
   BucketList: BucketList;
+  CustomRegularExpenditure: CustomRegularExpenditure;
+  CustomRegularExpenditureResponse: CustomRegularExpenditureResponse;
   DateTime: Scalars['DateTime']['output'];
   Deposit: Deposit;
   MinAccount: MinAccount;
@@ -478,6 +527,29 @@ export type BucketListResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CustomRegularExpenditureResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomRegularExpenditure'] = ResolversParentTypes['CustomRegularExpenditure']> = {
+  accountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType>;
+  accountBookCategoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isAutoExpenditure?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  regularDate?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  regularExpenditureDay?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CustomRegularExpenditureResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomRegularExpenditureResponse'] = ResolversParentTypes['CustomRegularExpenditureResponse']> = {
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  list?: Resolver<Maybe<Array<ResolversTypes['CustomRegularExpenditure']>>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['AccountBookCategoryType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
@@ -508,8 +580,10 @@ export type MinAccountResolvers<ContextType = any, ParentType extends ResolversP
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationcreateAccountBookArgs, 'amount' | 'categoryId' | 'registerDateTime' | 'title' | 'type'>>;
   createAccountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType, RequireFields<MutationcreateAccountBookCategoryArgs, 'accountBookCategoryImageId' | 'name' | 'type' | 'useStatistic'>>;
+  createRegularExpenditure?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcreateRegularExpenditureArgs, 'amount' | 'categoryId' | 'isAutoExpenditure' | 'regularDate' | 'title'>>;
   deleteAccountBook?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookArgs, 'id'>>;
   deleteAccountBookCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookCategoryArgs, 'id'>>;
+  deleteRegularExpenditure?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationdeleteRegularExpenditureArgs, 'id'>>;
   updateAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationupdateAccountBookArgs, 'id'>>;
 };
 
@@ -521,9 +595,11 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   accountBookList?: Resolver<Maybe<Array<ResolversTypes['AccountBook']>>, ParentType, ContextType, RequireFields<QueryaccountBookListArgs, 'dateTime'>>;
   accountBookStatisticList?: Resolver<Maybe<Array<ResolversTypes['Statistic']>>, ParentType, ContextType, RequireFields<QueryaccountBookStatisticListArgs, 'endDate' | 'startDate' | 'type'>>;
   account_list?: Resolver<Maybe<Array<ResolversTypes['Account']>>, ParentType, ContextType>;
+  regularExpenditureList?: Resolver<Maybe<Array<ResolversTypes['CustomRegularExpenditureResponse']>>, ParentType, ContextType, Partial<QueryregularExpenditureListArgs>>;
 };
 
 export type RegularExpenditureResolvers<ContextType = any, ParentType extends ResolversParentTypes['RegularExpenditure'] = ResolversParentTypes['RegularExpenditure']> = {
+  accountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType>;
   accountBookCategoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -546,7 +622,6 @@ export type SavingTypeResolvers<ContextType = any, ParentType extends ResolversP
 };
 
 export type StatisticResolvers<ContextType = any, ParentType extends ResolversParentTypes['Statistic'] = ResolversParentTypes['Statistic']> = {
-  accountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   categoryId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   categoryName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -612,6 +687,8 @@ export type Resolvers<ContextType = any> = {
   AccountBookCategory?: AccountBookCategoryResolvers<ContextType>;
   AccountBookCategoryImage?: AccountBookCategoryImageResolvers<ContextType>;
   BucketList?: BucketListResolvers<ContextType>;
+  CustomRegularExpenditure?: CustomRegularExpenditureResolvers<ContextType>;
+  CustomRegularExpenditureResponse?: CustomRegularExpenditureResponseResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Deposit?: DepositResolvers<ContextType>;
   MinAccount?: MinAccountResolvers<ContextType>;

@@ -1,5 +1,8 @@
 
 
+## 로컬 실행
+> npm run dev
+
 ## DB 싱크
 > npx prisma generate --schema=prisma/{schema_name}.prisma
 

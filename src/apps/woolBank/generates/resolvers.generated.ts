@@ -7,16 +7,21 @@ import    { accountBookImageList as Query_accountBookImageList } from './../sche
 import    { accountBookList as Query_accountBookList } from './../schema/resolvers/Query/accountBookList';
 import    { accountBookStatisticList as Query_accountBookStatisticList } from './../schema/resolvers/Query/accountBookStatisticList';
 import    { account_list as Query_account_list } from './../schema/resolvers/Query/account_list';
+import    { regularExpenditureList as Query_regularExpenditureList } from './../schema/resolvers/Query/regularExpenditureList';
 import    { createAccountBook as Mutation_createAccountBook } from './../schema/resolvers/Mutation/createAccountBook';
 import    { createAccountBookCategory as Mutation_createAccountBookCategory } from './../schema/resolvers/Mutation/createAccountBookCategory';
+import    { createRegularExpenditure as Mutation_createRegularExpenditure } from './../schema/resolvers/Mutation/createRegularExpenditure';
 import    { deleteAccountBook as Mutation_deleteAccountBook } from './../schema/resolvers/Mutation/deleteAccountBook';
 import    { deleteAccountBookCategory as Mutation_deleteAccountBookCategory } from './../schema/resolvers/Mutation/deleteAccountBookCategory';
+import    { deleteRegularExpenditure as Mutation_deleteRegularExpenditure } from './../schema/resolvers/Mutation/deleteRegularExpenditure';
 import    { updateAccountBook as Mutation_updateAccountBook } from './../schema/resolvers/Mutation/updateAccountBook';
 import    { Account } from './../schema/resolvers/Account';
 import    { AccountBook } from './../schema/resolvers/AccountBook';
 import    { AccountBookCategory } from './../schema/resolvers/AccountBookCategory';
 import    { AccountBookCategoryImage } from './../schema/resolvers/AccountBookCategoryImage';
 import    { BucketList } from './../schema/resolvers/BucketList';
+import    { CustomRegularExpenditure } from './../schema/resolvers/CustomRegularExpenditure';
+import    { CustomRegularExpenditureResponse } from './../schema/resolvers/CustomRegularExpenditureResponse';
 import    { Deposit } from './../schema/resolvers/Deposit';
 import    { MinAccount } from './../schema/resolvers/MinAccount';
 import    { RegularExpenditure } from './../schema/resolvers/RegularExpenditure';
@@ -28,14 +33,16 @@ import    { User } from './../schema/resolvers/User';
 import    { UserShareCode } from './../schema/resolvers/UserShareCode';
 import    { DateTimeResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
-      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryList: Query_accountBookCategoryList,accountBookImageList: Query_accountBookImageList,accountBookList: Query_accountBookList,accountBookStatisticList: Query_accountBookStatisticList,account_list: Query_account_list },
-      Mutation: { createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,updateAccountBook: Mutation_updateAccountBook },
+      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryList: Query_accountBookCategoryList,accountBookImageList: Query_accountBookImageList,accountBookList: Query_accountBookList,accountBookStatisticList: Query_accountBookStatisticList,account_list: Query_account_list,regularExpenditureList: Query_regularExpenditureList },
+      Mutation: { createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createRegularExpenditure: Mutation_createRegularExpenditure,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,updateAccountBook: Mutation_updateAccountBook },
       
       Account: Account,
 AccountBook: AccountBook,
 AccountBookCategory: AccountBookCategory,
 AccountBookCategoryImage: AccountBookCategoryImage,
 BucketList: BucketList,
+CustomRegularExpenditure: CustomRegularExpenditure,
+CustomRegularExpenditureResponse: CustomRegularExpenditureResponse,
 Deposit: Deposit,
 MinAccount: MinAccount,
 RegularExpenditure: RegularExpenditure,

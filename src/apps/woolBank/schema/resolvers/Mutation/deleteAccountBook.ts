@@ -9,9 +9,9 @@ export const deleteAccountBook: NonNullable<MutationResolvers['deleteAccountBook
       await prismaW.accountBook.delete({
         where: { id: Number(_arg.id) },
       });
-      return true;
+      return Number(_arg.id);
     } catch {
-      return false;
+      return -1;
     }
   },
 );

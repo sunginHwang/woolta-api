@@ -6,7 +6,10 @@ const prismaW = new WoolBankPrismaClient();
 
 export const createAccountBookCategory: NonNullable<MutationResolvers['createAccountBookCategory']> = isAuthenticated(
   async (_parent, _arg, _ctx) => {
-    return await prismaW.accountBookCategory.create({
+    return prismaW.accountBookCategory.create({
+      include: {
+        accountBookCategoryImage: true,
+      },
       data: {
         delYn: false,
         userId: 13,
