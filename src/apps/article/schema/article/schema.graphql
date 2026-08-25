@@ -1,0 +1,103 @@
+type Query
+type Mutation
+scalar DateTime
+
+type ArticleCategory {
+  id: String!
+  name: String!
+  order: Int!
+  createdAt: DateTime!
+}
+
+type ArticleSeo {
+  title: String
+  description: String
+  imageUrl: String
+}
+
+input ArticleSeoInput {
+  title: String
+  description: String
+  imageUrl: String
+}
+
+type Article {
+  id: String!
+  categoryId: String! # 아티클은 반드시 카테고리 소속 (기본함 없음)
+  title: String!
+  url: String!
+  seo: ArticleSeo
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type WeeklyCuration {
+  weekKey: String! # ISO 주차 키, 예: 2026-W34
+  articleIds: [String!]! # 최대 5개 (WEEKLY_CURATION_LIMIT)
+  articles: [Article!]! # 임베드 (스펙 ?expand=articles 대응)
+}
+
+input UpdateArticleInput {
+  title: String
+  url: String
+  categoryId: String
+  seo: ArticleSeoInput
+}
+
+input ImportArticleCategoryInput {
+  clientId: String!
+  name: String!
+  order: Int!
+  createdAt: DateTime
+}
+
+input ImportArticleInput {
+  clientId: String!
+  categoryClientId: String!
+  title: String!
+  url: String!
+  seo: ArticleSeoInput
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+input ImportCurationInput {
+  weekKey: String!
+  articleClientIds: [String!]!
+}
+
+type ArticleIdMapping {
+  from: String!
+  to: String!
+}
+
+type ArticleImportResult {
+  categoryIdMap: [ArticleIdMapping!]!
+  articleIdMap: [ArticleIdMapping!]!
+}
+
+extend type Query {
+  articleCategories: [ArticleCategory!]! # order ASC
+  articles(categoryId: String): [Article!]! # 생략 시 전체, createdAt DESC
+  articleCurations: [WeeklyCuration!]! # 전체 주차 (주차 수 적음)
+}
+
+extend type Mutation {
+  createArticleCategory(name: String!): ArticleCategory!
+  updateArticleCategory(id: String!, name: String!): ArticleCategory!
+  # 캐스케이드: 소속 아티클 전체 삭제 + 그 아티클들의 큐레이션 행 제거 (이동 아님, 삭제)
+  deleteArticleCategory(id: String!): Boolean!
+  # 정규화 URL 기준 유저 내 중복 시 CONFLICT
+  createArticle(categoryId: String!, title: String!, url: String!, seo: ArticleSeoInput): Article!
+  updateArticle(id: String!, input: UpdateArticleInput!): Article!
+  # 캐스케이드: 모든 주차 큐레이션에서 해당 articleId 제거
+  deleteArticle(id: String!): Boolean!
+  # 주차당 최대 5개 초과 시 CONFLICT, 이미 있으면 멱등 반환
+  addArticleToCuration(weekKey: String!, articleId: String!): WeeklyCuration!
+  removeArticleFromCuration(weekKey: String!, articleId: String!): WeeklyCuration!
+  importArticles(
+    categories: [ImportArticleCategoryInput!]!
+    articles: [ImportArticleInput!]!
+    curations: [ImportCurationInput!]!
+  ): ArticleImportResult!
+}
