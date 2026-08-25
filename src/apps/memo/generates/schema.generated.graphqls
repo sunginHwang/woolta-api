@@ -1,0 +1,47 @@
+scalar DateTime
+
+input ImportMemoInput {
+  clientId: String!
+  content: JSON!
+  createdAt: DateTime
+  title: String!
+  updatedAt: DateTime
+}
+
+scalar JSON
+
+type Memo {
+  content: JSON!
+  createdAt: DateTime!
+  id: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type MemoIdMapping {
+  from: String!
+  to: String!
+}
+
+type MemoImportResult {
+  memoIdMap: [MemoIdMapping!]!
+}
+
+type MemoSummary {
+  createdAt: DateTime!
+  id: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type Mutation {
+  createMemo: Memo!
+  deleteMemo(id: String!): Boolean!
+  importMemos(memos: [ImportMemoInput!]!): MemoImportResult!
+  updateMemo(content: JSON, id: String!, title: String): Memo!
+}
+
+type Query {
+  memo(id: String!): Memo!
+  memos: [MemoSummary!]!
+}

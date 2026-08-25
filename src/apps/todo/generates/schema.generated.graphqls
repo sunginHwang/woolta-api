@@ -1,0 +1,89 @@
+scalar DateTime
+
+type IdMapping {
+  from: String!
+  to: String!
+}
+
+input ImportTodoCategoryInput {
+  clientId: String!
+  createdAt: DateTime
+  name: String!
+  order: Int!
+}
+
+input ImportTodoInput {
+  categoryClientId: String
+  clientId: String!
+  completedAt: DateTime
+  createdAt: DateTime
+  deletedAt: DateTime
+  dueDate: String
+  isCompleted: Boolean!
+  memo: String!
+  order: Int!
+  priority: TodoPriority!
+  title: String!
+  updatedAt: DateTime
+}
+
+type Mutation {
+  completeTodo(id: String!, isCompleted: Boolean!): Todo!
+  createTodo(categoryId: String, dueDate: String, priority: TodoPriority, title: String!): Todo!
+  createTodoCategory(name: String!): TodoCategory!
+  deleteTodo(id: String!): Boolean!
+  deleteTodoCategory(id: String!): Boolean!
+  emptyTrash: Int!
+  importTodos(categories: [ImportTodoCategoryInput!]!, todos: [ImportTodoInput!]!): TodoImportResult!
+  restoreTodo(id: String!): Todo!
+  trashTodo(id: String!): Todo!
+  updateTodo(id: String!, input: UpdateTodoInput!): Todo!
+  updateTodoCategory(id: String!, name: String!): TodoCategory!
+}
+
+type Query {
+  todoCategories: [TodoCategory!]!
+  todos: [Todo!]!
+}
+
+type Todo {
+  categoryId: String
+  completedAt: DateTime
+  createdAt: DateTime!
+  deletedAt: DateTime
+  dueDate: String
+  id: String!
+  isCompleted: Boolean!
+  memo: String!
+  order: Int!
+  priority: TodoPriority!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type TodoCategory {
+  createdAt: DateTime!
+  id: String!
+  name: String!
+  order: Int!
+}
+
+type TodoImportResult {
+  categoryIdMap: [IdMapping!]!
+  todoIdMap: [IdMapping!]!
+}
+
+enum TodoPriority {
+  high
+  low
+  medium
+  none
+}
+
+input UpdateTodoInput {
+  categoryId: String
+  dueDate: String
+  memo: String
+  priority: TodoPriority
+  title: String
+}

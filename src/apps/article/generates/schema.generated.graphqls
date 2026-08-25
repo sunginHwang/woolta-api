@@ -1,0 +1,93 @@
+type Article {
+  categoryId: String!
+  createdAt: DateTime!
+  id: String!
+  seo: ArticleSeo
+  title: String!
+  updatedAt: DateTime!
+  url: String!
+}
+
+type ArticleCategory {
+  createdAt: DateTime!
+  id: String!
+  name: String!
+  order: Int!
+}
+
+type ArticleIdMapping {
+  from: String!
+  to: String!
+}
+
+type ArticleImportResult {
+  articleIdMap: [ArticleIdMapping!]!
+  categoryIdMap: [ArticleIdMapping!]!
+}
+
+type ArticleSeo {
+  description: String
+  imageUrl: String
+  title: String
+}
+
+input ArticleSeoInput {
+  description: String
+  imageUrl: String
+  title: String
+}
+
+scalar DateTime
+
+input ImportArticleCategoryInput {
+  clientId: String!
+  createdAt: DateTime
+  name: String!
+  order: Int!
+}
+
+input ImportArticleInput {
+  categoryClientId: String!
+  clientId: String!
+  createdAt: DateTime
+  seo: ArticleSeoInput
+  title: String!
+  updatedAt: DateTime
+  url: String!
+}
+
+input ImportCurationInput {
+  articleClientIds: [String!]!
+  weekKey: String!
+}
+
+type Mutation {
+  addArticleToCuration(articleId: String!, weekKey: String!): WeeklyCuration!
+  createArticle(categoryId: String!, seo: ArticleSeoInput, title: String!, url: String!): Article!
+  createArticleCategory(name: String!): ArticleCategory!
+  deleteArticle(id: String!): Boolean!
+  deleteArticleCategory(id: String!): Boolean!
+  importArticles(articles: [ImportArticleInput!]!, categories: [ImportArticleCategoryInput!]!, curations: [ImportCurationInput!]!): ArticleImportResult!
+  removeArticleFromCuration(articleId: String!, weekKey: String!): WeeklyCuration!
+  updateArticle(id: String!, input: UpdateArticleInput!): Article!
+  updateArticleCategory(id: String!, name: String!): ArticleCategory!
+}
+
+type Query {
+  articleCategories: [ArticleCategory!]!
+  articleCurations: [WeeklyCuration!]!
+  articles(categoryId: String): [Article!]!
+}
+
+input UpdateArticleInput {
+  categoryId: String
+  seo: ArticleSeoInput
+  title: String
+  url: String
+}
+
+type WeeklyCuration {
+  articleIds: [String!]!
+  articles: [Article!]!
+  weekKey: String!
+}

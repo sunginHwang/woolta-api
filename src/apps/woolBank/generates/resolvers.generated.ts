@@ -49,7 +49,7 @@ import    { StatisticItem } from './../schema/resolvers/StatisticItem';
 import    { Todo } from './../schema/resolvers/Todo';
 import    { User } from './../schema/resolvers/User';
 import    { UserShareCode } from './../schema/resolvers/UserShareCode';
-import    { DateTimeResolver } from 'graphql-scalars';
+import    { DateTime } from './../schema/resolvers/DateTime';
     export const resolvers: Resolvers = {
       Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryList: Query_accountBookCategoryList,accountBookImageList: Query_accountBookImageList,accountBookList: Query_accountBookList,accountBookStatisticList: Query_accountBookStatisticList,accountLastUpdatedDate: Query_accountLastUpdatedDate,account_list: Query_account_list,bucketList: Query_bucketList,bucketListDetail: Query_bucketListDetail,bucketListItemLastUpdatedDate: Query_bucketListItemLastUpdatedDate,bucketListLastUpdatedDate: Query_bucketListLastUpdatedDate,mainInfo: Query_mainInfo,regularExpenditureList: Query_regularExpenditureList },
       Mutation: { completeAccountExpiration: Mutation_completeAccountExpiration,completeBucketList: Mutation_completeBucketList,createAccount: Mutation_createAccount,createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createBucketList: Mutation_createBucketList,createDeposit: Mutation_createDeposit,createRegularExpenditure: Mutation_createRegularExpenditure,createTodo: Mutation_createTodo,deleteAccount: Mutation_deleteAccount,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteBucketList: Mutation_deleteBucketList,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,deleteTodo: Mutation_deleteTodo,updateAccountBook: Mutation_updateAccountBook,updateBucketList: Mutation_updateBucketList,updateTodoComplete: Mutation_updateTodoComplete },
@@ -71,5 +71,5 @@ StatisticItem: StatisticItem,
 Todo: Todo,
 User: User,
 UserShareCode: UserShareCode,
-DateTime: DateTimeResolver
+DateTime: DateTime
     }

@@ -1,0 +1,61 @@
+type Category {
+  label: String!
+  value: Int!
+}
+
+scalar DateTime
+
+type Mutation {
+  createPost(categoryNo: Int!, contents: String!, title: String!): PostUpsertResult!
+  deletePost(categoryNo: Int!, postNo: Int!): Boolean!
+  sendPushToAll(content: String!, title: String!, url: String!): Boolean!
+  subscribeWebPush(auth: String!, endPoint: String!, key: String!): Boolean!
+  unsubscribeWebPush(key: String!): Boolean!
+  updatePost(categoryNo: Int!, contents: String!, id: Int!, title: String!): PostUpsertResult!
+}
+
+type Post {
+  categoryLabel: String!
+  categoryNo: Int!
+  content: String
+  createdAt: DateTime!
+  postNo: Int!
+  title: String!
+  writer: Writer!
+}
+
+type PostSummary {
+  author: String
+  categoryLabel: String!
+  categoryNo: Int!
+  createdAt: DateTime!
+  postNo: Int!
+  subDescription: String
+  title: String!
+}
+
+type PostUpsertResult {
+  categoryNo: Int!
+  postNo: Int!
+}
+
+type Query {
+  allPosts: [Post!]!
+  categories: [Category!]!
+  post(categoryNo: Int!, postNo: Int!): Post!
+  postsByCategory(categoryNo: Int!): [PostSummary!]!
+  recentPosts: [PostSummary!]!
+  user(id: ID!): User
+}
+
+type User {
+  id: ID!
+  userId: String!
+  userName: String!
+}
+
+type Writer {
+  imageUrl: String!
+  nickName: String
+  no: Int!
+}

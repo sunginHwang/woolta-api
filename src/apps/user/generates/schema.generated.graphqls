@@ -1,0 +1,50 @@
+type AuthTokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type CheckTokenResult {
+  authTokens: AuthTokens!
+  userInfo: UserInfo!
+}
+
+scalar DateTime
+
+type LoginResult {
+  accessToken: String!
+  refreshToken: String!
+  user: UserInfo!
+}
+
+type Mutation {
+  loginByShareCode(shareCode: String!): LoginResult!
+  loginBySocial(email: String, imageUrl: String!, loginType: SocialLoginType!, name: String, socialId: String!): LoginResult!
+  logout: Boolean!
+  refreshTokenCheck(refreshToken: String!): AuthTokens!
+  upsertShareCode: String!
+}
+
+type Query {
+  accessCheck: Int!
+  checkToken: CheckTokenResult!
+  me: UserInfo!
+  shareCode: String!
+}
+
+enum SocialLoginType {
+  facebook
+  google
+  kakaoTalk
+}
+
+type UserInfo {
+  authType: String
+  createdAt: DateTime!
+  email: String!
+  id: Int!
+  loginType: String!
+  name: String!
+  profileImg: String!
+  socialId: String!
+  updatedAt: DateTime!
+}
