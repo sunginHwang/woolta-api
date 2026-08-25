@@ -1,20 +1,22 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { isAuthenticated } from '../../../middlewares/isAuthenticated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-const prisma = new WoolBankPrismaClient();
+import { requireAuth } from '../../../../../shared/auth';
+import { prismaWoolBank } from '../../../utils/prismaClient';
 
-export const accountBookCategoryList: NonNullable<QueryResolvers['accountBookCategoryList']> = isAuthenticated(
-  async (_parent, _arg, _ctx) => {
-    const accountBookCategoryList = await prisma.accountBookCategory.findMany({
-      orderBy: { id: 'desc' },
-      include: { accountBookCategoryImage: true },
-      where: { userId: 13, delYn: false },
-    });
-    const convertedAccountBookCategoryList = accountBookCategoryList.map((accountBookCategory) => ({
-      ...accountBookCategory,
-      id: String(accountBookCategory.id),
-    }));
+export const accountBookCategoryList: NonNullable<QueryResolvers['accountBookCategoryList']> = async (
+  _parent,
+  _arg,
+  _ctx,
+) => {
+  const { userId } = requireAuth(_ctx);
 
-    return convertedAccountBookCategoryList;
-  },
-);
+  const accountBookCategoryList = await prismaWoolBank.accountBookCategory.findMany({
+    orderBy: { id: 'desc' },
+    include: { accountBookCategoryImage: true },
+    where: { userId, delYn: false },
+  });
+
+  return accountBookCategoryList.map((accountBookCategory) => ({
+    ...accountBookCategory,
+    id: String(accountBookCategory.id),
+  }));
+};

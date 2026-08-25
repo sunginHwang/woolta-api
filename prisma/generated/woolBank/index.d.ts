@@ -6113,6 +6113,9 @@ export namespace Prisma {
   export type AccountBookAvgAggregateOutputType = {
     id: number | null
     amount: number | null
+    regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
   }
@@ -6120,6 +6123,9 @@ export namespace Prisma {
   export type AccountBookSumAggregateOutputType = {
     id: number | null
     amount: number | null
+    regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
   }
@@ -6131,6 +6137,10 @@ export namespace Prisma {
     memo: string | null
     type: $Enums.AccountBookCategoryType | null
     isRegularExpenditure: boolean | null
+    isDisabledBudget: boolean | null
+    regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     registerDateTime: Date | null
     userId: number | null
     accountBookCategoryId: number | null
@@ -6145,6 +6155,10 @@ export namespace Prisma {
     memo: string | null
     type: $Enums.AccountBookCategoryType | null
     isRegularExpenditure: boolean | null
+    isDisabledBudget: boolean | null
+    regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     registerDateTime: Date | null
     userId: number | null
     accountBookCategoryId: number | null
@@ -6159,6 +6173,10 @@ export namespace Prisma {
     memo: number
     type: number
     isRegularExpenditure: number
+    isDisabledBudget: number
+    regularDate: number
+    installmentMonth: number
+    paidInstallmentMonth: number
     registerDateTime: number
     userId: number
     accountBookCategoryId: number
@@ -6171,6 +6189,9 @@ export namespace Prisma {
   export type AccountBookAvgAggregateInputType = {
     id?: true
     amount?: true
+    regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
   }
@@ -6178,6 +6199,9 @@ export namespace Prisma {
   export type AccountBookSumAggregateInputType = {
     id?: true
     amount?: true
+    regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
   }
@@ -6189,6 +6213,10 @@ export namespace Prisma {
     memo?: true
     type?: true
     isRegularExpenditure?: true
+    isDisabledBudget?: true
+    regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     registerDateTime?: true
     userId?: true
     accountBookCategoryId?: true
@@ -6203,6 +6231,10 @@ export namespace Prisma {
     memo?: true
     type?: true
     isRegularExpenditure?: true
+    isDisabledBudget?: true
+    regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     registerDateTime?: true
     userId?: true
     accountBookCategoryId?: true
@@ -6217,6 +6249,10 @@ export namespace Prisma {
     memo?: true
     type?: true
     isRegularExpenditure?: true
+    isDisabledBudget?: true
+    regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     registerDateTime?: true
     userId?: true
     accountBookCategoryId?: true
@@ -6318,6 +6354,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget: boolean
+    regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     registerDateTime: Date
     userId: number
     accountBookCategoryId: number
@@ -6351,6 +6391,10 @@ export namespace Prisma {
     memo?: boolean
     type?: boolean
     isRegularExpenditure?: boolean
+    isDisabledBudget?: boolean
+    regularDate?: boolean
+    installmentMonth?: boolean
+    paidInstallmentMonth?: boolean
     registerDateTime?: boolean
     userId?: boolean
     accountBookCategoryId?: boolean
@@ -6367,6 +6411,10 @@ export namespace Prisma {
     memo?: boolean
     type?: boolean
     isRegularExpenditure?: boolean
+    isDisabledBudget?: boolean
+    regularDate?: boolean
+    installmentMonth?: boolean
+    paidInstallmentMonth?: boolean
     registerDateTime?: boolean
     userId?: boolean
     accountBookCategoryId?: boolean
@@ -6394,6 +6442,10 @@ export namespace Prisma {
       memo: string
       type: $Enums.AccountBookCategoryType
       isRegularExpenditure: boolean
+      isDisabledBudget: boolean
+      regularDate: number | null
+      installmentMonth: number | null
+      paidInstallmentMonth: number | null
       registerDateTime: Date
       userId: number
       accountBookCategoryId: number
@@ -6802,6 +6854,10 @@ export namespace Prisma {
     readonly memo: FieldRef<"AccountBook", 'String'>
     readonly type: FieldRef<"AccountBook", 'AccountBookCategoryType'>
     readonly isRegularExpenditure: FieldRef<"AccountBook", 'Boolean'>
+    readonly isDisabledBudget: FieldRef<"AccountBook", 'Boolean'>
+    readonly regularDate: FieldRef<"AccountBook", 'Int'>
+    readonly installmentMonth: FieldRef<"AccountBook", 'Int'>
+    readonly paidInstallmentMonth: FieldRef<"AccountBook", 'Int'>
     readonly registerDateTime: FieldRef<"AccountBook", 'DateTime'>
     readonly userId: FieldRef<"AccountBook", 'Int'>
     readonly accountBookCategoryId: FieldRef<"AccountBook", 'Int'>
@@ -10171,6 +10227,7 @@ export namespace Prisma {
     description: string | null
     userId: number | null
     completeDate: Date | null
+    imageUrl: string | null
     thumbImageUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10183,6 +10240,7 @@ export namespace Prisma {
     description: string | null
     userId: number | null
     completeDate: Date | null
+    imageUrl: string | null
     thumbImageUrl: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10195,6 +10253,7 @@ export namespace Prisma {
     description: number
     userId: number
     completeDate: number
+    imageUrl: number
     thumbImageUrl: number
     createdAt: number
     updatedAt: number
@@ -10219,6 +10278,7 @@ export namespace Prisma {
     description?: true
     userId?: true
     completeDate?: true
+    imageUrl?: true
     thumbImageUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -10231,6 +10291,7 @@ export namespace Prisma {
     description?: true
     userId?: true
     completeDate?: true
+    imageUrl?: true
     thumbImageUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -10243,6 +10304,7 @@ export namespace Prisma {
     description?: true
     userId?: true
     completeDate?: true
+    imageUrl?: true
     thumbImageUrl?: true
     createdAt?: true
     updatedAt?: true
@@ -10342,6 +10404,7 @@ export namespace Prisma {
     description: string
     userId: number
     completeDate: Date
+    imageUrl: string
     thumbImageUrl: string
     createdAt: Date
     updatedAt: Date
@@ -10373,6 +10436,7 @@ export namespace Prisma {
     description?: boolean
     userId?: boolean
     completeDate?: boolean
+    imageUrl?: boolean
     thumbImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10388,6 +10452,7 @@ export namespace Prisma {
     description?: boolean
     userId?: boolean
     completeDate?: boolean
+    imageUrl?: boolean
     thumbImageUrl?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10414,6 +10479,7 @@ export namespace Prisma {
       description: string
       userId: number
       completeDate: Date
+      imageUrl: string
       thumbImageUrl: string
       createdAt: Date
       updatedAt: Date
@@ -10820,6 +10886,7 @@ export namespace Prisma {
     readonly description: FieldRef<"BucketList", 'String'>
     readonly userId: FieldRef<"BucketList", 'Int'>
     readonly completeDate: FieldRef<"BucketList", 'DateTime'>
+    readonly imageUrl: FieldRef<"BucketList", 'String'>
     readonly thumbImageUrl: FieldRef<"BucketList", 'String'>
     readonly createdAt: FieldRef<"BucketList", 'DateTime'>
     readonly updatedAt: FieldRef<"BucketList", 'DateTime'>
@@ -11172,6 +11239,8 @@ export namespace Prisma {
     id: number | null
     amount: number | null
     regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
   }
@@ -11180,6 +11249,8 @@ export namespace Prisma {
     id: number | null
     amount: number | null
     regularDate: number | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
   }
@@ -11190,6 +11261,8 @@ export namespace Prisma {
     regularDate: number | null
     title: string | null
     isAutoExpenditure: boolean | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
     createdAt: Date | null
@@ -11202,6 +11275,8 @@ export namespace Prisma {
     regularDate: number | null
     title: string | null
     isAutoExpenditure: boolean | null
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number | null
     accountBookCategoryId: number | null
     createdAt: Date | null
@@ -11214,6 +11289,8 @@ export namespace Prisma {
     regularDate: number
     title: number
     isAutoExpenditure: number
+    installmentMonth: number
+    paidInstallmentMonth: number
     userId: number
     accountBookCategoryId: number
     createdAt: number
@@ -11226,6 +11303,8 @@ export namespace Prisma {
     id?: true
     amount?: true
     regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
   }
@@ -11234,6 +11313,8 @@ export namespace Prisma {
     id?: true
     amount?: true
     regularDate?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
   }
@@ -11244,6 +11325,8 @@ export namespace Prisma {
     regularDate?: true
     title?: true
     isAutoExpenditure?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
     createdAt?: true
@@ -11256,6 +11339,8 @@ export namespace Prisma {
     regularDate?: true
     title?: true
     isAutoExpenditure?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
     createdAt?: true
@@ -11268,6 +11353,8 @@ export namespace Prisma {
     regularDate?: true
     title?: true
     isAutoExpenditure?: true
+    installmentMonth?: true
+    paidInstallmentMonth?: true
     userId?: true
     accountBookCategoryId?: true
     createdAt?: true
@@ -11367,6 +11454,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth: number | null
+    paidInstallmentMonth: number | null
     userId: number
     accountBookCategoryId: number
     createdAt: Date
@@ -11398,6 +11487,8 @@ export namespace Prisma {
     regularDate?: boolean
     title?: boolean
     isAutoExpenditure?: boolean
+    installmentMonth?: boolean
+    paidInstallmentMonth?: boolean
     userId?: boolean
     accountBookCategoryId?: boolean
     createdAt?: boolean
@@ -11412,6 +11503,8 @@ export namespace Prisma {
     regularDate?: boolean
     title?: boolean
     isAutoExpenditure?: boolean
+    installmentMonth?: boolean
+    paidInstallmentMonth?: boolean
     userId?: boolean
     accountBookCategoryId?: boolean
     createdAt?: boolean
@@ -11437,6 +11530,8 @@ export namespace Prisma {
       regularDate: number
       title: string
       isAutoExpenditure: boolean
+      installmentMonth: number | null
+      paidInstallmentMonth: number | null
       userId: number
       accountBookCategoryId: number
       createdAt: Date
@@ -11843,6 +11938,8 @@ export namespace Prisma {
     readonly regularDate: FieldRef<"RegularExpenditure", 'Int'>
     readonly title: FieldRef<"RegularExpenditure", 'String'>
     readonly isAutoExpenditure: FieldRef<"RegularExpenditure", 'Boolean'>
+    readonly installmentMonth: FieldRef<"RegularExpenditure", 'Int'>
+    readonly paidInstallmentMonth: FieldRef<"RegularExpenditure", 'Int'>
     readonly userId: FieldRef<"RegularExpenditure", 'Int'>
     readonly accountBookCategoryId: FieldRef<"RegularExpenditure", 'Int'>
     readonly createdAt: FieldRef<"RegularExpenditure", 'DateTime'>
@@ -13212,6 +13309,10 @@ export namespace Prisma {
     memo: 'memo',
     type: 'type',
     isRegularExpenditure: 'isRegularExpenditure',
+    isDisabledBudget: 'isDisabledBudget',
+    regularDate: 'regularDate',
+    installmentMonth: 'installmentMonth',
+    paidInstallmentMonth: 'paidInstallmentMonth',
     registerDateTime: 'registerDateTime',
     userId: 'userId',
     accountBookCategoryId: 'accountBookCategoryId',
@@ -13270,6 +13371,7 @@ export namespace Prisma {
     description: 'description',
     userId: 'userId',
     completeDate: 'completeDate',
+    imageUrl: 'imageUrl',
     thumbImageUrl: 'thumbImageUrl',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -13284,6 +13386,8 @@ export namespace Prisma {
     regularDate: 'regularDate',
     title: 'title',
     isAutoExpenditure: 'isAutoExpenditure',
+    installmentMonth: 'installmentMonth',
+    paidInstallmentMonth: 'paidInstallmentMonth',
     userId: 'userId',
     accountBookCategoryId: 'accountBookCategoryId',
     createdAt: 'createdAt',
@@ -13312,6 +13416,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -13691,6 +13803,10 @@ export namespace Prisma {
     memo?: StringFilter<"AccountBook"> | string
     type?: EnumAccountBookCategoryTypeFilter<"AccountBook"> | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFilter<"AccountBook"> | boolean
+    isDisabledBudget?: BoolFilter<"AccountBook"> | boolean
+    regularDate?: IntNullableFilter<"AccountBook"> | number | null
+    installmentMonth?: IntNullableFilter<"AccountBook"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"AccountBook"> | number | null
     registerDateTime?: DateTimeFilter<"AccountBook"> | Date | string
     userId?: IntFilter<"AccountBook"> | number
     accountBookCategoryId?: IntFilter<"AccountBook"> | number
@@ -13707,6 +13823,10 @@ export namespace Prisma {
     memo?: SortOrder
     type?: SortOrder
     isRegularExpenditure?: SortOrder
+    isDisabledBudget?: SortOrder
+    regularDate?: SortOrderInput | SortOrder
+    installmentMonth?: SortOrderInput | SortOrder
+    paidInstallmentMonth?: SortOrderInput | SortOrder
     registerDateTime?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
@@ -13726,6 +13846,10 @@ export namespace Prisma {
     memo?: StringFilter<"AccountBook"> | string
     type?: EnumAccountBookCategoryTypeFilter<"AccountBook"> | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFilter<"AccountBook"> | boolean
+    isDisabledBudget?: BoolFilter<"AccountBook"> | boolean
+    regularDate?: IntNullableFilter<"AccountBook"> | number | null
+    installmentMonth?: IntNullableFilter<"AccountBook"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"AccountBook"> | number | null
     registerDateTime?: DateTimeFilter<"AccountBook"> | Date | string
     userId?: IntFilter<"AccountBook"> | number
     accountBookCategoryId?: IntFilter<"AccountBook"> | number
@@ -13742,6 +13866,10 @@ export namespace Prisma {
     memo?: SortOrder
     type?: SortOrder
     isRegularExpenditure?: SortOrder
+    isDisabledBudget?: SortOrder
+    regularDate?: SortOrderInput | SortOrder
+    installmentMonth?: SortOrderInput | SortOrder
+    paidInstallmentMonth?: SortOrderInput | SortOrder
     registerDateTime?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
@@ -13764,6 +13892,10 @@ export namespace Prisma {
     memo?: StringWithAggregatesFilter<"AccountBook"> | string
     type?: EnumAccountBookCategoryTypeWithAggregatesFilter<"AccountBook"> | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolWithAggregatesFilter<"AccountBook"> | boolean
+    isDisabledBudget?: BoolWithAggregatesFilter<"AccountBook"> | boolean
+    regularDate?: IntNullableWithAggregatesFilter<"AccountBook"> | number | null
+    installmentMonth?: IntNullableWithAggregatesFilter<"AccountBook"> | number | null
+    paidInstallmentMonth?: IntNullableWithAggregatesFilter<"AccountBook"> | number | null
     registerDateTime?: DateTimeWithAggregatesFilter<"AccountBook"> | Date | string
     userId?: IntWithAggregatesFilter<"AccountBook"> | number
     accountBookCategoryId?: IntWithAggregatesFilter<"AccountBook"> | number
@@ -14007,6 +14139,7 @@ export namespace Prisma {
     description?: StringFilter<"BucketList"> | string
     userId?: IntFilter<"BucketList"> | number
     completeDate?: DateTimeFilter<"BucketList"> | Date | string
+    imageUrl?: StringFilter<"BucketList"> | string
     thumbImageUrl?: StringFilter<"BucketList"> | string
     createdAt?: DateTimeFilter<"BucketList"> | Date | string
     updatedAt?: DateTimeFilter<"BucketList"> | Date | string
@@ -14021,6 +14154,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     completeDate?: SortOrder
+    imageUrl?: SortOrder
     thumbImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14038,6 +14172,7 @@ export namespace Prisma {
     description?: StringFilter<"BucketList"> | string
     userId?: IntFilter<"BucketList"> | number
     completeDate?: DateTimeFilter<"BucketList"> | Date | string
+    imageUrl?: StringFilter<"BucketList"> | string
     thumbImageUrl?: StringFilter<"BucketList"> | string
     createdAt?: DateTimeFilter<"BucketList"> | Date | string
     updatedAt?: DateTimeFilter<"BucketList"> | Date | string
@@ -14052,6 +14187,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     completeDate?: SortOrder
+    imageUrl?: SortOrder
     thumbImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14072,6 +14208,7 @@ export namespace Prisma {
     description?: StringWithAggregatesFilter<"BucketList"> | string
     userId?: IntWithAggregatesFilter<"BucketList"> | number
     completeDate?: DateTimeWithAggregatesFilter<"BucketList"> | Date | string
+    imageUrl?: StringWithAggregatesFilter<"BucketList"> | string
     thumbImageUrl?: StringWithAggregatesFilter<"BucketList"> | string
     createdAt?: DateTimeWithAggregatesFilter<"BucketList"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"BucketList"> | Date | string
@@ -14086,6 +14223,8 @@ export namespace Prisma {
     regularDate?: IntFilter<"RegularExpenditure"> | number
     title?: StringFilter<"RegularExpenditure"> | string
     isAutoExpenditure?: BoolFilter<"RegularExpenditure"> | boolean
+    installmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
     userId?: IntFilter<"RegularExpenditure"> | number
     accountBookCategoryId?: IntFilter<"RegularExpenditure"> | number
     createdAt?: DateTimeFilter<"RegularExpenditure"> | Date | string
@@ -14100,6 +14239,8 @@ export namespace Prisma {
     regularDate?: SortOrder
     title?: SortOrder
     isAutoExpenditure?: SortOrder
+    installmentMonth?: SortOrderInput | SortOrder
+    paidInstallmentMonth?: SortOrderInput | SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
     createdAt?: SortOrder
@@ -14117,6 +14258,8 @@ export namespace Prisma {
     regularDate?: IntFilter<"RegularExpenditure"> | number
     title?: StringFilter<"RegularExpenditure"> | string
     isAutoExpenditure?: BoolFilter<"RegularExpenditure"> | boolean
+    installmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
     userId?: IntFilter<"RegularExpenditure"> | number
     accountBookCategoryId?: IntFilter<"RegularExpenditure"> | number
     createdAt?: DateTimeFilter<"RegularExpenditure"> | Date | string
@@ -14131,6 +14274,8 @@ export namespace Prisma {
     regularDate?: SortOrder
     title?: SortOrder
     isAutoExpenditure?: SortOrder
+    installmentMonth?: SortOrderInput | SortOrder
+    paidInstallmentMonth?: SortOrderInput | SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
     createdAt?: SortOrder
@@ -14151,6 +14296,8 @@ export namespace Prisma {
     regularDate?: IntWithAggregatesFilter<"RegularExpenditure"> | number
     title?: StringWithAggregatesFilter<"RegularExpenditure"> | string
     isAutoExpenditure?: BoolWithAggregatesFilter<"RegularExpenditure"> | boolean
+    installmentMonth?: IntNullableWithAggregatesFilter<"RegularExpenditure"> | number | null
+    paidInstallmentMonth?: IntNullableWithAggregatesFilter<"RegularExpenditure"> | number | null
     userId?: IntWithAggregatesFilter<"RegularExpenditure"> | number
     accountBookCategoryId?: IntWithAggregatesFilter<"RegularExpenditure"> | number
     createdAt?: DateTimeWithAggregatesFilter<"RegularExpenditure"> | Date | string
@@ -14574,6 +14721,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14588,6 +14739,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     userId: number
     accountBookCategoryId: number
@@ -14601,6 +14756,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14615,6 +14774,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
@@ -14629,6 +14792,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     userId: number
     accountBookCategoryId: number
@@ -14642,6 +14809,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14654,6 +14825,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
@@ -14888,6 +15063,7 @@ export namespace Prisma {
     title: string
     description: string
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14902,6 +15078,7 @@ export namespace Prisma {
     description: string
     userId: number
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14913,6 +15090,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14927,6 +15105,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14940,6 +15119,7 @@ export namespace Prisma {
     description: string
     userId: number
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14950,6 +15130,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14962,6 +15143,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14972,6 +15154,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutRegularExpendituresInput
@@ -14984,6 +15168,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     userId: number
     accountBookCategoryId: number
     createdAt?: Date | string
@@ -14995,6 +15181,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutRegularExpendituresNestedInput
@@ -15007,6 +15195,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     userId?: IntFieldUpdateOperationsInput | number
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15019,6 +15209,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     userId: number
     accountBookCategoryId: number
     createdAt?: Date | string
@@ -15030,6 +15222,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15040,6 +15234,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     userId?: IntFieldUpdateOperationsInput | number
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15512,9 +15708,25 @@ export namespace Prisma {
     not?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel> | $Enums.AccountBookCategoryType
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type AccountBookCategoryRelationFilter = {
     is?: AccountBookCategoryWhereInput
     isNot?: AccountBookCategoryWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type AccountBookCountOrderByAggregateInput = {
@@ -15524,6 +15736,10 @@ export namespace Prisma {
     memo?: SortOrder
     type?: SortOrder
     isRegularExpenditure?: SortOrder
+    isDisabledBudget?: SortOrder
+    regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     registerDateTime?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
@@ -15534,6 +15750,9 @@ export namespace Prisma {
   export type AccountBookAvgOrderByAggregateInput = {
     id?: SortOrder
     amount?: SortOrder
+    regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
   }
@@ -15545,6 +15764,10 @@ export namespace Prisma {
     memo?: SortOrder
     type?: SortOrder
     isRegularExpenditure?: SortOrder
+    isDisabledBudget?: SortOrder
+    regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     registerDateTime?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
@@ -15559,6 +15782,10 @@ export namespace Prisma {
     memo?: SortOrder
     type?: SortOrder
     isRegularExpenditure?: SortOrder
+    isDisabledBudget?: SortOrder
+    regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     registerDateTime?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
@@ -15569,6 +15796,9 @@ export namespace Prisma {
   export type AccountBookSumOrderByAggregateInput = {
     id?: SortOrder
     amount?: SortOrder
+    regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
   }
@@ -15581,6 +15811,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel>
     _max?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type AccountBookCategoryImageRelationFilter = {
@@ -15734,6 +15980,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     completeDate?: SortOrder
+    imageUrl?: SortOrder
     thumbImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15751,6 +15998,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     completeDate?: SortOrder
+    imageUrl?: SortOrder
     thumbImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15763,6 +16011,7 @@ export namespace Prisma {
     description?: SortOrder
     userId?: SortOrder
     completeDate?: SortOrder
+    imageUrl?: SortOrder
     thumbImageUrl?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -15779,6 +16028,8 @@ export namespace Prisma {
     regularDate?: SortOrder
     title?: SortOrder
     isAutoExpenditure?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
     createdAt?: SortOrder
@@ -15789,6 +16040,8 @@ export namespace Prisma {
     id?: SortOrder
     amount?: SortOrder
     regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
   }
@@ -15799,6 +16052,8 @@ export namespace Prisma {
     regularDate?: SortOrder
     title?: SortOrder
     isAutoExpenditure?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
     createdAt?: SortOrder
@@ -15811,6 +16066,8 @@ export namespace Prisma {
     regularDate?: SortOrder
     title?: SortOrder
     isAutoExpenditure?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
     createdAt?: SortOrder
@@ -15821,6 +16078,8 @@ export namespace Prisma {
     id?: SortOrder
     amount?: SortOrder
     regularDate?: SortOrder
+    installmentMonth?: SortOrder
+    paidInstallmentMonth?: SortOrder
     userId?: SortOrder
     accountBookCategoryId?: SortOrder
   }
@@ -16364,6 +16623,14 @@ export namespace Prisma {
     set?: $Enums.AccountBookCategoryType
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutAccountBooksNestedInput = {
     create?: XOR<UserCreateWithoutAccountBooksInput, UserUncheckedCreateWithoutAccountBooksInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountBooksInput
@@ -16818,6 +17085,17 @@ export namespace Prisma {
     not?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel> | $Enums.AccountBookCategoryType
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumAccountBookCategoryTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.AccountBookCategoryType | EnumAccountBookCategoryTypeFieldRefInput<$PrismaModel>
     in?: $Enums.AccountBookCategoryType[]
@@ -16826,6 +17104,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel>
     _max?: NestedEnumAccountBookCategoryTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -16876,6 +17181,7 @@ export namespace Prisma {
     title: string
     description: string
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16888,6 +17194,7 @@ export namespace Prisma {
     title: string
     description: string
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16966,6 +17273,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -16979,6 +17290,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     accountBookCategoryId: number
     createdAt?: Date | string
@@ -17062,6 +17377,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountBookCategory: AccountBookCategoryCreateNestedOneWithoutRegularExpendituresInput
@@ -17073,6 +17390,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     accountBookCategoryId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17150,6 +17469,7 @@ export namespace Prisma {
     description?: StringFilter<"BucketList"> | string
     userId?: IntFilter<"BucketList"> | number
     completeDate?: DateTimeFilter<"BucketList"> | Date | string
+    imageUrl?: StringFilter<"BucketList"> | string
     thumbImageUrl?: StringFilter<"BucketList"> | string
     createdAt?: DateTimeFilter<"BucketList"> | Date | string
     updatedAt?: DateTimeFilter<"BucketList"> | Date | string
@@ -17240,6 +17560,10 @@ export namespace Prisma {
     memo?: StringFilter<"AccountBook"> | string
     type?: EnumAccountBookCategoryTypeFilter<"AccountBook"> | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFilter<"AccountBook"> | boolean
+    isDisabledBudget?: BoolFilter<"AccountBook"> | boolean
+    regularDate?: IntNullableFilter<"AccountBook"> | number | null
+    installmentMonth?: IntNullableFilter<"AccountBook"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"AccountBook"> | number | null
     registerDateTime?: DateTimeFilter<"AccountBook"> | Date | string
     userId?: IntFilter<"AccountBook"> | number
     accountBookCategoryId?: IntFilter<"AccountBook"> | number
@@ -17331,6 +17655,8 @@ export namespace Prisma {
     regularDate?: IntFilter<"RegularExpenditure"> | number
     title?: StringFilter<"RegularExpenditure"> | string
     isAutoExpenditure?: BoolFilter<"RegularExpenditure"> | boolean
+    installmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
+    paidInstallmentMonth?: IntNullableFilter<"RegularExpenditure"> | number | null
     userId?: IntFilter<"RegularExpenditure"> | number
     accountBookCategoryId?: IntFilter<"RegularExpenditure"> | number
     createdAt?: DateTimeFilter<"RegularExpenditure"> | Date | string
@@ -17781,6 +18107,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17794,6 +18124,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     userId: number
     createdAt?: Date | string
@@ -17815,6 +18149,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutRegularExpendituresInput
@@ -17826,6 +18162,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     userId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18620,6 +18958,7 @@ export namespace Prisma {
     title: string
     description: string
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18633,6 +18972,7 @@ export namespace Prisma {
     description: string
     userId: number
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18707,6 +19047,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18720,6 +19061,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18747,6 +19089,7 @@ export namespace Prisma {
     title: string
     description: string
     completeDate: Date | string
+    imageUrl: string
     thumbImageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18778,6 +19121,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     accountBookCategoryId: number
     createdAt?: Date | string
@@ -18809,6 +19156,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     accountBookCategoryId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18868,6 +19217,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18880,6 +19230,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18892,6 +19243,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     completeDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     thumbImageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18958,6 +19310,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18971,6 +19327,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18984,6 +19344,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19056,6 +19420,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountBookCategory?: AccountBookCategoryUpdateOneRequiredWithoutRegularExpendituresNestedInput
@@ -19067,6 +19433,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19078,6 +19446,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     accountBookCategoryId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19194,6 +19564,10 @@ export namespace Prisma {
     memo: string
     type: $Enums.AccountBookCategoryType
     isRegularExpenditure: boolean
+    isDisabledBudget?: boolean
+    regularDate?: number | null
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     registerDateTime: Date | string
     userId: number
     createdAt?: Date | string
@@ -19206,6 +19580,8 @@ export namespace Prisma {
     regularDate: number
     title: string
     isAutoExpenditure: boolean
+    installmentMonth?: number | null
+    paidInstallmentMonth?: number | null
     userId: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19217,6 +19593,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19230,6 +19610,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19243,6 +19627,10 @@ export namespace Prisma {
     memo?: StringFieldUpdateOperationsInput | string
     type?: EnumAccountBookCategoryTypeFieldUpdateOperationsInput | $Enums.AccountBookCategoryType
     isRegularExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    isDisabledBudget?: BoolFieldUpdateOperationsInput | boolean
+    regularDate?: NullableIntFieldUpdateOperationsInput | number | null
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     registerDateTime?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19254,6 +19642,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutRegularExpendituresNestedInput
@@ -19265,6 +19655,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19276,6 +19668,8 @@ export namespace Prisma {
     regularDate?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     isAutoExpenditure?: BoolFieldUpdateOperationsInput | boolean
+    installmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    paidInstallmentMonth?: NullableIntFieldUpdateOperationsInput | number | null
     userId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -86,6 +86,10 @@ model AccountBook {
   memo                  String
   type                  AccountBookCategoryType
   isRegularExpenditure  Boolean             @map("is_regular_expenditure")
+  isDisabledBudget      Boolean             @default(false) @map("is_disabled_budget")
+  regularDate           Int?                @map("regular_date")
+  installmentMonth      Int?                @map("installment_month")
+  paidInstallmentMonth  Int?                @map("paid_installment_month")
   registerDateTime      DateTime            @map("register_date_time")
   userId                Int                 @map("user_id")
   user                  User                @relation(fields: [userId], references: [id])
@@ -159,6 +163,7 @@ model BucketList {
   user          User     @relation(fields: [userId], references: [id])
   todoList      Todo[]
   completeDate  DateTime @map("complete_date")
+  imageUrl      String   @map("image_url")
   thumbImageUrl String   @map("thumb_image_url")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
@@ -172,6 +177,8 @@ model RegularExpenditure {
   regularDate           Int                 @map("regular_date")
   title                 String
   isAutoExpenditure     Boolean             @map("is_auto_expenditure")
+  installmentMonth      Int?                @map("installment_month")
+  paidInstallmentMonth  Int?                @map("paid_installment_month")
   userId                Int                 @map("user_id")
   user                  User                @relation(fields: [userId], references: [id])
   accountBookCategoryId Int                 @map("account_book_category_id")

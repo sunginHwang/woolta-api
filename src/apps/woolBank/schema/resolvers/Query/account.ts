@@ -1,34 +1,10 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-import { isAuthenticated } from '../../../middlewares/isAuthenticated';
-import { GraphQLError } from 'graphql/error';
+import { requireAuth } from '../../../../../shared/auth';
+import { getAccountByIdAndUserIdOrThrow } from '../../../services/AccountService';
 
-const prismaW = new WoolBankPrismaClient();
+// 원본 GET /accounts/:accountId — deposits(depositDate desc) + savingType 포함
+export const account: NonNullable<QueryResolvers['account']> = async (_parent, _arg, _ctx) => {
+  const { userId } = requireAuth(_ctx);
 
-export const account: NonNullable<QueryResolvers['account']> = isAuthenticated(async (_parent, _args, _ctx) => {
-  const account = await prismaW.account.findUnique({
-    where: { id: Number(_args.id) },
-  });
-  if (!account) {
-    return null;
-  }
-
-  if (_args.id === '12') {
-    throw new GraphQLError('my message', {
-      extensions: {
-        code: 'FORBIDDEN',
-        myExtension: 'foo',
-      },
-    });
-  }
-
-  const { id, taxType, regularTransferDate, rate, title, amount } = account;
-  return {
-    id,
-    taxType,
-    regularTransferDate,
-    rate,
-    title,
-    amount,
-  };
-});
+  return getAccountByIdAndUserIdOrThrow(Number(_arg.id), userId);
+};

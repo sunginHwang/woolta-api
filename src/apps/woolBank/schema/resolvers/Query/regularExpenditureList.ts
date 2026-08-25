@@ -1,8 +1,8 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { Prisma, PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
+import { Prisma } from '../../../../../../prisma/generated/woolBank';
+import { requireAuth } from '../../../../../shared/auth';
 import { getNowDate, getRemainDate } from '../../../utils/date';
-
-const prisma = new WoolBankPrismaClient();
+import { prismaWoolBank as prisma } from '../../../utils/prismaClient';
 
 type AccountBookCategoryWithImageType = Prisma.AccountBookCategoryGetPayload<{
   include: { accountBookCategoryImage: true };
@@ -23,9 +23,11 @@ export const regularExpenditureList: NonNullable<QueryResolvers['regularExpendit
   _arg,
   _ctx,
 ) => {
+  const { userId } = requireAuth(_ctx);
+
   const [expenditureTypeList, regularExpenditures] = await Promise.all([
-    getExpenditureAccountBookCategories(13),
-    getRegularExpenditureListByUserId(13, Number(_arg.limit ?? 100)),
+    getExpenditureAccountBookCategories(userId),
+    getRegularExpenditureListByUserId(userId, Number(_arg.limit ?? 100)),
   ]);
 
   return expenditureTypeList

@@ -1,15 +1,15 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-const prisma = new WoolBankPrismaClient();
+import { requireAuth } from '../../../../../shared/auth';
+import { prismaWoolBank } from '../../../utils/prismaClient';
 
+// 원본 GET /accounts/ (getAccountsByUserId)
 export const account_list: NonNullable<QueryResolvers['account_list']> = async (_parent, _arg, _ctx) => {
-  const account_list = await prisma.account.findMany({
-    orderBy: { id: 'desc' },
-    include: { savingType: true },
-    where: {
-      userId: 13,
-    },
-  });
+  const { userId } = requireAuth(_ctx);
 
-  return account_list;
+  return prismaWoolBank.account.findMany({
+    where: { userId },
+    orderBy: { id: 'desc' },
+    take: _arg.limit ?? 100,
+    include: { savingType: true },
+  });
 };

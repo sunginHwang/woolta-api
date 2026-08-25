@@ -1,14 +1,14 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-import { endOfMonth, startOfMonth, startOfDay, endOfDay } from 'date-fns';
-
-const prisma = new WoolBankPrismaClient();
+import { endOfMonth, startOfMonth } from 'date-fns';
+import { requireAuth } from '../../../../../shared/auth';
+import { prismaWoolBank } from '../../../utils/prismaClient';
 
 export const accountBookList: NonNullable<QueryResolvers['accountBookList']> = async (_parent, _arg, _ctx) => {
+  const { userId } = requireAuth(_ctx);
   const startDate = startOfMonth(new Date(_arg.dateTime));
   const endDate = endOfMonth(new Date(_arg.dateTime));
 
-  const accountBookList = await prisma.accountBook.findMany({
+  return prismaWoolBank.accountBook.findMany({
     orderBy: { id: 'desc' },
     include: {
       accountBookCategory: {
@@ -18,13 +18,11 @@ export const accountBookList: NonNullable<QueryResolvers['accountBookList']> = a
       },
     },
     where: {
-      userId: 13,
+      userId,
       registerDateTime: {
         gte: startDate,
         lte: endDate,
       },
     },
   });
-
-  return accountBookList;
 };

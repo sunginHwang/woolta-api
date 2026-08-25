@@ -1,14 +1,15 @@
 import type { MutationResolvers } from './../../../generates/types.generated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
 import { GraphQLError } from 'graphql';
-
-const prisma = new WoolBankPrismaClient();
+import { requireRealUser } from '../../../../../shared/auth';
+import { prismaWoolBank as prisma } from '../../../utils/prismaClient';
 
 export const deleteRegularExpenditure: NonNullable<MutationResolvers['deleteRegularExpenditure']> = async (
   _parent,
   _arg,
   _ctx,
 ) => {
+  requireRealUser(_ctx);
+
   const regularExpenditure = await prisma.regularExpenditure.findUnique({ where: { id: Number(_arg.id) } });
 
   if (!regularExpenditure) {

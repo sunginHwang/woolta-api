@@ -1,17 +1,20 @@
 import type { MutationResolvers } from './../../../generates/types.generated';
-import { PrismaClient as WoolBankPrismaClient } from '../../../../../../prisma/generated/woolBank';
-import { isAuthenticated } from '../../../middlewares/isAuthenticated';
+import { requireRealUser } from '../../../../../shared/auth';
+import { prismaWoolBank } from '../../../utils/prismaClient';
 
-const prismaW = new WoolBankPrismaClient();
-export const deleteAccountBook: NonNullable<MutationResolvers['deleteAccountBook']> = isAuthenticated(
-  async (_parent, _arg, _ctx) => {
-    try {
-      await prismaW.accountBook.delete({
-        where: { id: Number(_arg.id) },
-      });
-      return Number(_arg.id);
-    } catch {
+export const deleteAccountBook: NonNullable<MutationResolvers['deleteAccountBook']> = async (_parent, _arg, _ctx) => {
+  const { userId } = requireRealUser(_ctx);
+
+  try {
+    const accountBook = await prismaWoolBank.accountBook.findFirst({ where: { id: Number(_arg.id), userId } });
+
+    if (!accountBook) {
       return -1;
     }
-  },
-);
+
+    await prismaWoolBank.accountBook.delete({ where: { id: accountBook.id } });
+    return accountBook.id;
+  } catch {
+    return -1;
+  }
+};

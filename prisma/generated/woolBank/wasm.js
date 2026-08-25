@@ -171,6 +171,10 @@ exports.Prisma.AccountBookScalarFieldEnum = {
   memo: 'memo',
   type: 'type',
   isRegularExpenditure: 'isRegularExpenditure',
+  isDisabledBudget: 'isDisabledBudget',
+  regularDate: 'regularDate',
+  installmentMonth: 'installmentMonth',
+  paidInstallmentMonth: 'paidInstallmentMonth',
   registerDateTime: 'registerDateTime',
   userId: 'userId',
   accountBookCategoryId: 'accountBookCategoryId',
@@ -217,6 +221,7 @@ exports.Prisma.BucketListScalarFieldEnum = {
   description: 'description',
   userId: 'userId',
   completeDate: 'completeDate',
+  imageUrl: 'imageUrl',
   thumbImageUrl: 'thumbImageUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -228,6 +233,8 @@ exports.Prisma.RegularExpenditureScalarFieldEnum = {
   regularDate: 'regularDate',
   title: 'title',
   isAutoExpenditure: 'isAutoExpenditure',
+  installmentMonth: 'installmentMonth',
+  paidInstallmentMonth: 'paidInstallmentMonth',
   userId: 'userId',
   accountBookCategoryId: 'accountBookCategoryId',
   createdAt: 'createdAt',
@@ -247,6 +254,11 @@ exports.Prisma.TodoScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.AccountBookCategoryType = exports.$Enums.AccountBookCategoryType = {
   expenditure: 'expenditure',
