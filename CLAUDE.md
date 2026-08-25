@@ -5,14 +5,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev              # dev server (nodemon + ts-node, entry: src/app.ts, port 4000)
+npm run dev              # dev server (tsx watch, entry: src/app.ts, port 4000)
 npm run codegenAll       # graphql-codegen for all domains
 npm run codegen<Domain>  # codegen for one domain: Blog / WoolBank / User / Todo / Memo / Article
 npx prisma generate --schema=prisma/schema<Domain>.prisma  # regenerate one domain's Prisma client
 ```
 
+- Runtime: **Node 24** (`.nvmrc`, `engines`), **ESM** (`"type": "module"`), TypeScript 6, dev runner **tsx** (tsc is typecheck-only via `noEmit`; `module: "preserve"` allows extensionless relative imports). ESM gotcha: named imports from CJS packages can fail at runtime even when tsc passes (e.g. use `import jwt from 'jsonwebtoken'` + `jwt.TokenExpiredError`, default-import lodash) — always boot-test after adding a CJS dependency.
+- Stack: Apollo Server 5 (`expressMiddleware` comes from `@as-integrations/express5`, not `@apollo/server/express4`), Express 5 (no body-parser — use `express.json()`), Prisma 7, graphql-codegen CLI 7 + `@eddeee888/gcg-typescript-resolver-files` 0.18. `graphql` stays on 16.x (Apollo 5 peer dep).
 - No tests and no lint script. Formatting is Prettier (`.prettierrc`; generated code is excluded via `.prettierignore`).
-- Databases are MySQL, configured via `BLOG_DATABASE_URL`, `WOOLBANK_DATABASE_URL`, and `DASHBOARD_DATABASE_URL`. Note: `dotenv` is a dependency but `dotenv.config()` is never called — the env vars must already be set in the shell for Prisma to connect.
+- Databases are MySQL, configured via `BLOG_DATABASE_URL`, `WOOLBANK_DATABASE_URL`, and `DASHBOARD_DATABASE_URL`. Nothing loads `.env` files — the env vars must already be set in the shell.
+- **Prisma 7 specifics**: schemas use the `prisma-client` generator (emits TypeScript into `prisma/generated/<domain>`); import everything from the `<output>/client` entrypoint. Datasource blocks have **no `url`** — the connection string is passed at runtime via `new PrismaClient({ adapter: new PrismaMariaDb(process.env.<DOMAIN>_DATABASE_URL!) })` in each domain's `utils/prismaClient.ts`.
 - Blog domain extras: `BLOG_AUTHOR_USER_NO` (temporary author identity until the external auth service is wired in, see `src/apps/blog/middlewares/currentUser.ts`) and `BLOG_UPLOAD_PATH` (image upload dir, defaults to `/home/blog/post/upload/`).
 
 ## Architecture

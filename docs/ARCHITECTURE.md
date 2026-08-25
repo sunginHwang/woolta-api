@@ -90,6 +90,12 @@ user 도메인 API: `loginBySocial`(미가입 시 자동 회원가입 — passwo
 - **부수효과 패턴**: fire-and-forget은 `.catch(log)`로 요청 응답과 분리 (예: 포스트 생성 시 웹푸시).
 - **PrismaClient**: 도메인당 1개 싱글턴(`utils/prismaClient.ts`)만 사용. 파일마다 `new PrismaClient()` 금지.
 
+## 4.5 런타임/스택 (2026-08 메이저 업데이트)
+
+Node 24 (`.nvmrc`) · **ESM**(`"type": "module"`) · TypeScript 6 · dev 러너 **tsx**(`npm run dev` = tsx watch, tsc는 `noEmit` 타입 체크 전용) · Apollo Server 5(`expressMiddleware`는 `@as-integrations/express5`) · Express 5(body-parser 제거, `express.json()`) · Prisma 7 · codegen CLI 7 + gcg 0.18 · graphql-scalars 2. `graphql`은 Apollo 5 peer dep 제약으로 16.x 유지.
+
+ESM 주의: CJS 패키지의 named import는 tsc를 통과해도 런타임에 실패할 수 있다(jsonwebtoken, lodash는 default import 후 구조분해). 새 CJS 의존성 추가 시 반드시 부팅 확인.
+
 ## 5. Prisma 컨벤션
 
 - **마이그레이션 없음** — 레거시 테이블은 Prisma가 매핑만 하고, 신규 테이블(dashboard DB)은 SQL DDL 스크립트(`scripts/dashboardDdl.sql`)로 만든 뒤 매핑한다. `prisma db push`는 쓰지 않는다(한 DB를 여러 스키마가 공유해 타 도메인 테이블 drop 위험). 스키마 작성/수정 시 실 DB에 `prisma db pull`을 스크래치 파일로 떠서 대조 후 확정한다.
@@ -97,6 +103,7 @@ user 도메인 API: `loginBySocial`(미가입 시 자동 회원가입 — passwo
 - `createdAt DateTime @default(now())` / `updatedAt DateTime @updatedAt` — 레거시(JPA @PrePersist, TypeORM)처럼 앱 레벨에서 관리.
 - boolean 컬럼이 tinyint(4)여도 `Boolean` 매핑 정상 동작 (실데이터 검증 완료).
 - 클라이언트 출력은 `prisma/generated/<domain>` 고정. 스키마 수정 후 `npx prisma generate --schema=prisma/schema<Domain>.prisma`.
+- **Prisma 7**: generator는 `prisma-client`(TypeScript 소스 생성), import는 `<output>/client` 단일 entrypoint(모델 타입·Prisma 네임스페이스 포함). datasource 블록에 `url` 금지 — 접속 문자열은 각 도메인 `utils/prismaClient.ts`에서 `new PrismaClient({ adapter: new PrismaMariaDb(env) })`로 런타임 주입.
 - **GraphQL 관계 필드는 nullable로**: codegen 타입이 non-null 관계를 재귀적으로 요구해 include 부담이 커지므로, 응답에 항상 싣지 않는 관계(`Deposit.account`, `Todo.user` 등)는 SDL에서 nullable로 선언하고 리졸버는 필요한 include만 한다.
 
 ## 6. GraphQL로 옮기지 않는 것 (REST 유지)
@@ -115,7 +122,7 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 
 ## 8. 환경변수
 
-`dotenv.config()`를 호출하지 않으므로 **셸에 직접 export** 해야 한다.
+`.env` 로딩이 없으므로 **셸에 직접 export** 해야 한다.
 
 | 변수 | 용도 | 기본값 |
 |---|---|---|
@@ -130,7 +137,7 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 
 ## 9. 검증 방법 (테스트 프레임워크 없음)
 
-1. `npm run codegenAll && npx tsc --noEmit` — 타입 클린 (기존 잔존 에러 3건 제외: `woolBank/models/routes` 2건, `MinUser.ts` 1건)
+1. `npm run codegenAll && npx tsc --noEmit` — 타입 클린 (잔존 에러 0 — 레거시 잔재 파일은 2026-08에 정리 완료)
 2. 더미 DB URL로 부팅 → 스키마/배선 검증 (`{ __typename }`)
 3. 인증 플로우: `createAuthToken`으로 토큰 생성 → 쿠키로 `accessCheck`, 만료토큰+refresh 재발급, share 토큰의 `requireRealUser` 거부 확인
 4. 실 DB 읽기 전용 쿼리로 데이터 검증 (쓰기 뮤테이션은 테스트 DB에서)
