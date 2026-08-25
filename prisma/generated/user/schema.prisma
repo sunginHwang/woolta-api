@@ -1,0 +1,36 @@
+// user 도메인 전용 스키마 — 데이터는 woolbank DB의 user / user_share_code 테이블을 그대로 사용한다.
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/user"
+}
+
+datasource user {
+  provider = "mysql"
+  url      = env("WOOLBANK_DATABASE_URL")
+}
+
+model User {
+
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String
+  password   String
+  loginType  String   @map("login_type")
+  socialId   String   @map("social_id")
+  profileImg String   @map("profile_img")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model UserShareCode {
+
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  shareCode String   @map("share_code")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_share_code")
+}

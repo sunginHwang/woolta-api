@@ -1,0 +1,53 @@
+type Query
+type Mutation
+scalar DateTime
+
+# 원본 woolbankApi SocialType: 'kakaoTalk' | 'facebook' | 'google'
+enum SocialLoginType {
+  facebook
+  kakaoTalk
+  google
+}
+
+type UserInfo {
+  id: Int!
+  name: String!
+  email: String!
+  loginType: String!
+  socialId: String!
+  profileImg: String!
+  authType: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AuthTokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type LoginResult {
+  user: UserInfo!
+  accessToken: String!
+  refreshToken: String!
+}
+
+type CheckTokenResult {
+  userInfo: UserInfo!
+  authTokens: AuthTokens!
+}
+
+extend type Query {
+  me: UserInfo!
+  accessCheck: Int!
+  checkToken: CheckTokenResult!
+  shareCode: String!
+}
+
+extend type Mutation {
+  loginBySocial(name: String, email: String, imageUrl: String!, loginType: SocialLoginType!, socialId: String!): LoginResult!
+  loginByShareCode(shareCode: String!): LoginResult!
+  logout: Boolean!
+  refreshTokenCheck(refreshToken: String!): AuthTokens!
+  upsertShareCode: String!
+}

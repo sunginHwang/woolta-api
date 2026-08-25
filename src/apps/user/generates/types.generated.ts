@@ -1,0 +1,251 @@
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+export type Maybe<T> = T | null | undefined;
+export type InputMaybe<T> = T | null | undefined;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  DateTime: { input: Date | string; output: Date | string; }
+};
+
+export type AuthTokens = {
+  __typename?: 'AuthTokens';
+  accessToken: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
+};
+
+export type CheckTokenResult = {
+  __typename?: 'CheckTokenResult';
+  authTokens: AuthTokens;
+  userInfo: UserInfo;
+};
+
+export type LoginResult = {
+  __typename?: 'LoginResult';
+  accessToken: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
+  user: UserInfo;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  loginByShareCode: LoginResult;
+  loginBySocial: LoginResult;
+  logout: Scalars['Boolean']['output'];
+  refreshTokenCheck: AuthTokens;
+  upsertShareCode: Scalars['String']['output'];
+};
+
+
+export type MutationloginByShareCodeArgs = {
+  shareCode: Scalars['String']['input'];
+};
+
+
+export type MutationloginBySocialArgs = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  imageUrl: Scalars['String']['input'];
+  loginType: SocialLoginType;
+  name?: InputMaybe<Scalars['String']['input']>;
+  socialId: Scalars['String']['input'];
+};
+
+
+export type MutationrefreshTokenCheckArgs = {
+  refreshToken: Scalars['String']['input'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  accessCheck: Scalars['Int']['output'];
+  checkToken: CheckTokenResult;
+  me: UserInfo;
+  shareCode: Scalars['String']['output'];
+};
+
+export type SocialLoginType =
+  | 'facebook'
+  | 'google'
+  | 'kakaoTalk';
+
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  authType?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  loginType: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  profileImg: Scalars['String']['output'];
+  socialId: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+
+
+export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
+
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
+
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+}
+
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
+  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
+}
+
+export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+
+
+/** Mapping between all available schema types and the resolvers types */
+export type ResolversTypes = {
+  AuthTokens: ResolverTypeWrapper<AuthTokens>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  CheckTokenResult: ResolverTypeWrapper<CheckTokenResult>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  LoginResult: ResolverTypeWrapper<LoginResult>;
+  Mutation: ResolverTypeWrapper<{}>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  SocialLoginType: SocialLoginType;
+  UserInfo: ResolverTypeWrapper<UserInfo>;
+};
+
+/** Mapping between all available schema types and the resolvers parents */
+export type ResolversParentTypes = {
+  AuthTokens: AuthTokens;
+  String: Scalars['String']['output'];
+  CheckTokenResult: CheckTokenResult;
+  DateTime: Scalars['DateTime']['output'];
+  LoginResult: LoginResult;
+  Mutation: {};
+  Boolean: Scalars['Boolean']['output'];
+  Query: {};
+  Int: Scalars['Int']['output'];
+  UserInfo: UserInfo;
+};
+
+export type AuthTokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthTokens'] = ResolversParentTypes['AuthTokens']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CheckTokenResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CheckTokenResult'] = ResolversParentTypes['CheckTokenResult']> = {
+  authTokens?: Resolver<ResolversTypes['AuthTokens'], ParentType, ContextType>;
+  userInfo?: Resolver<ResolversTypes['UserInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
+
+export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['UserInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  loginByShareCode?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginByShareCodeArgs, 'shareCode'>>;
+  loginBySocial?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginBySocialArgs, 'imageUrl' | 'loginType' | 'socialId'>>;
+  logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  refreshTokenCheck?: Resolver<ResolversTypes['AuthTokens'], ParentType, ContextType, RequireFields<MutationrefreshTokenCheckArgs, 'refreshToken'>>;
+  upsertShareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  accessCheck?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  checkToken?: Resolver<ResolversTypes['CheckTokenResult'], ParentType, ContextType>;
+  me?: Resolver<ResolversTypes['UserInfo'], ParentType, ContextType>;
+  shareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type UserInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInfo'] = ResolversParentTypes['UserInfo']> = {
+  authType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  loginType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  profileImg?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  socialId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Resolvers<ContextType = any> = {
+  AuthTokens?: AuthTokensResolvers<ContextType>;
+  CheckTokenResult?: CheckTokenResultResolvers<ContextType>;
+  DateTime?: GraphQLScalarType;
+  LoginResult?: LoginResultResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  UserInfo?: UserInfoResolvers<ContextType>;
+};
+
