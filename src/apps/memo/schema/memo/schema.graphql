@@ -1,0 +1,50 @@
+type Query
+type Mutation
+scalar DateTime
+scalar JSON
+
+type Memo {
+  id: String!
+  title: String!
+  content: JSON! # Tiptap document JSON — opaque
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# 목록은 content 제외 (본문이 커질 수 있음 — 스펙 권장)
+type MemoSummary {
+  id: String!
+  title: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ImportMemoInput {
+  clientId: String!
+  title: String!
+  content: JSON!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type MemoIdMapping {
+  from: String!
+  to: String!
+}
+
+type MemoImportResult {
+  memoIdMap: [MemoIdMapping!]!
+}
+
+extend type Query {
+  memos: [MemoSummary!]! # updatedAt DESC
+  memo(id: String!): Memo!
+}
+
+extend type Mutation {
+  # 인자 없음 — "새 메모" 클릭 즉시 빈 메모 생성 (title '', content 빈 doc)
+  createMemo: Memo!
+  updateMemo(id: String!, title: String, content: JSON): Memo!
+  deleteMemo(id: String!): Boolean! # 휴지통 없음, 즉시 영구 삭제
+  importMemos(memos: [ImportMemoInput!]!): MemoImportResult!
+}

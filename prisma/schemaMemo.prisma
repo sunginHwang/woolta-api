@@ -1,0 +1,21 @@
+// memo 도메인 스키마 — dashboard DB (테이블 DDL: scripts/dashboardDdl.sql)
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/memo"
+}
+
+datasource memo {
+  provider = "mysql"
+  url      = env("DASHBOARD_DATABASE_URL")
+}
+
+model Memo {
+  @@map("memo")
+
+  id        String   @id @default(uuid()) @memo.Char(36)
+  userId    Int      @map("user_id")
+  title     String   @default("")
+  content   Json     // Tiptap document JSON — opaque 저장, 파싱/검증 없음
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
