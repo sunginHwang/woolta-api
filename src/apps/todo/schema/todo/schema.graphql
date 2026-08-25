@@ -1,0 +1,95 @@
+type Query
+type Mutation
+scalar DateTime
+
+enum TodoPriority {
+  none
+  low
+  medium
+  high
+}
+
+type Todo {
+  id: String!
+  title: String!
+  memo: String!
+  dueDate: String # YYYY-MM-DD (date-only)
+  categoryId: String # null = 기본함(inbox)
+  priority: TodoPriority!
+  isCompleted: Boolean!
+  completedAt: DateTime
+  deletedAt: DateTime # soft delete (휴지통)
+  order: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type TodoCategory {
+  id: String!
+  name: String!
+  order: Int!
+  createdAt: DateTime!
+}
+
+input UpdateTodoInput {
+  title: String
+  memo: String
+  dueDate: String
+  categoryId: String
+  priority: TodoPriority
+}
+
+# 로컬스토리지 1회 이관용 — clientId(로컬 uuid) 기준으로 서버 id 매핑 반환
+input ImportTodoCategoryInput {
+  clientId: String!
+  name: String!
+  order: Int!
+  createdAt: DateTime
+}
+
+input ImportTodoInput {
+  clientId: String!
+  title: String!
+  memo: String!
+  dueDate: String
+  categoryClientId: String
+  priority: TodoPriority!
+  isCompleted: Boolean!
+  completedAt: DateTime
+  deletedAt: DateTime
+  order: Int!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type IdMapping {
+  from: String!
+  to: String!
+}
+
+type TodoImportResult {
+  categoryIdMap: [IdMapping!]!
+  todoIdMap: [IdMapping!]!
+}
+
+extend type Query {
+  # v1: 휴지통 포함 전체 1회 조회 — 스마트 리스트 필터/카운트는 클라이언트 유지 (스펙 허용안)
+  todos: [Todo!]!
+  todoCategories: [TodoCategory!]!
+}
+
+extend type Mutation {
+  createTodo(title: String!, dueDate: String, categoryId: String, priority: TodoPriority): Todo!
+  updateTodo(id: String!, input: UpdateTodoInput!): Todo!
+  # 토글이 아닌 명시값 (동시성 안전) — 서버가 completedAt 세팅/해제
+  completeTodo(id: String!, isCompleted: Boolean!): Todo!
+  trashTodo(id: String!): Todo!
+  restoreTodo(id: String!): Todo!
+  deleteTodo(id: String!): Boolean!
+  emptyTrash: Int!
+  createTodoCategory(name: String!): TodoCategory!
+  updateTodoCategory(id: String!, name: String!): TodoCategory!
+  # 캐스케이드: 소속 todo 는 categoryId = null (기본함 이동)
+  deleteTodoCategory(id: String!): Boolean!
+  importTodos(categories: [ImportTodoCategoryInput!]!, todos: [ImportTodoInput!]!): TodoImportResult!
+}
