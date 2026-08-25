@@ -1,5 +1,6 @@
 import { getDate, isLastDayOfMonth, setDate } from 'date-fns';
-import { range } from 'lodash';
+import lodash from 'lodash';
+const { range } = lodash;
 import { prismaWoolBank } from '../utils/prismaClient';
 
 // 원본 regularExpenditureService.scheduleRegularExpenditure — 매일 자정 정기지출을 가계부에 벌크 등록.

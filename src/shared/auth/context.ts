@@ -1,5 +1,5 @@
 import express from 'express';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { AuthType, authConfig } from './config';
 import { setAuthCookie } from './cookie';
 import { createAuthToken, verifyToken } from './token';
@@ -31,7 +31,7 @@ export const buildAuthContext = async (req: express.Request, res: express.Respon
     const decoded = verifyToken(accessToken);
     return { userId: decoded.userId, authType: decoded.loginType };
   } catch (e) {
-    if (e instanceof TokenExpiredError && refreshToken) {
+    if (e instanceof jwt.TokenExpiredError && refreshToken) {
       try {
         const tokenInfo = verifyToken(refreshToken);
         const authTokens = createAuthToken(tokenInfo.userId, tokenInfo.loginType);
