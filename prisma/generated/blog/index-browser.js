@@ -127,7 +127,53 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   imageUrl: 'imageUrl',
-  isAdmin: 'isAdmin'
+  isAdmin: 'isAdmin',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BoardScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  contents: 'contents',
+  subDescription: 'subDescription',
+  views: 'views',
+  userNo: 'userNo',
+  categoryNo: 'categoryNo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BoardCategoryScalarFieldEnum = {
+  no: 'no',
+  categoryName: 'categoryName'
+};
+
+exports.Prisma.PostFileScalarFieldEnum = {
+  id: 'id',
+  originFileName: 'originFileName',
+  fileName: 'fileName',
+  fileDir: 'fileDir',
+  fileExt: 'fileExt',
+  fullPath: 'fullPath',
+  size: 'size',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebPushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  endPoint: 'endPoint',
+  pushKey: 'pushKey',
+  auth: 'auth',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebPushKeyScalarFieldEnum = {
+  id: 'id',
+  publicKey: 'publicKey',
+  privateKey: 'privateKey'
 };
 
 exports.Prisma.SortOrder = {
@@ -142,7 +188,12 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Board: 'Board',
+  BoardCategory: 'BoardCategory',
+  PostFile: 'PostFile',
+  WebPushSubscription: 'WebPushSubscription',
+  WebPushKey: 'WebPushKey'
 };
 
 /**

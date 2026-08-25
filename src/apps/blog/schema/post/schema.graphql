@@ -1,0 +1,52 @@
+type Mutation
+scalar DateTime
+
+type Category {
+  value: Int!
+  label: String!
+}
+
+type Writer {
+  no: Int!
+  nickName: String
+  imageUrl: String!
+}
+
+type PostSummary {
+  postNo: Int!
+  title: String!
+  subDescription: String
+  categoryLabel: String!
+  categoryNo: Int!
+  createdAt: DateTime!
+  author: String
+}
+
+type Post {
+  postNo: Int!
+  title: String!
+  content: String
+  categoryLabel: String!
+  categoryNo: Int!
+  createdAt: DateTime!
+  writer: Writer!
+}
+
+type PostUpsertResult {
+  postNo: Int!
+  categoryNo: Int!
+}
+
+extend type Query {
+  categories: [Category!]!
+  postsByCategory(categoryNo: Int!): [PostSummary!]!
+  recentPosts: [PostSummary!]!
+  allPosts: [Post!]!
+  post(categoryNo: Int!, postNo: Int!): Post!
+}
+
+extend type Mutation {
+  createPost(categoryNo: Int!, title: String!, contents: String!): PostUpsertResult!
+  updatePost(id: Int!, categoryNo: Int!, title: String!, contents: String!): PostUpsertResult!
+  deletePost(categoryNo: Int!, postNo: Int!): Boolean!
+}

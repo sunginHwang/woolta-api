@@ -24,5 +24,66 @@ model User {
   password  String
   imageUrl  String @map("image_url")
   isAdmin   Boolean @default(false) @map("is_admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  boards    Board[]
+}
+
+model Board {
+  @@map("board")
+
+  id             Int      @id @default(autoincrement())
+  title          String
+  contents       String?  @blog.Text
+  subDescription String?  @map("sub_description")
+  views          Int      @default(0)
+  userNo         Int      @map("user_no")
+  categoryNo     Int      @map("category_no")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user     User          @relation(fields: [userNo], references: [no])
+  category BoardCategory @relation(fields: [categoryNo], references: [no])
+}
+
+model BoardCategory {
+  @@map("board_category")
+
+  no           Int     @id @default(autoincrement())
+  categoryName String  @map("category_name")
+  boards       Board[]
+}
+
+model PostFile {
+  @@map("post_file")
+
+  id             Int      @id @default(autoincrement())
+  originFileName String   @map("origin_file_name")
+  fileName       String   @map("file_name")
+  fileDir        String   @map("file_dir")
+  fileExt        String   @map("file_ext")
+  fullPath       String   @map("full_path")
+  size           Int
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+}
+
+model WebPushSubscription {
+  @@map("web_push_subscription")
+
+  id        Int      @id @default(autoincrement())
+  endPoint  String   @map("end_point") @blog.Text
+  pushKey   String   @map("push_key")
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model WebPushKey {
+  @@map("web_push_key")
+
+  id         Int    @id @default(autoincrement())
+  publicKey  String @map("public_key")
+  privateKey String @map("private_key")
 }
 

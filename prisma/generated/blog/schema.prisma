@@ -13,14 +13,80 @@ datasource blog {
 
 model User {
 
-  no       Int     @id @default(autoincrement())
-  userId   String  @unique @map("user_id")
-  userName String? @map("user_name")
-  nickName String? @map("nick_name")
-  email    String?
-  password String
-  imageUrl String  @map("image_url")
-  isAdmin  Boolean @default(false) @map("is_admin")
+  no        Int      @id @default(autoincrement())
+  userId    String   @unique @map("user_id")
+  userName  String?  @map("user_name")
+  nickName  String?  @map("nick_name")
+  email     String?
+  password  String
+  imageUrl  String   @map("image_url")
+  isAdmin   Boolean  @default(false) @map("is_admin")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  boards    Board[]
 
   @@map("user")
+}
+
+model Board {
+
+  id             Int      @id @default(autoincrement())
+  title          String
+  contents       String?  @blog.Text
+  subDescription String?  @map("sub_description")
+  views          Int      @default(0)
+  userNo         Int      @map("user_no")
+  categoryNo     Int      @map("category_no")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user     User          @relation(fields: [userNo], references: [no])
+  category BoardCategory @relation(fields: [categoryNo], references: [no])
+
+  @@map("board")
+}
+
+model BoardCategory {
+
+  no           Int     @id @default(autoincrement())
+  categoryName String  @map("category_name")
+  boards       Board[]
+
+  @@map("board_category")
+}
+
+model PostFile {
+
+  id             Int      @id @default(autoincrement())
+  originFileName String   @map("origin_file_name")
+  fileName       String   @map("file_name")
+  fileDir        String   @map("file_dir")
+  fileExt        String   @map("file_ext")
+  fullPath       String   @map("full_path")
+  size           Int
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("post_file")
+}
+
+model WebPushSubscription {
+
+  id        Int      @id @default(autoincrement())
+  endPoint  String   @map("end_point") @blog.Text
+  pushKey   String   @map("push_key")
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("web_push_subscription")
+}
+
+model WebPushKey {
+
+  id         Int    @id @default(autoincrement())
+  publicKey  String @map("public_key")
+  privateKey String @map("private_key")
+
+  @@map("web_push_key")
 }
