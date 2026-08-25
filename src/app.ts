@@ -3,7 +3,7 @@ import path from 'path';
 import cron from 'node-cron';
 import {PrismaClient as BlogPrismaClient, User} from "../prisma/generated/blog";
 import {PrismaClient as WoolBankPrismaClient, User as WooltaUser} from "../prisma/generated/woolBank";
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServer } from '@apollo/server';
 import { typeDefs as WoolBankTypeDefs } from './apps/woolBank/generates/typeDefs.generated'
 import { resolvers as WoolBankResolvers } from './apps/woolBank/generates/resolvers.generated'
@@ -19,7 +19,6 @@ import { resolvers as MemoResolvers } from './apps/memo/generates/resolvers.gene
 import { typeDefs as ArticleTypeDefs } from './apps/article/generates/typeDefs.generated'
 import { resolvers as ArticleResolvers } from './apps/article/generates/resolvers.generated'
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
 import blogFileUploadRouter from './apps/blog/routes/fileUpload';
 import woolBankFileUploadRouter from './apps/woolBank/routes/fileUpload';
 import { buildAuthContext } from './shared/auth';
@@ -68,7 +67,7 @@ async function startServer() {
 
     app.use(
         '/blog/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(blogServer, {
             context: async ({ req, res }) => {
                 return { req, res }
@@ -80,7 +79,7 @@ async function startServer() {
 
     app.use(
         '/woolBank/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(woolBankServer, {
             context: async ({ req, res }) => {
                 return { req, res, auth: await buildAuthContext(req, res) }
@@ -93,7 +92,7 @@ async function startServer() {
 
     app.use(
         '/user/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(userServer, {
             context: async ({ req, res }) => {
                 return { req, res, auth: await buildAuthContext(req, res) }
@@ -104,7 +103,7 @@ async function startServer() {
     // 대시보드 3개 앱 (todo / memo / article-curation) — 스펙: woolta/docs/api-spec-todo-memo-article.md
     app.use(
         '/todo/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(todoServer, {
             context: async ({ req, res }) => {
                 return { req, res, auth: await buildAuthContext(req, res) }
@@ -114,7 +113,7 @@ async function startServer() {
 
     app.use(
         '/memo/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(memoServer, {
             context: async ({ req, res }) => {
                 return { req, res, auth: await buildAuthContext(req, res) }
@@ -124,7 +123,7 @@ async function startServer() {
 
     app.use(
         '/article/graphql',
-        bodyParser.json(),
+        express.json(),
         expressMiddleware(articleServer, {
             context: async ({ req, res }) => {
                 return { req, res, auth: await buildAuthContext(req, res) }
