@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql/error';
-import { BucketList, Todo } from '../../../../prisma/generated/woolBank';
+import { BucketList, Todo } from '../../../../prisma/generated/woolBank/client';
 import { prismaWoolBank } from '../utils/prismaClient';
 
 // 원본 bucketListService.getBucketListByUserId의 BucketListResType 변환

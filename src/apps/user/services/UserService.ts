@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { GraphQLError } from 'graphql/error';
-import { User } from '../../../../prisma/generated/user';
+import { User } from '../../../../prisma/generated/user/client';
 import { AuthType, createAuthToken } from '../../../shared/auth';
 import { prismaUser } from '../utils/prismaClient';
 

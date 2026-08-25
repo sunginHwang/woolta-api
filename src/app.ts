@@ -1,8 +1,6 @@
-import express, { Request, Response} from "express";
+import express from "express";
 import path from 'path';
 import cron from 'node-cron';
-import {PrismaClient as BlogPrismaClient, User} from "../prisma/generated/blog";
-import {PrismaClient as WoolBankPrismaClient, User as WooltaUser} from "../prisma/generated/woolBank";
 import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServer } from '@apollo/server';
 import { typeDefs as WoolBankTypeDefs } from './apps/woolBank/generates/typeDefs.generated'
@@ -25,9 +23,6 @@ import { buildAuthContext } from './shared/auth';
 import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
 
 async function startServer() {
-    const prismaB = new BlogPrismaClient();
-    const prismaW = new WoolBankPrismaClient();
-
     const app: express.Application = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -139,20 +134,6 @@ async function startServer() {
         });
         console.log('woolBank regular expenditure cron enabled');
     }
-
-    app.get("/", (req: Request, res: Response) => {
-        prismaB.user.findMany().then((users:User[]) => {
-            console.log(users);
-            res.json({ users });
-        });
-    });
-
-    app.get("/blog2", (req: Request, res: Response) => {
-        prismaW.user.findMany().then((users:WooltaUser[]) => {
-            console.log(users);
-            res.json({ users });
-        });
-    });
 
 // Start the Express server
     const PORT = process.env.PORT || 4000;

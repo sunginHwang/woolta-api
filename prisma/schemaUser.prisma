@@ -1,12 +1,11 @@
 // user 도메인 전용 스키마 — 데이터는 woolbank DB의 user / user_share_code 테이블을 그대로 사용한다.
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "./generated/user"
 }
 
 datasource user {
   provider = "mysql"
-  url      = env("WOOLBANK_DATABASE_URL")
 }
 
 model User {

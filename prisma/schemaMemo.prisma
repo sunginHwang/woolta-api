@@ -1,12 +1,11 @@
 // memo 도메인 스키마 — dashboard DB (테이블 DDL: scripts/dashboardDdl.sql)
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "./generated/memo"
 }
 
 datasource memo {
   provider = "mysql"
-  url      = env("DASHBOARD_DATABASE_URL")
 }
 
 model Memo {

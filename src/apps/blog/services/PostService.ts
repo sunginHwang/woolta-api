@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql/error';
-import { Board, BoardCategory, User } from '../../../../prisma/generated/blog';
+import { Board, BoardCategory, User } from '../../../../prisma/generated/blog/client';
 import { prismaBlog } from '../utils/prismaClient';
 
 export type BoardWithRelations = Board & { user: User; category: BoardCategory };

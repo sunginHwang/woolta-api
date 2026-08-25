@@ -2,7 +2,7 @@ import type { QueryResolvers } from './../../../../generates/types.generated';
 import { requireRealUser } from '../../../../../../shared/auth';
 import { toArticle } from '../../../../services/ArticleService';
 import { prismaArticle } from '../../../../utils/prismaClient';
-import type { Article as PrismaArticle } from '../../../../../../../prisma/generated/article';
+import type { Article as PrismaArticle } from '../../../../../../../prisma/generated/article/client';
 
 // 전체 주차 반환 (주차 수 적음 — 스펙) — 최신 주차 먼저, 아티클 임베드
 export const articleCurations: NonNullable<QueryResolvers['articleCurations']> = async (_parent, _arg, _ctx) => {

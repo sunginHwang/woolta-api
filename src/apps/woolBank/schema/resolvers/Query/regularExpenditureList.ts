@@ -1,5 +1,5 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
-import { Prisma } from '../../../../../../prisma/generated/woolBank';
+import { Prisma } from '../../../../../../prisma/generated/woolBank/client';
 import { requireAuth } from '../../../../../shared/auth';
 import { getNowDate, getRemainDate } from '../../../utils/date';
 import { prismaWoolBank as prisma } from '../../../utils/prismaClient';

@@ -1,6 +1,6 @@
 import webpush from 'web-push';
 import { GraphQLError } from 'graphql/error';
-import { WebPushSubscription } from '../../../../prisma/generated/blog';
+import { WebPushSubscription } from '../../../../prisma/generated/blog/client';
 import { prismaBlog } from '../utils/prismaClient';
 
 export interface PushNotification {

@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql/error';
-import type { Todo as PrismaTodo } from '../../../../prisma/generated/todo';
+import type { Todo as PrismaTodo } from '../../../../prisma/generated/todo/client';
 import type { Todo, TodoPriority, TodoImportResult } from '../generates/types.generated';
 import type { ImportTodoCategoryInput, ImportTodoInput } from '../generates/types.generated';
 import { prismaTodo } from '../utils/prismaClient';

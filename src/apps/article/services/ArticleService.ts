@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql/error';
-import type { Article as PrismaArticle } from '../../../../prisma/generated/article';
+import type { Article as PrismaArticle } from '../../../../prisma/generated/article/client';
 import type {
   Article,
   ArticleImportResult,

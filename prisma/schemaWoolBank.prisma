@@ -2,14 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "./generated/woolBank"
 
 }
 
 datasource woolbank {
   provider = "mysql"
-  url      = env("WOOLBANK_DATABASE_URL")
 }
 
 model User {
