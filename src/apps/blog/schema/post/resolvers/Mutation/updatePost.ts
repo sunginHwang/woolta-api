@@ -6,10 +6,11 @@ import { makePostSubDescription } from '../../../../utils/postContent';
 import { prismaBlog } from '../../../../utils/prismaClient';
 
 export const updatePost: NonNullable<MutationResolvers['updatePost']> = async (_parent, _arg, _ctx) => {
-  const boardCategory = await getBoardCategory(_arg.categoryNo);
+  const { id, categoryNo, title, contents } = _arg.input;
+  const boardCategory = await getBoardCategory(categoryNo);
 
   const originBoard = await prismaBlog.board.findUnique({
-    where: { id: _arg.id },
+    where: { id },
     include: { user: true },
   });
 
@@ -27,9 +28,9 @@ export const updatePost: NonNullable<MutationResolvers['updatePost']> = async (_
   const savedPost = await prismaBlog.board.update({
     where: { id: originBoard.id },
     data: {
-      title: _arg.title,
-      contents: _arg.contents,
-      subDescription: makePostSubDescription(_arg.contents),
+      title,
+      contents,
+      subDescription: makePostSubDescription(contents),
       categoryNo: boardCategory.no,
     },
   });

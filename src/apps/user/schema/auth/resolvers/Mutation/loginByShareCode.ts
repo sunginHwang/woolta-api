@@ -6,10 +6,11 @@ import { getUserById, getUserWithToken } from '../../../../services/UserService'
 
 // 원본 POST /user/share-code-login: 공유코드로 읽기전용(share) 로그인
 export const loginByShareCode: NonNullable<MutationResolvers['loginByShareCode']> = async (_parent, _arg, _ctx) => {
-  const userShareCode = await getShareCodeInfoByShareCode(_arg.shareCode);
+  const { shareCode } = _arg.input;
+  const userShareCode = await getShareCodeInfoByShareCode(shareCode);
 
   if (!userShareCode) {
-    throw new GraphQLError(`share-code: ${_arg.shareCode} is not exist share-code`, {
+    throw new GraphQLError(`share-code: ${shareCode} is not exist share-code`, {
       extensions: { code: 'UNAUTHENTICATED' },
     });
   }
@@ -17,7 +18,7 @@ export const loginByShareCode: NonNullable<MutationResolvers['loginByShareCode']
   const userInfo = await getUserById(userShareCode.userId);
 
   if (!userInfo) {
-    throw new GraphQLError(`share-code: ${_arg.shareCode} is not exist share-code user-info`, {
+    throw new GraphQLError(`share-code: ${shareCode} is not exist share-code user-info`, {
       extensions: { code: 'UNAUTHENTICATED' },
     });
   }

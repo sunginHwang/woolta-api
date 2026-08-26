@@ -1,3 +1,8 @@
+input AddArticleToCurationInput {
+  articleId: String!
+  weekKey: String!
+}
+
 type Article {
   categoryId: String!
   createdAt: DateTime!
@@ -15,6 +20,11 @@ type ArticleCategory {
   order: Int!
 }
 
+type ArticleCategoryList {
+  itemList: [ArticleCategory!]!
+  totalCount: Int!
+}
+
 type ArticleIdMapping {
   from: String!
   to: String!
@@ -23,6 +33,11 @@ type ArticleIdMapping {
 type ArticleImportResult {
   articleIdMap: [ArticleIdMapping!]!
   categoryIdMap: [ArticleIdMapping!]!
+}
+
+type ArticleList {
+  itemList: [Article!]!
+  totalCount: Int!
 }
 
 type ArticleSeo {
@@ -37,7 +52,26 @@ input ArticleSeoInput {
   title: String
 }
 
+input CreateArticleCategoryInput {
+  name: String!
+}
+
+input CreateArticleInput {
+  categoryId: String!
+  seo: ArticleSeoInput
+  title: String!
+  url: String!
+}
+
 scalar DateTime
+
+input DeleteArticleCategoryInput {
+  id: String!
+}
+
+input DeleteArticleInput {
+  id: String!
+}
 
 input ImportArticleCategoryInput {
   clientId: String!
@@ -56,31 +90,48 @@ input ImportArticleInput {
   url: String!
 }
 
+input ImportArticleListInput {
+  categoryList: [ImportArticleCategoryInput!]!
+  curationList: [ImportCurationInput!]!
+  itemList: [ImportArticleInput!]!
+}
+
 input ImportCurationInput {
   articleClientIds: [String!]!
   weekKey: String!
 }
 
 type Mutation {
-  addArticleToCuration(articleId: String!, weekKey: String!): WeeklyCuration!
-  createArticle(categoryId: String!, seo: ArticleSeoInput, title: String!, url: String!): Article!
-  createArticleCategory(name: String!): ArticleCategory!
-  deleteArticle(id: String!): Boolean!
-  deleteArticleCategory(id: String!): Boolean!
-  importArticles(articles: [ImportArticleInput!]!, categories: [ImportArticleCategoryInput!]!, curations: [ImportCurationInput!]!): ArticleImportResult!
-  removeArticleFromCuration(articleId: String!, weekKey: String!): WeeklyCuration!
-  updateArticle(id: String!, input: UpdateArticleInput!): Article!
-  updateArticleCategory(id: String!, name: String!): ArticleCategory!
+  addArticleToCuration(input: AddArticleToCurationInput!): WeeklyCuration!
+  createArticle(input: CreateArticleInput!): Article!
+  createArticleCategory(input: CreateArticleCategoryInput!): ArticleCategory!
+  deleteArticle(input: DeleteArticleInput!): Boolean!
+  deleteArticleCategory(input: DeleteArticleCategoryInput!): Boolean!
+  importArticleList(input: ImportArticleListInput!): ArticleImportResult!
+  removeArticleFromCuration(input: RemoveArticleFromCurationInput!): WeeklyCuration!
+  updateArticle(input: UpdateArticleInput!): Article!
+  updateArticleCategory(input: UpdateArticleCategoryInput!): ArticleCategory!
 }
 
 type Query {
-  articleCategories: [ArticleCategory!]!
-  articleCurations: [WeeklyCuration!]!
-  articles(categoryId: String): [Article!]!
+  articleCategoryList: ArticleCategoryList!
+  articleList(categoryId: String): ArticleList!
+  weeklyCurationList: WeeklyCurationList!
+}
+
+input RemoveArticleFromCurationInput {
+  articleId: String!
+  weekKey: String!
+}
+
+input UpdateArticleCategoryInput {
+  id: String!
+  name: String!
 }
 
 input UpdateArticleInput {
   categoryId: String
+  id: String!
   seo: ArticleSeoInput
   title: String
   url: String
@@ -90,4 +141,9 @@ type WeeklyCuration {
   articleIds: [String!]!
   articles: [Article!]!
   weekKey: String!
+}
+
+type WeeklyCurationList {
+  itemList: [WeeklyCuration!]!
+  totalCount: Int!
 }

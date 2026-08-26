@@ -10,12 +10,12 @@ export const completeAccountExpiration: NonNullable<MutationResolvers['completeA
   _ctx,
 ) => {
   const { userId } = requireAuth(_ctx);
-  const account = await getAccountByIdAndUserIdOrThrow(Number(_arg.id), userId);
+  const account = await getAccountByIdAndUserIdOrThrow(Number(_arg.input.id), userId);
 
-  const completedAccount = await prismaWoolBank.account.update({
+  await prismaWoolBank.account.update({
     where: { id: account.id },
     data: { isExpiration: true },
   });
 
-  return completedAccount.id;
+  return true;
 };

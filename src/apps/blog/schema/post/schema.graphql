@@ -6,6 +6,11 @@ type Category {
   label: String!
 }
 
+type CategoryList {
+  totalCount: Int!
+  itemList: [Category!]!
+}
+
 type Writer {
   no: Int!
   nickName: String
@@ -20,6 +25,11 @@ type PostSummary {
   categoryNo: Int!
   createdAt: DateTime!
   author: String
+}
+
+type PostList {
+  totalCount: Int!
+  itemList: [PostSummary!]!
 }
 
 type Post {
@@ -37,16 +47,33 @@ type PostUpsertResult {
   categoryNo: Int!
 }
 
+input CreatePostInput {
+  categoryNo: Int!
+  title: String!
+  contents: String!
+}
+
+input UpdatePostInput {
+  id: Int!
+  categoryNo: Int!
+  title: String!
+  contents: String!
+}
+
+input DeletePostInput {
+  categoryNo: Int!
+  postNo: Int!
+}
+
 extend type Query {
-  categories: [Category!]!
-  postsByCategory(categoryNo: Int!): [PostSummary!]!
-  recentPosts: [PostSummary!]!
-  allPosts: [Post!]!
-  post(categoryNo: Int!, postNo: Int!): Post!
+  categoryList: CategoryList!
+  postList(categoryId: Int): PostList!
+  getRecentPostList(limitCount: Int): PostList!
+  post(categoryNo: Int!, postNo: Int!): Post
 }
 
 extend type Mutation {
-  createPost(categoryNo: Int!, title: String!, contents: String!): PostUpsertResult!
-  updatePost(id: Int!, categoryNo: Int!, title: String!, contents: String!): PostUpsertResult!
-  deletePost(categoryNo: Int!, postNo: Int!): Boolean!
+  createPost(input: CreatePostInput!): PostUpsertResult!
+  updatePost(input: UpdatePostInput!): PostUpsertResult!
+  deletePost(input: DeletePostInput!): Boolean!
 }

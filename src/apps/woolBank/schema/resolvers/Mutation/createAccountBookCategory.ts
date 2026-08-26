@@ -1,5 +1,6 @@
 import type { MutationResolvers } from './../../../generates/types.generated';
 import { requireAuth } from '../../../../../shared/auth';
+import { gqlToDbAccountBookCategoryType, toGqlAccountBookCategory } from '../../../utils/enums';
 import { prismaWoolBank } from '../../../utils/prismaClient';
 
 export const createAccountBookCategory: NonNullable<MutationResolvers['createAccountBookCategory']> = async (
@@ -8,18 +9,21 @@ export const createAccountBookCategory: NonNullable<MutationResolvers['createAcc
   _ctx,
 ) => {
   const { userId } = requireAuth(_ctx);
+  const { name, type, accountBookCategoryImageId, useStatistic } = _arg.input;
 
-  return prismaWoolBank.accountBookCategory.create({
+  const accountBookCategory = await prismaWoolBank.accountBookCategory.create({
     include: {
       accountBookCategoryImage: true,
     },
     data: {
       delYn: false,
       userId,
-      name: _arg.name,
-      type: _arg.type,
-      accountBookCategoryImageId: _arg.accountBookCategoryImageId,
-      useStatistic: _arg.useStatistic,
+      name,
+      type: gqlToDbAccountBookCategoryType(type),
+      accountBookCategoryImageId,
+      useStatistic,
     },
   });
+
+  return toGqlAccountBookCategory(accountBookCategory);
 };

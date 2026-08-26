@@ -3,15 +3,31 @@ type Category {
   value: Int!
 }
 
+type CategoryList {
+  itemList: [Category!]!
+  totalCount: Int!
+}
+
+input CreatePostInput {
+  categoryNo: Int!
+  contents: String!
+  title: String!
+}
+
 scalar DateTime
 
+input DeletePostInput {
+  categoryNo: Int!
+  postNo: Int!
+}
+
 type Mutation {
-  createPost(categoryNo: Int!, contents: String!, title: String!): PostUpsertResult!
-  deletePost(categoryNo: Int!, postNo: Int!): Boolean!
-  sendPushToAll(content: String!, title: String!, url: String!): Boolean!
-  subscribeWebPush(auth: String!, endPoint: String!, key: String!): Boolean!
-  unsubscribeWebPush(key: String!): Boolean!
-  updatePost(categoryNo: Int!, contents: String!, id: Int!, title: String!): PostUpsertResult!
+  createPost(input: CreatePostInput!): PostUpsertResult!
+  deletePost(input: DeletePostInput!): Boolean!
+  sendPushToAll(input: SendPushToAllInput!): Boolean!
+  subscribeWebPush(input: SubscribeWebPushInput!): Boolean!
+  unsubscribeWebPush(input: UnsubscribeWebPushInput!): Boolean!
+  updatePost(input: UpdatePostInput!): PostUpsertResult!
 }
 
 type Post {
@@ -22,6 +38,11 @@ type Post {
   postNo: Int!
   title: String!
   writer: Writer!
+}
+
+type PostList {
+  itemList: [PostSummary!]!
+  totalCount: Int!
 }
 
 type PostSummary {
@@ -40,12 +61,34 @@ type PostUpsertResult {
 }
 
 type Query {
-  allPosts: [Post!]!
-  categories: [Category!]!
-  post(categoryNo: Int!, postNo: Int!): Post!
-  postsByCategory(categoryNo: Int!): [PostSummary!]!
-  recentPosts: [PostSummary!]!
+  categoryList: CategoryList!
+  getRecentPostList(limitCount: Int): PostList!
+  post(categoryNo: Int!, postNo: Int!): Post
+  postList(categoryId: Int): PostList!
   user(id: ID!): User
+}
+
+input SendPushToAllInput {
+  content: String!
+  title: String!
+  url: String!
+}
+
+input SubscribeWebPushInput {
+  auth: String!
+  endPoint: String!
+  key: String!
+}
+
+input UnsubscribeWebPushInput {
+  key: String!
+}
+
+input UpdatePostInput {
+  categoryNo: Int!
+  contents: String!
+  id: Int!
+  title: String!
 }
 
 type User {

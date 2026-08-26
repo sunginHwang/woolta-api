@@ -6,14 +6,15 @@ import { makePostSubDescription } from '../../../../utils/postContent';
 import { prismaBlog } from '../../../../utils/prismaClient';
 
 export const createPost: NonNullable<MutationResolvers['createPost']> = async (_parent, _arg, _ctx) => {
-  const boardCategory = await getBoardCategory(_arg.categoryNo);
+  const { categoryNo, title, contents } = _arg.input;
+  const boardCategory = await getBoardCategory(categoryNo);
   const user = await getCurrentUser(_ctx.req);
 
   const savedPost = await prismaBlog.board.create({
     data: {
-      title: _arg.title,
-      contents: _arg.contents,
-      subDescription: makePostSubDescription(_arg.contents),
+      title,
+      contents,
+      subDescription: makePostSubDescription(contents),
       views: 0,
       userNo: user.no,
       categoryNo: boardCategory.no,

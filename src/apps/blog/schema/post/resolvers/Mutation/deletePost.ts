@@ -5,7 +5,8 @@ import { getBoard } from '../../../../services/PostService';
 import { prismaBlog } from '../../../../utils/prismaClient';
 
 export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (_parent, _arg, _ctx) => {
-  const board = await getBoard(_arg.categoryNo, _arg.postNo);
+  const { categoryNo, postNo } = _arg.input;
+  const board = await getBoard(categoryNo, postNo);
   const user = await getCurrentUser(_ctx.req);
 
   if (board.user.userId !== user.userId) {

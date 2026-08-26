@@ -1,5 +1,6 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
 import { requireAuth } from '../../../../../shared/auth';
+import { toGqlAccountBookCategory } from '../../../utils/enums';
 import { prismaWoolBank } from '../../../utils/prismaClient';
 
 export const accountBookCategoryList: NonNullable<QueryResolvers['accountBookCategoryList']> = async (
@@ -15,8 +16,9 @@ export const accountBookCategoryList: NonNullable<QueryResolvers['accountBookCat
     where: { userId, delYn: false },
   });
 
-  return accountBookCategoryList.map((accountBookCategory) => ({
-    ...accountBookCategory,
-    id: String(accountBookCategory.id),
-  }));
+  const itemList = accountBookCategoryList.map((accountBookCategory) =>
+    toGqlAccountBookCategory({ ...accountBookCategory, id: String(accountBookCategory.id) }),
+  );
+
+  return { totalCount: itemList.length, itemList };
 };

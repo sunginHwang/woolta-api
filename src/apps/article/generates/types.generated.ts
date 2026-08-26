@@ -12,6 +12,11 @@ export type Scalars = {
   DateTime: { input: Date | string; output: Date | string; }
 };
 
+export type AddArticleToCurationInput = {
+  articleId: Scalars['String']['input'];
+  weekKey: Scalars['String']['input'];
+};
+
 export type Article = {
   __typename?: 'Article';
   categoryId: Scalars['String']['output'];
@@ -31,6 +36,12 @@ export type ArticleCategory = {
   order: Scalars['Int']['output'];
 };
 
+export type ArticleCategoryList = {
+  __typename?: 'ArticleCategoryList';
+  itemList: Array<ArticleCategory>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type ArticleIdMapping = {
   __typename?: 'ArticleIdMapping';
   from: Scalars['String']['output'];
@@ -41,6 +52,12 @@ export type ArticleImportResult = {
   __typename?: 'ArticleImportResult';
   articleIdMap: Array<ArticleIdMapping>;
   categoryIdMap: Array<ArticleIdMapping>;
+};
+
+export type ArticleList = {
+  __typename?: 'ArticleList';
+  itemList: Array<Article>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type ArticleSeo = {
@@ -54,6 +71,25 @@ export type ArticleSeoInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateArticleCategoryInput = {
+  name: Scalars['String']['input'];
+};
+
+export type CreateArticleInput = {
+  categoryId: Scalars['String']['input'];
+  seo?: InputMaybe<ArticleSeoInput>;
+  title: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type DeleteArticleCategoryInput = {
+  id: Scalars['String']['input'];
+};
+
+export type DeleteArticleInput = {
+  id: Scalars['String']['input'];
 };
 
 export type ImportArticleCategoryInput = {
@@ -73,6 +109,12 @@ export type ImportArticleInput = {
   url: Scalars['String']['input'];
 };
 
+export type ImportArticleListInput = {
+  categoryList: Array<ImportArticleCategoryInput>;
+  curationList: Array<ImportCurationInput>;
+  itemList: Array<ImportArticleInput>;
+};
+
 export type ImportCurationInput = {
   articleClientIds: Array<Scalars['String']['input']>;
   weekKey: Scalars['String']['input'];
@@ -85,7 +127,7 @@ export type Mutation = {
   createArticleCategory: ArticleCategory;
   deleteArticle: Scalars['Boolean']['output'];
   deleteArticleCategory: Scalars['Boolean']['output'];
-  importArticles: ArticleImportResult;
+  importArticleList: ArticleImportResult;
   removeArticleFromCuration: WeeklyCuration;
   updateArticle: Article;
   updateArticleCategory: ArticleCategory;
@@ -93,72 +135,74 @@ export type Mutation = {
 
 
 export type MutationaddArticleToCurationArgs = {
-  articleId: Scalars['String']['input'];
-  weekKey: Scalars['String']['input'];
+  input: AddArticleToCurationInput;
 };
 
 
 export type MutationcreateArticleArgs = {
-  categoryId: Scalars['String']['input'];
-  seo?: InputMaybe<ArticleSeoInput>;
-  title: Scalars['String']['input'];
-  url: Scalars['String']['input'];
+  input: CreateArticleInput;
 };
 
 
 export type MutationcreateArticleCategoryArgs = {
-  name: Scalars['String']['input'];
+  input: CreateArticleCategoryInput;
 };
 
 
 export type MutationdeleteArticleArgs = {
-  id: Scalars['String']['input'];
+  input: DeleteArticleInput;
 };
 
 
 export type MutationdeleteArticleCategoryArgs = {
-  id: Scalars['String']['input'];
+  input: DeleteArticleCategoryInput;
 };
 
 
-export type MutationimportArticlesArgs = {
-  articles: Array<ImportArticleInput>;
-  categories: Array<ImportArticleCategoryInput>;
-  curations: Array<ImportCurationInput>;
+export type MutationimportArticleListArgs = {
+  input: ImportArticleListInput;
 };
 
 
 export type MutationremoveArticleFromCurationArgs = {
-  articleId: Scalars['String']['input'];
-  weekKey: Scalars['String']['input'];
+  input: RemoveArticleFromCurationInput;
 };
 
 
 export type MutationupdateArticleArgs = {
-  id: Scalars['String']['input'];
   input: UpdateArticleInput;
 };
 
 
 export type MutationupdateArticleCategoryArgs = {
-  id: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  input: UpdateArticleCategoryInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  articleCategories: Array<ArticleCategory>;
-  articleCurations: Array<WeeklyCuration>;
-  articles: Array<Article>;
+  articleCategoryList: ArticleCategoryList;
+  articleList: ArticleList;
+  weeklyCurationList: WeeklyCurationList;
 };
 
 
-export type QueryarticlesArgs = {
+export type QueryarticleListArgs = {
   categoryId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type RemoveArticleFromCurationInput = {
+  articleId: Scalars['String']['input'];
+  weekKey: Scalars['String']['input'];
+};
+
+export type UpdateArticleCategoryInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateArticleInput = {
   categoryId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
   seo?: InputMaybe<ArticleSeoInput>;
   title?: InputMaybe<Scalars['String']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;
@@ -169,6 +213,12 @@ export type WeeklyCuration = {
   articleIds: Array<Scalars['String']['output']>;
   articles: Array<Article>;
   weekKey: Scalars['String']['output'];
+};
+
+export type WeeklyCurationList = {
+  __typename?: 'WeeklyCurationList';
+  itemList: Array<WeeklyCuration>;
+  totalCount: Scalars['Int']['output'];
 };
 
 
@@ -244,44 +294,66 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Article: ResolverTypeWrapper<Article>;
+  AddArticleToCurationInput: AddArticleToCurationInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Article: ResolverTypeWrapper<Article>;
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  ArticleCategoryList: ResolverTypeWrapper<ArticleCategoryList>;
   ArticleIdMapping: ResolverTypeWrapper<ArticleIdMapping>;
   ArticleImportResult: ResolverTypeWrapper<ArticleImportResult>;
+  ArticleList: ResolverTypeWrapper<ArticleList>;
   ArticleSeo: ResolverTypeWrapper<ArticleSeo>;
   ArticleSeoInput: ArticleSeoInput;
+  CreateArticleCategoryInput: CreateArticleCategoryInput;
+  CreateArticleInput: CreateArticleInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  DeleteArticleCategoryInput: DeleteArticleCategoryInput;
+  DeleteArticleInput: DeleteArticleInput;
   ImportArticleCategoryInput: ImportArticleCategoryInput;
   ImportArticleInput: ImportArticleInput;
+  ImportArticleListInput: ImportArticleListInput;
   ImportCurationInput: ImportCurationInput;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  RemoveArticleFromCurationInput: RemoveArticleFromCurationInput;
+  UpdateArticleCategoryInput: UpdateArticleCategoryInput;
   UpdateArticleInput: UpdateArticleInput;
   WeeklyCuration: ResolverTypeWrapper<WeeklyCuration>;
+  WeeklyCurationList: ResolverTypeWrapper<WeeklyCurationList>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Article: Article;
+  AddArticleToCurationInput: AddArticleToCurationInput;
   String: Scalars['String']['output'];
+  Article: Article;
   ArticleCategory: ArticleCategory;
   Int: Scalars['Int']['output'];
+  ArticleCategoryList: ArticleCategoryList;
   ArticleIdMapping: ArticleIdMapping;
   ArticleImportResult: ArticleImportResult;
+  ArticleList: ArticleList;
   ArticleSeo: ArticleSeo;
   ArticleSeoInput: ArticleSeoInput;
+  CreateArticleCategoryInput: CreateArticleCategoryInput;
+  CreateArticleInput: CreateArticleInput;
   DateTime: Scalars['DateTime']['output'];
+  DeleteArticleCategoryInput: DeleteArticleCategoryInput;
+  DeleteArticleInput: DeleteArticleInput;
   ImportArticleCategoryInput: ImportArticleCategoryInput;
   ImportArticleInput: ImportArticleInput;
+  ImportArticleListInput: ImportArticleListInput;
   ImportCurationInput: ImportCurationInput;
   Mutation: Record<PropertyKey, never>;
   Boolean: Scalars['Boolean']['output'];
   Query: Record<PropertyKey, never>;
+  RemoveArticleFromCurationInput: RemoveArticleFromCurationInput;
+  UpdateArticleCategoryInput: UpdateArticleCategoryInput;
   UpdateArticleInput: UpdateArticleInput;
   WeeklyCuration: WeeklyCuration;
+  WeeklyCurationList: WeeklyCurationList;
 };
 
 export type ArticleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']> = {
@@ -301,6 +373,11 @@ export type ArticleCategoryResolvers<ContextType = any, ParentType extends Resol
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type ArticleCategoryListResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleCategoryList'] = ResolversParentTypes['ArticleCategoryList']> = {
+  itemList?: Resolver<Array<ResolversTypes['ArticleCategory']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type ArticleIdMappingResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleIdMapping'] = ResolversParentTypes['ArticleIdMapping']> = {
   from?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   to?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -309,6 +386,11 @@ export type ArticleIdMappingResolvers<ContextType = any, ParentType extends Reso
 export type ArticleImportResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleImportResult'] = ResolversParentTypes['ArticleImportResult']> = {
   articleIdMap?: Resolver<Array<ResolversTypes['ArticleIdMapping']>, ParentType, ContextType>;
   categoryIdMap?: Resolver<Array<ResolversTypes['ArticleIdMapping']>, ParentType, ContextType>;
+};
+
+export type ArticleListResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleList'] = ResolversParentTypes['ArticleList']> = {
+  itemList?: Resolver<Array<ResolversTypes['Article']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type ArticleSeoResolvers<ContextType = any, ParentType extends ResolversParentTypes['ArticleSeo'] = ResolversParentTypes['ArticleSeo']> = {
@@ -322,21 +404,21 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addArticleToCuration?: Resolver<ResolversTypes['WeeklyCuration'], ParentType, ContextType, RequireFields<MutationaddArticleToCurationArgs, 'articleId' | 'weekKey'>>;
-  createArticle?: Resolver<ResolversTypes['Article'], ParentType, ContextType, RequireFields<MutationcreateArticleArgs, 'categoryId' | 'title' | 'url'>>;
-  createArticleCategory?: Resolver<ResolversTypes['ArticleCategory'], ParentType, ContextType, RequireFields<MutationcreateArticleCategoryArgs, 'name'>>;
-  deleteArticle?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteArticleArgs, 'id'>>;
-  deleteArticleCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteArticleCategoryArgs, 'id'>>;
-  importArticles?: Resolver<ResolversTypes['ArticleImportResult'], ParentType, ContextType, RequireFields<MutationimportArticlesArgs, 'articles' | 'categories' | 'curations'>>;
-  removeArticleFromCuration?: Resolver<ResolversTypes['WeeklyCuration'], ParentType, ContextType, RequireFields<MutationremoveArticleFromCurationArgs, 'articleId' | 'weekKey'>>;
-  updateArticle?: Resolver<ResolversTypes['Article'], ParentType, ContextType, RequireFields<MutationupdateArticleArgs, 'id' | 'input'>>;
-  updateArticleCategory?: Resolver<ResolversTypes['ArticleCategory'], ParentType, ContextType, RequireFields<MutationupdateArticleCategoryArgs, 'id' | 'name'>>;
+  addArticleToCuration?: Resolver<ResolversTypes['WeeklyCuration'], ParentType, ContextType, RequireFields<MutationaddArticleToCurationArgs, 'input'>>;
+  createArticle?: Resolver<ResolversTypes['Article'], ParentType, ContextType, RequireFields<MutationcreateArticleArgs, 'input'>>;
+  createArticleCategory?: Resolver<ResolversTypes['ArticleCategory'], ParentType, ContextType, RequireFields<MutationcreateArticleCategoryArgs, 'input'>>;
+  deleteArticle?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteArticleArgs, 'input'>>;
+  deleteArticleCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteArticleCategoryArgs, 'input'>>;
+  importArticleList?: Resolver<ResolversTypes['ArticleImportResult'], ParentType, ContextType, RequireFields<MutationimportArticleListArgs, 'input'>>;
+  removeArticleFromCuration?: Resolver<ResolversTypes['WeeklyCuration'], ParentType, ContextType, RequireFields<MutationremoveArticleFromCurationArgs, 'input'>>;
+  updateArticle?: Resolver<ResolversTypes['Article'], ParentType, ContextType, RequireFields<MutationupdateArticleArgs, 'input'>>;
+  updateArticleCategory?: Resolver<ResolversTypes['ArticleCategory'], ParentType, ContextType, RequireFields<MutationupdateArticleCategoryArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  articleCategories?: Resolver<Array<ResolversTypes['ArticleCategory']>, ParentType, ContextType>;
-  articleCurations?: Resolver<Array<ResolversTypes['WeeklyCuration']>, ParentType, ContextType>;
-  articles?: Resolver<Array<ResolversTypes['Article']>, ParentType, ContextType, Partial<QueryarticlesArgs>>;
+  articleCategoryList?: Resolver<ResolversTypes['ArticleCategoryList'], ParentType, ContextType>;
+  articleList?: Resolver<ResolversTypes['ArticleList'], ParentType, ContextType, Partial<QueryarticleListArgs>>;
+  weeklyCurationList?: Resolver<ResolversTypes['WeeklyCurationList'], ParentType, ContextType>;
 };
 
 export type WeeklyCurationResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeeklyCuration'] = ResolversParentTypes['WeeklyCuration']> = {
@@ -345,15 +427,23 @@ export type WeeklyCurationResolvers<ContextType = any, ParentType extends Resolv
   weekKey?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
+export type WeeklyCurationListResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeeklyCurationList'] = ResolversParentTypes['WeeklyCurationList']> = {
+  itemList?: Resolver<Array<ResolversTypes['WeeklyCuration']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Article?: ArticleResolvers<ContextType>;
   ArticleCategory?: ArticleCategoryResolvers<ContextType>;
+  ArticleCategoryList?: ArticleCategoryListResolvers<ContextType>;
   ArticleIdMapping?: ArticleIdMappingResolvers<ContextType>;
   ArticleImportResult?: ArticleImportResultResolvers<ContextType>;
+  ArticleList?: ArticleListResolvers<ContextType>;
   ArticleSeo?: ArticleSeoResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   WeeklyCuration?: WeeklyCurationResolvers<ContextType>;
+  WeeklyCurationList?: WeeklyCurationListResolvers<ContextType>;
 };
 

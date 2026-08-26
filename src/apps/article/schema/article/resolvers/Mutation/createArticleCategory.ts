@@ -5,8 +5,9 @@ import { prismaArticle } from '../../../../utils/prismaClient';
 
 export const createArticleCategory: NonNullable<MutationResolvers['createArticleCategory']> = async (_parent, _arg, _ctx) => {
   const { userId } = requireRealUser(_ctx);
+  const { name } = _arg.input;
 
-  if (_arg.name.trim().length === 0) {
+  if (name.trim().length === 0) {
     throw new GraphQLError('카테고리 이름을 입력해주세요.', { extensions: { code: 'BAD_REQUEST' } });
   }
 
@@ -14,7 +15,7 @@ export const createArticleCategory: NonNullable<MutationResolvers['createArticle
   return prismaArticle.articleCategory.create({
     data: {
       userId,
-      name: _arg.name,
+      name,
       order: (max._max.order ?? 0) + 1,
     },
   });

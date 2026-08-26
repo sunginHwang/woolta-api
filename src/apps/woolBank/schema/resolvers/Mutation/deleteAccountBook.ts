@@ -6,15 +6,15 @@ export const deleteAccountBook: NonNullable<MutationResolvers['deleteAccountBook
   const { userId } = requireRealUser(_ctx);
 
   try {
-    const accountBook = await prismaWoolBank.accountBook.findFirst({ where: { id: Number(_arg.id), userId } });
+    const accountBook = await prismaWoolBank.accountBook.findFirst({ where: { id: Number(_arg.input.id), userId } });
 
     if (!accountBook) {
-      return -1;
+      return false;
     }
 
     await prismaWoolBank.accountBook.delete({ where: { id: accountBook.id } });
-    return accountBook.id;
+    return true;
   } catch {
-    return -1;
+    return false;
   }
 };

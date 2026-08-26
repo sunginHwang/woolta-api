@@ -19,12 +19,31 @@ type MemoSummary {
   updatedAt: DateTime!
 }
 
+type MemoList {
+  totalCount: Int!
+  itemList: [MemoSummary!]!
+}
+
+input UpdateMemoInput {
+  id: String!
+  title: String
+  content: JSON
+}
+
+input DeleteMemoInput {
+  id: String!
+}
+
 input ImportMemoInput {
   clientId: String!
   title: String!
   content: JSON!
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+input ImportMemoListInput {
+  itemList: [ImportMemoInput!]!
 }
 
 type MemoIdMapping {
@@ -37,14 +56,14 @@ type MemoImportResult {
 }
 
 extend type Query {
-  memos: [MemoSummary!]! # updatedAt DESC
-  memo(id: String!): Memo!
+  memoList: MemoList! # updatedAt DESC
+  memo(id: String!): Memo # 없으면 null 반환
 }
 
 extend type Mutation {
   # 인자 없음 — "새 메모" 클릭 즉시 빈 메모 생성 (title '', content 빈 doc)
   createMemo: Memo!
-  updateMemo(id: String!, title: String, content: JSON): Memo!
-  deleteMemo(id: String!): Boolean! # 휴지통 없음, 즉시 영구 삭제
-  importMemos(memos: [ImportMemoInput!]!): MemoImportResult!
+  updateMemo(input: UpdateMemoInput!): Memo!
+  deleteMemo(input: DeleteMemoInput!): Boolean! # 휴지통 없음, 즉시 영구 삭제
+  importMemoList(input: ImportMemoListInput!): MemoImportResult!
 }

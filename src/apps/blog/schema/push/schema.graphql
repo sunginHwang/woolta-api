@@ -1,5 +1,21 @@
+input SubscribeWebPushInput {
+  key: String!
+  auth: String!
+  endPoint: String!
+}
+
+input UnsubscribeWebPushInput {
+  key: String!
+}
+
+input SendPushToAllInput {
+  title: String!
+  content: String!
+  url: String!
+}
+
 extend type Mutation {
-  subscribeWebPush(key: String!, auth: String!, endPoint: String!): Boolean!
-  unsubscribeWebPush(key: String!): Boolean!
-  sendPushToAll(title: String!, content: String!, url: String!): Boolean!
+  subscribeWebPush(input: SubscribeWebPushInput!): Boolean!
+  unsubscribeWebPush(input: UnsubscribeWebPushInput!): Boolean!
+  sendPushToAll(input: SendPushToAllInput!): Boolean!
 }

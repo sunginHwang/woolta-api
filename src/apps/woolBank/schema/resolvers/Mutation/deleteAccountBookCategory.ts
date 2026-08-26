@@ -12,7 +12,7 @@ export const deleteAccountBookCategory: NonNullable<MutationResolvers['deleteAcc
 
   try {
     const accountBookCategory = await prismaWoolBank.accountBookCategory.findFirst({
-      where: { id: Number(_arg.id), userId },
+      where: { id: Number(_arg.input.id), userId },
     });
 
     if (!accountBookCategory) {

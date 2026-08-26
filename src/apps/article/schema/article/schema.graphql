@@ -9,6 +9,11 @@ type ArticleCategory {
   createdAt: DateTime!
 }
 
+type ArticleCategoryList {
+  totalCount: Int!
+  itemList: [ArticleCategory!]!
+}
+
 type ArticleSeo {
   title: String
   description: String
@@ -31,17 +36,62 @@ type Article {
   updatedAt: DateTime!
 }
 
+type ArticleList {
+  totalCount: Int!
+  itemList: [Article!]!
+}
+
 type WeeklyCuration {
   weekKey: String! # ISO 주차 키, 예: 2026-W34
   articleIds: [String!]! # 최대 5개 (WEEKLY_CURATION_LIMIT)
   articles: [Article!]! # 임베드 (스펙 ?expand=articles 대응)
 }
 
+type WeeklyCurationList {
+  totalCount: Int!
+  itemList: [WeeklyCuration!]!
+}
+
+input CreateArticleInput {
+  categoryId: String!
+  title: String!
+  url: String!
+  seo: ArticleSeoInput
+}
+
 input UpdateArticleInput {
+  id: String!
   title: String
   url: String
   categoryId: String
   seo: ArticleSeoInput
+}
+
+input DeleteArticleInput {
+  id: String!
+}
+
+input CreateArticleCategoryInput {
+  name: String!
+}
+
+input UpdateArticleCategoryInput {
+  id: String!
+  name: String!
+}
+
+input DeleteArticleCategoryInput {
+  id: String!
+}
+
+input AddArticleToCurationInput {
+  weekKey: String!
+  articleId: String!
+}
+
+input RemoveArticleFromCurationInput {
+  weekKey: String!
+  articleId: String!
 }
 
 input ImportArticleCategoryInput {
@@ -66,6 +116,12 @@ input ImportCurationInput {
   articleClientIds: [String!]!
 }
 
+input ImportArticleListInput {
+  categoryList: [ImportArticleCategoryInput!]!
+  itemList: [ImportArticleInput!]!
+  curationList: [ImportCurationInput!]!
+}
+
 type ArticleIdMapping {
   from: String!
   to: String!
@@ -77,27 +133,23 @@ type ArticleImportResult {
 }
 
 extend type Query {
-  articleCategories: [ArticleCategory!]! # order ASC
-  articles(categoryId: String): [Article!]! # 생략 시 전체, createdAt DESC
-  articleCurations: [WeeklyCuration!]! # 전체 주차 (주차 수 적음)
+  articleCategoryList: ArticleCategoryList! # order ASC
+  articleList(categoryId: String): ArticleList! # 생략 시 전체, createdAt DESC
+  weeklyCurationList: WeeklyCurationList! # 전체 주차 (주차 수 적음)
 }
 
 extend type Mutation {
-  createArticleCategory(name: String!): ArticleCategory!
-  updateArticleCategory(id: String!, name: String!): ArticleCategory!
+  createArticleCategory(input: CreateArticleCategoryInput!): ArticleCategory!
+  updateArticleCategory(input: UpdateArticleCategoryInput!): ArticleCategory!
   # 캐스케이드: 소속 아티클 전체 삭제 + 그 아티클들의 큐레이션 행 제거 (이동 아님, 삭제)
-  deleteArticleCategory(id: String!): Boolean!
+  deleteArticleCategory(input: DeleteArticleCategoryInput!): Boolean!
   # 정규화 URL 기준 유저 내 중복 시 CONFLICT
-  createArticle(categoryId: String!, title: String!, url: String!, seo: ArticleSeoInput): Article!
-  updateArticle(id: String!, input: UpdateArticleInput!): Article!
+  createArticle(input: CreateArticleInput!): Article!
+  updateArticle(input: UpdateArticleInput!): Article!
   # 캐스케이드: 모든 주차 큐레이션에서 해당 articleId 제거
-  deleteArticle(id: String!): Boolean!
+  deleteArticle(input: DeleteArticleInput!): Boolean!
   # 주차당 최대 5개 초과 시 CONFLICT, 이미 있으면 멱등 반환
-  addArticleToCuration(weekKey: String!, articleId: String!): WeeklyCuration!
-  removeArticleFromCuration(weekKey: String!, articleId: String!): WeeklyCuration!
-  importArticles(
-    categories: [ImportArticleCategoryInput!]!
-    articles: [ImportArticleInput!]!
-    curations: [ImportCurationInput!]!
-  ): ArticleImportResult!
+  addArticleToCuration(input: AddArticleToCurationInput!): WeeklyCuration!
+  removeArticleFromCuration(input: RemoveArticleFromCurationInput!): WeeklyCuration!
+  importArticleList(input: ImportArticleListInput!): ArticleImportResult!
 }

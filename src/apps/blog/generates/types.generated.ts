@@ -18,6 +18,23 @@ export type Category = {
   value: Scalars['Int']['output'];
 };
 
+export type CategoryList = {
+  __typename?: 'CategoryList';
+  itemList: Array<Category>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type CreatePostInput = {
+  categoryNo: Scalars['Int']['input'];
+  contents: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type DeletePostInput = {
+  categoryNo: Scalars['Int']['input'];
+  postNo: Scalars['Int']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: PostUpsertResult;
@@ -30,42 +47,32 @@ export type Mutation = {
 
 
 export type MutationcreatePostArgs = {
-  categoryNo: Scalars['Int']['input'];
-  contents: Scalars['String']['input'];
-  title: Scalars['String']['input'];
+  input: CreatePostInput;
 };
 
 
 export type MutationdeletePostArgs = {
-  categoryNo: Scalars['Int']['input'];
-  postNo: Scalars['Int']['input'];
+  input: DeletePostInput;
 };
 
 
 export type MutationsendPushToAllArgs = {
-  content: Scalars['String']['input'];
-  title: Scalars['String']['input'];
-  url: Scalars['String']['input'];
+  input: SendPushToAllInput;
 };
 
 
 export type MutationsubscribeWebPushArgs = {
-  auth: Scalars['String']['input'];
-  endPoint: Scalars['String']['input'];
-  key: Scalars['String']['input'];
+  input: SubscribeWebPushInput;
 };
 
 
 export type MutationunsubscribeWebPushArgs = {
-  key: Scalars['String']['input'];
+  input: UnsubscribeWebPushInput;
 };
 
 
 export type MutationupdatePostArgs = {
-  categoryNo: Scalars['Int']['input'];
-  contents: Scalars['String']['input'];
-  id: Scalars['Int']['input'];
-  title: Scalars['String']['input'];
+  input: UpdatePostInput;
 };
 
 export type Post = {
@@ -77,6 +84,12 @@ export type Post = {
   postNo: Scalars['Int']['output'];
   title: Scalars['String']['output'];
   writer: Writer;
+};
+
+export type PostList = {
+  __typename?: 'PostList';
+  itemList: Array<PostSummary>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type PostSummary = {
@@ -98,12 +111,16 @@ export type PostUpsertResult = {
 
 export type Query = {
   __typename?: 'Query';
-  allPosts: Array<Post>;
-  categories: Array<Category>;
-  post: Post;
-  postsByCategory: Array<PostSummary>;
-  recentPosts: Array<PostSummary>;
+  categoryList: CategoryList;
+  getRecentPostList: PostList;
+  post?: Maybe<Post>;
+  postList: PostList;
   user?: Maybe<User>;
+};
+
+
+export type QuerygetRecentPostListArgs = {
+  limitCount?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -113,13 +130,36 @@ export type QuerypostArgs = {
 };
 
 
-export type QuerypostsByCategoryArgs = {
-  categoryNo: Scalars['Int']['input'];
+export type QuerypostListArgs = {
+  categoryId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 export type QueryuserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type SendPushToAllInput = {
+  content: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type SubscribeWebPushInput = {
+  auth: Scalars['String']['input'];
+  endPoint: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+};
+
+export type UnsubscribeWebPushInput = {
+  key: Scalars['String']['input'];
+};
+
+export type UpdatePostInput = {
+  categoryNo: Scalars['Int']['input'];
+  contents: Scalars['String']['input'];
+  id: Scalars['Int']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type User = {
@@ -212,14 +252,22 @@ export type ResolversTypes = {
   Category: ResolverTypeWrapper<Category>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  CategoryList: ResolverTypeWrapper<CategoryList>;
+  CreatePostInput: CreatePostInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  DeletePostInput: DeletePostInput;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Post: ResolverTypeWrapper<Post>;
+  PostList: ResolverTypeWrapper<PostList>;
   PostSummary: ResolverTypeWrapper<PostSummary>;
   PostUpsertResult: ResolverTypeWrapper<PostUpsertResult>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  SendPushToAllInput: SendPushToAllInput;
+  SubscribeWebPushInput: SubscribeWebPushInput;
+  UnsubscribeWebPushInput: UnsubscribeWebPushInput;
+  UpdatePostInput: UpdatePostInput;
   User: ResolverTypeWrapper<User>;
   Writer: ResolverTypeWrapper<Writer>;
 };
@@ -229,14 +277,22 @@ export type ResolversParentTypes = {
   Category: Category;
   String: Scalars['String']['output'];
   Int: Scalars['Int']['output'];
+  CategoryList: CategoryList;
+  CreatePostInput: CreatePostInput;
   DateTime: Scalars['DateTime']['output'];
+  DeletePostInput: DeletePostInput;
   Mutation: Record<PropertyKey, never>;
   Boolean: Scalars['Boolean']['output'];
   Post: Post;
+  PostList: PostList;
   PostSummary: PostSummary;
   PostUpsertResult: PostUpsertResult;
   Query: Record<PropertyKey, never>;
   ID: Scalars['ID']['output'];
+  SendPushToAllInput: SendPushToAllInput;
+  SubscribeWebPushInput: SubscribeWebPushInput;
+  UnsubscribeWebPushInput: UnsubscribeWebPushInput;
+  UpdatePostInput: UpdatePostInput;
   User: User;
   Writer: Writer;
 };
@@ -246,17 +302,22 @@ export type CategoryResolvers<ContextType = any, ParentType extends ResolversPar
   value?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type CategoryListResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoryList'] = ResolversParentTypes['CategoryList']> = {
+  itemList?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createPost?: Resolver<ResolversTypes['PostUpsertResult'], ParentType, ContextType, RequireFields<MutationcreatePostArgs, 'categoryNo' | 'contents' | 'title'>>;
-  deletePost?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeletePostArgs, 'categoryNo' | 'postNo'>>;
-  sendPushToAll?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsendPushToAllArgs, 'content' | 'title' | 'url'>>;
-  subscribeWebPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsubscribeWebPushArgs, 'auth' | 'endPoint' | 'key'>>;
-  unsubscribeWebPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationunsubscribeWebPushArgs, 'key'>>;
-  updatePost?: Resolver<ResolversTypes['PostUpsertResult'], ParentType, ContextType, RequireFields<MutationupdatePostArgs, 'categoryNo' | 'contents' | 'id' | 'title'>>;
+  createPost?: Resolver<ResolversTypes['PostUpsertResult'], ParentType, ContextType, RequireFields<MutationcreatePostArgs, 'input'>>;
+  deletePost?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeletePostArgs, 'input'>>;
+  sendPushToAll?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsendPushToAllArgs, 'input'>>;
+  subscribeWebPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsubscribeWebPushArgs, 'input'>>;
+  unsubscribeWebPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationunsubscribeWebPushArgs, 'input'>>;
+  updatePost?: Resolver<ResolversTypes['PostUpsertResult'], ParentType, ContextType, RequireFields<MutationupdatePostArgs, 'input'>>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
@@ -267,6 +328,11 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   postNo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   writer?: Resolver<ResolversTypes['Writer'], ParentType, ContextType>;
+};
+
+export type PostListResolvers<ContextType = any, ParentType extends ResolversParentTypes['PostList'] = ResolversParentTypes['PostList']> = {
+  itemList?: Resolver<Array<ResolversTypes['PostSummary']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type PostSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['PostSummary'] = ResolversParentTypes['PostSummary']> = {
@@ -285,11 +351,10 @@ export type PostUpsertResultResolvers<ContextType = any, ParentType extends Reso
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  allPosts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType>;
-  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
-  post?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<QuerypostArgs, 'categoryNo' | 'postNo'>>;
-  postsByCategory?: Resolver<Array<ResolversTypes['PostSummary']>, ParentType, ContextType, RequireFields<QuerypostsByCategoryArgs, 'categoryNo'>>;
-  recentPosts?: Resolver<Array<ResolversTypes['PostSummary']>, ParentType, ContextType>;
+  categoryList?: Resolver<ResolversTypes['CategoryList'], ParentType, ContextType>;
+  getRecentPostList?: Resolver<ResolversTypes['PostList'], ParentType, ContextType, Partial<QuerygetRecentPostListArgs>>;
+  post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QuerypostArgs, 'categoryNo' | 'postNo'>>;
+  postList?: Resolver<ResolversTypes['PostList'], ParentType, ContextType, Partial<QuerypostListArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryuserArgs, 'id'>>;
 };
 
@@ -307,9 +372,11 @@ export type WriterResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type Resolvers<ContextType = any> = {
   Category?: CategoryResolvers<ContextType>;
+  CategoryList?: CategoryListResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
+  PostList?: PostListResolvers<ContextType>;
   PostSummary?: PostSummaryResolvers<ContextType>;
   PostUpsertResult?: PostUpsertResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

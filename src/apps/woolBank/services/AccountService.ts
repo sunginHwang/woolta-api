@@ -95,7 +95,7 @@ export const saveDeposit = async ({
         prevTotalAmount: account.currentAmount,
         userId,
       },
-      include: { account: { include: { savingType: true } } },
+      include: { account: { include: { savingType: true, deposits: true } } },
     });
 
     await tx.account.update({

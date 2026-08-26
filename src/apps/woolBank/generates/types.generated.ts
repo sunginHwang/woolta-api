@@ -19,7 +19,7 @@ export type Account = {
   amount: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
   currentAmount: Scalars['Int']['output'];
-  deposits?: Maybe<Array<Deposit>>;
+  deposits: Array<Deposit>;
   endDate: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   isExpiration: Scalars['Boolean']['output'];
@@ -78,9 +78,33 @@ export type AccountBookCategoryImage = {
   userId: Scalars['Int']['output'];
 };
 
+export type AccountBookCategoryImageList = {
+  __typename?: 'AccountBookCategoryImageList';
+  itemList: Array<AccountBookCategoryImage>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type AccountBookCategoryList = {
+  __typename?: 'AccountBookCategoryList';
+  itemList: Array<AccountBookCategory>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type AccountBookCategoryType =
-  | 'expenditure'
-  | 'income';
+  | 'EXPENDITURE'
+  | 'INCOME';
+
+export type AccountBookList = {
+  __typename?: 'AccountBookList';
+  itemList: Array<AccountBook>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type AccountList = {
+  __typename?: 'AccountList';
+  itemList: Array<Account>;
+  totalCount: Scalars['Int']['output'];
+};
 
 export type BucketList = {
   __typename?: 'BucketList';
@@ -92,9 +116,9 @@ export type BucketList = {
   isComplete: Scalars['Boolean']['output'];
   thumbImageUrl: Scalars['String']['output'];
   title: Scalars['String']['output'];
-  todoList?: Maybe<Array<Todo>>;
+  todoList: Array<BucketListTodo>;
   updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<User>;
+  user?: Maybe<WoolBankUser>;
   userId: Scalars['Int']['output'];
 };
 
@@ -108,6 +132,98 @@ export type BucketListSummary = {
   title: Scalars['String']['output'];
   todoCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type BucketListSummaryList = {
+  __typename?: 'BucketListSummaryList';
+  itemList: Array<BucketListSummary>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type BucketListTodo = {
+  __typename?: 'BucketListTodo';
+  bucketList?: Maybe<BucketList>;
+  bucketListId: Scalars['Int']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  isComplete: Scalars['Boolean']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  user?: Maybe<WoolBankUser>;
+  userId: Scalars['Int']['output'];
+};
+
+export type BucketListTodoInput = {
+  isComplete: Scalars['Boolean']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CompleteAccountExpirationInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type CompleteBucketListInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type CreateAccountBookCategoryInput = {
+  accountBookCategoryImageId: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  type: AccountBookCategoryType;
+  useStatistic: Scalars['Boolean']['input'];
+};
+
+export type CreateAccountBookInput = {
+  amount: Scalars['Int']['input'];
+  categoryId: Scalars['Int']['input'];
+  installmentMonth?: InputMaybe<Scalars['Int']['input']>;
+  isDisabledBudget?: InputMaybe<Scalars['Boolean']['input']>;
+  memo?: InputMaybe<Scalars['String']['input']>;
+  registerDateTime: Scalars['DateTime']['input'];
+  scheduledPaymentDay?: InputMaybe<Scalars['Int']['input']>;
+  scheduledPaymentType?: InputMaybe<ScheduledPaymentType>;
+  title: Scalars['String']['input'];
+  type: AccountBookCategoryType;
+};
+
+export type CreateAccountInput = {
+  amount: Scalars['Int']['input'];
+  endDate: Scalars['DateTime']['input'];
+  rate: Scalars['Float']['input'];
+  regularTransferDate: Scalars['Int']['input'];
+  savingTypeId: Scalars['Int']['input'];
+  startDate: Scalars['DateTime']['input'];
+  taxType: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CreateBucketListInput = {
+  completeDate: Scalars['DateTime']['input'];
+  description: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  thumbImageUrl?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+  todoList?: InputMaybe<Array<BucketListTodoInput>>;
+};
+
+export type CreateBucketListTodoInput = {
+  bucketListId: Scalars['Int']['input'];
+  isComplete: Scalars['Boolean']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type CreateDepositInput = {
+  accountId: Scalars['Int']['input'];
+  amount: Scalars['Int']['input'];
+  depositDate?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type CreateRegularExpenditureInput = {
+  amount: Scalars['Int']['input'];
+  categoryId: Scalars['Int']['input'];
+  isAutoExpenditure: Scalars['Boolean']['input'];
+  regularDate: Scalars['Int']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type CustomRegularExpenditure = {
@@ -125,12 +241,28 @@ export type CustomRegularExpenditure = {
   userId: Scalars['Int']['output'];
 };
 
-export type CustomRegularExpenditureResponse = {
-  __typename?: 'CustomRegularExpenditureResponse';
-  imageUrl: Scalars['String']['output'];
-  list?: Maybe<Array<CustomRegularExpenditure>>;
-  name: Scalars['String']['output'];
-  type: AccountBookCategoryType;
+export type DeleteAccountBookCategoryInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type DeleteAccountBookInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type DeleteAccountInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type DeleteBucketListInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type DeleteBucketListTodoInput = {
+  todoId: Scalars['ID']['input'];
+};
+
+export type DeleteRegularExpenditureInput = {
+  id: Scalars['ID']['input'];
 };
 
 export type Deposit = {
@@ -156,177 +288,132 @@ export type MainInfo = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  completeAccountExpiration: Scalars['Int']['output'];
-  completeBucketList: Scalars['Int']['output'];
-  createAccount: Scalars['Int']['output'];
+  completeAccountExpiration: Scalars['Boolean']['output'];
+  completeBucketList: Scalars['Boolean']['output'];
+  createAccount: Account;
   createAccountBook: AccountBook;
   createAccountBookCategory: AccountBookCategory;
-  createBucketList: Scalars['Int']['output'];
+  createBucketList: BucketList;
+  createBucketListTodo: BucketListTodo;
   createDeposit: Deposit;
-  createRegularExpenditure: Scalars['Int']['output'];
-  createTodo: Scalars['Int']['output'];
+  createRegularExpenditure: RegularExpenditure;
   deleteAccount: Scalars['Boolean']['output'];
-  deleteAccountBook: Scalars['Int']['output'];
+  deleteAccountBook: Scalars['Boolean']['output'];
   deleteAccountBookCategory: Scalars['Boolean']['output'];
   deleteBucketList: Scalars['Boolean']['output'];
-  deleteRegularExpenditure: Scalars['Int']['output'];
-  deleteTodo: Scalars['Boolean']['output'];
+  deleteBucketListTodo: Scalars['Boolean']['output'];
+  deleteRegularExpenditure: Scalars['Boolean']['output'];
   updateAccountBook: AccountBook;
-  updateBucketList: Scalars['Int']['output'];
-  updateTodoComplete: Todo;
+  updateBucketList: BucketList;
+  updateBucketListTodoComplete: BucketListTodo;
 };
 
 
 export type MutationcompleteAccountExpirationArgs = {
-  id: Scalars['ID']['input'];
+  input: CompleteAccountExpirationInput;
 };
 
 
 export type MutationcompleteBucketListArgs = {
-  id: Scalars['ID']['input'];
+  input: CompleteBucketListInput;
 };
 
 
 export type MutationcreateAccountArgs = {
-  amount: Scalars['Int']['input'];
-  endDate: Scalars['DateTime']['input'];
-  rate: Scalars['Float']['input'];
-  regularTransferDate: Scalars['Int']['input'];
-  savingTypeId: Scalars['Int']['input'];
-  startDate: Scalars['DateTime']['input'];
-  taxType: Scalars['String']['input'];
-  title: Scalars['String']['input'];
+  input: CreateAccountInput;
 };
 
 
 export type MutationcreateAccountBookArgs = {
-  amount: Scalars['Int']['input'];
-  categoryId: Scalars['Int']['input'];
-  installmentMonth?: InputMaybe<Scalars['Int']['input']>;
-  isDisabledBudget?: InputMaybe<Scalars['Boolean']['input']>;
-  memo?: InputMaybe<Scalars['String']['input']>;
-  registerDateTime: Scalars['DateTime']['input'];
-  scheduledPaymentDay?: InputMaybe<Scalars['Int']['input']>;
-  scheduledPaymentType?: InputMaybe<ScheduledPaymentType>;
-  title: Scalars['String']['input'];
-  type: AccountBookCategoryType;
+  input: CreateAccountBookInput;
 };
 
 
 export type MutationcreateAccountBookCategoryArgs = {
-  accountBookCategoryImageId: Scalars['Int']['input'];
-  name: Scalars['String']['input'];
-  type: AccountBookCategoryType;
-  useStatistic: Scalars['Boolean']['input'];
+  input: CreateAccountBookCategoryInput;
 };
 
 
 export type MutationcreateBucketListArgs = {
-  completeDate: Scalars['DateTime']['input'];
-  description: Scalars['String']['input'];
-  imageUrl?: InputMaybe<Scalars['String']['input']>;
-  thumbImageUrl?: InputMaybe<Scalars['String']['input']>;
-  title: Scalars['String']['input'];
-  todoList?: InputMaybe<Array<TodoInput>>;
+  input: CreateBucketListInput;
+};
+
+
+export type MutationcreateBucketListTodoArgs = {
+  input: CreateBucketListTodoInput;
 };
 
 
 export type MutationcreateDepositArgs = {
-  accountId: Scalars['Int']['input'];
-  amount: Scalars['Int']['input'];
-  depositDate?: InputMaybe<Scalars['DateTime']['input']>;
+  input: CreateDepositInput;
 };
 
 
 export type MutationcreateRegularExpenditureArgs = {
-  amount: Scalars['Int']['input'];
-  categoryId: Scalars['Int']['input'];
-  isAutoExpenditure: Scalars['Boolean']['input'];
-  regularDate: Scalars['Int']['input'];
-  title: Scalars['String']['input'];
-};
-
-
-export type MutationcreateTodoArgs = {
-  bucketListId: Scalars['Int']['input'];
-  isComplete: Scalars['Boolean']['input'];
-  title: Scalars['String']['input'];
+  input: CreateRegularExpenditureInput;
 };
 
 
 export type MutationdeleteAccountArgs = {
-  id: Scalars['ID']['input'];
+  input: DeleteAccountInput;
 };
 
 
 export type MutationdeleteAccountBookArgs = {
-  id: Scalars['ID']['input'];
+  input: DeleteAccountBookInput;
 };
 
 
 export type MutationdeleteAccountBookCategoryArgs = {
-  id: Scalars['ID']['input'];
+  input: DeleteAccountBookCategoryInput;
 };
 
 
 export type MutationdeleteBucketListArgs = {
-  id: Scalars['ID']['input'];
+  input: DeleteBucketListInput;
+};
+
+
+export type MutationdeleteBucketListTodoArgs = {
+  input: DeleteBucketListTodoInput;
 };
 
 
 export type MutationdeleteRegularExpenditureArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationdeleteTodoArgs = {
-  todoId: Scalars['ID']['input'];
+  input: DeleteRegularExpenditureInput;
 };
 
 
 export type MutationupdateAccountBookArgs = {
-  amount?: InputMaybe<Scalars['Int']['input']>;
-  categoryId?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['ID']['input'];
-  isDisabledBudget?: InputMaybe<Scalars['Boolean']['input']>;
-  memo?: InputMaybe<Scalars['String']['input']>;
-  registerDateTime?: InputMaybe<Scalars['DateTime']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
-  type?: InputMaybe<AccountBookCategoryType>;
+  input: UpdateAccountBookInput;
 };
 
 
 export type MutationupdateBucketListArgs = {
-  completeDate: Scalars['DateTime']['input'];
-  description: Scalars['String']['input'];
-  id: Scalars['ID']['input'];
-  imageUrl?: InputMaybe<Scalars['String']['input']>;
-  thumbImageUrl?: InputMaybe<Scalars['String']['input']>;
-  title: Scalars['String']['input'];
+  input: UpdateBucketListInput;
 };
 
 
-export type MutationupdateTodoCompleteArgs = {
-  isComplete: Scalars['Boolean']['input'];
-  todoId: Scalars['ID']['input'];
+export type MutationupdateBucketListTodoCompleteArgs = {
+  input: UpdateBucketListTodoCompleteInput;
 };
 
 export type Query = {
   __typename?: 'Query';
   account?: Maybe<Account>;
   accountBook?: Maybe<AccountBook>;
-  accountBookCategoryList?: Maybe<Array<AccountBookCategory>>;
-  accountBookImageList?: Maybe<Array<AccountBookCategoryImage>>;
-  accountBookList?: Maybe<Array<AccountBook>>;
-  accountBookStatisticList?: Maybe<Array<Statistic>>;
-  accountLastUpdatedDate: Scalars['DateTime']['output'];
-  account_list?: Maybe<Array<Account>>;
-  bucketList: Array<BucketListSummary>;
-  bucketListDetail?: Maybe<BucketList>;
-  bucketListItemLastUpdatedDate: Scalars['DateTime']['output'];
-  bucketListLastUpdatedDate: Scalars['DateTime']['output'];
+  accountBookCategoryImageList: AccountBookCategoryImageList;
+  accountBookCategoryList: AccountBookCategoryList;
+  accountBookList: AccountBookList;
+  accountList: AccountList;
+  bucketList?: Maybe<BucketList>;
+  bucketListSummaryList: BucketListSummaryList;
+  getAccountBookStatisticList: StatisticList;
+  getAccountLastUpdatedDate: Scalars['DateTime']['output'];
+  getBucketListItemLastUpdatedDate: Scalars['DateTime']['output'];
+  getBucketListLastUpdatedDate: Scalars['DateTime']['output'];
   mainInfo: MainInfo;
-  regularExpenditureList?: Maybe<Array<CustomRegularExpenditureResponse>>;
+  regularExpenditureGroupList: RegularExpenditureGroupList;
 };
 
 
@@ -345,35 +432,35 @@ export type QueryaccountBookListArgs = {
 };
 
 
-export type QueryaccountBookStatisticListArgs = {
+export type QueryaccountListArgs = {
+  limitCount?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerybucketListArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QuerybucketListSummaryListArgs = {
+  limitCount?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerygetAccountBookStatisticListArgs = {
   endDate: Scalars['DateTime']['input'];
   startDate: Scalars['DateTime']['input'];
   type: AccountBookCategoryType;
 };
 
 
-export type Queryaccount_listArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QuerybucketListArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QuerybucketListDetailArgs = {
+export type QuerygetBucketListItemLastUpdatedDateArgs = {
   id: Scalars['ID']['input'];
 };
 
 
-export type QuerybucketListItemLastUpdatedDateArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryregularExpenditureListArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
+export type QueryregularExpenditureGroupListArgs = {
+  limitCount?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type RegularExpenditure = {
@@ -390,6 +477,20 @@ export type RegularExpenditure = {
   userId: Scalars['Int']['output'];
 };
 
+export type RegularExpenditureGroup = {
+  __typename?: 'RegularExpenditureGroup';
+  imageUrl: Scalars['String']['output'];
+  list: Array<CustomRegularExpenditure>;
+  name: Scalars['String']['output'];
+  type: AccountBookCategoryType;
+};
+
+export type RegularExpenditureGroupList = {
+  __typename?: 'RegularExpenditureGroupList';
+  itemList: Array<RegularExpenditureGroup>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type SavingType = {
   __typename?: 'SavingType';
   createdAt: Scalars['DateTime']['output'];
@@ -400,15 +501,15 @@ export type SavingType = {
 };
 
 export type ScheduledPaymentType =
-  | 'installment'
-  | 'repeat';
+  | 'INSTALLMENT'
+  | 'REPEAT';
 
 export type Statistic = {
   __typename?: 'Statistic';
   amount: Scalars['Int']['output'];
   categoryId: Scalars['String']['output'];
   categoryName: Scalars['String']['output'];
-  list?: Maybe<Array<StatisticItem>>;
+  list: Array<StatisticItem>;
   percentage: Scalars['Float']['output'];
   useStatistic: Scalars['Boolean']['output'];
 };
@@ -420,26 +521,48 @@ export type StatisticItem = {
   title: Scalars['String']['output'];
 };
 
-export type Todo = {
-  __typename?: 'Todo';
-  bucketList?: Maybe<BucketList>;
-  bucketListId: Scalars['Int']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  isComplete: Scalars['Boolean']['output'];
-  title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<User>;
-  userId: Scalars['Int']['output'];
+export type StatisticList = {
+  __typename?: 'StatisticList';
+  itemList: Array<Statistic>;
+  totalCount: Scalars['Int']['output'];
 };
 
-export type TodoInput = {
-  isComplete: Scalars['Boolean']['input'];
+export type UpdateAccountBookInput = {
+  amount?: InputMaybe<Scalars['Int']['input']>;
+  categoryId?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['ID']['input'];
+  isDisabledBudget?: InputMaybe<Scalars['Boolean']['input']>;
+  memo?: InputMaybe<Scalars['String']['input']>;
+  registerDateTime?: InputMaybe<Scalars['DateTime']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<AccountBookCategoryType>;
+};
+
+export type UpdateBucketListInput = {
+  completeDate: Scalars['DateTime']['input'];
+  description: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  thumbImageUrl?: InputMaybe<Scalars['String']['input']>;
   title: Scalars['String']['input'];
 };
 
-export type User = {
-  __typename?: 'User';
+export type UpdateBucketListTodoCompleteInput = {
+  isComplete: Scalars['Boolean']['input'];
+  todoId: Scalars['ID']['input'];
+};
+
+export type UserShareCode = {
+  __typename?: 'UserShareCode';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  shareCode: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  userId: Scalars['Int']['output'];
+};
+
+export type WoolBankUser = {
+  __typename?: 'WoolBankUser';
   accountBookCategories: Array<AccountBookCategory>;
   accountBookCategoryImages: Array<AccountBookCategoryImage>;
   accountBooks: Array<AccountBook>;
@@ -451,21 +574,11 @@ export type User = {
   id: Scalars['ID']['output'];
   loginType: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  password: Scalars['String']['output'];
   profileImg: Scalars['String']['output'];
   regularExpenditures: Array<RegularExpenditure>;
   socialId: Scalars['String']['output'];
-  todos: Array<Todo>;
+  todos: Array<BucketListTodo>;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type UserShareCode = {
-  __typename?: 'UserShareCode';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  shareCode: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  userId: Scalars['Int']['output'];
 };
 
 
@@ -550,25 +663,50 @@ export type ResolversTypes = {
   AccountBook: ResolverTypeWrapper<Omit<AccountBook, 'accountBookCategory' | 'type'> & { accountBookCategory: ResolversTypes['AccountBookCategory'], type: ResolversTypes['AccountBookCategoryType'] }>;
   AccountBookCategory: ResolverTypeWrapper<Omit<AccountBookCategory, 'type'> & { type: ResolversTypes['AccountBookCategoryType'] }>;
   AccountBookCategoryImage: ResolverTypeWrapper<AccountBookCategoryImage>;
-  AccountBookCategoryType: ResolverTypeWrapper<'expenditure' | 'income'>;
-  BucketList: ResolverTypeWrapper<Omit<BucketList, 'todoList' | 'user'> & { todoList?: Maybe<Array<ResolversTypes['Todo']>>, user?: Maybe<ResolversTypes['User']> }>;
+  AccountBookCategoryImageList: ResolverTypeWrapper<AccountBookCategoryImageList>;
+  AccountBookCategoryList: ResolverTypeWrapper<Omit<AccountBookCategoryList, 'itemList'> & { itemList: Array<ResolversTypes['AccountBookCategory']> }>;
+  AccountBookCategoryType: ResolverTypeWrapper<'EXPENDITURE' | 'INCOME'>;
+  AccountBookList: ResolverTypeWrapper<Omit<AccountBookList, 'itemList'> & { itemList: Array<ResolversTypes['AccountBook']> }>;
+  AccountList: ResolverTypeWrapper<AccountList>;
+  BucketList: ResolverTypeWrapper<Omit<BucketList, 'todoList' | 'user'> & { todoList: Array<ResolversTypes['BucketListTodo']>, user?: Maybe<ResolversTypes['WoolBankUser']> }>;
   BucketListSummary: ResolverTypeWrapper<BucketListSummary>;
+  BucketListSummaryList: ResolverTypeWrapper<BucketListSummaryList>;
+  BucketListTodo: ResolverTypeWrapper<Omit<BucketListTodo, 'bucketList' | 'user'> & { bucketList?: Maybe<ResolversTypes['BucketList']>, user?: Maybe<ResolversTypes['WoolBankUser']> }>;
+  BucketListTodoInput: BucketListTodoInput;
+  CompleteAccountExpirationInput: CompleteAccountExpirationInput;
+  CompleteBucketListInput: CompleteBucketListInput;
+  CreateAccountBookCategoryInput: CreateAccountBookCategoryInput;
+  CreateAccountBookInput: CreateAccountBookInput;
+  CreateAccountInput: CreateAccountInput;
+  CreateBucketListInput: CreateBucketListInput;
+  CreateBucketListTodoInput: CreateBucketListTodoInput;
+  CreateDepositInput: CreateDepositInput;
+  CreateRegularExpenditureInput: CreateRegularExpenditureInput;
   CustomRegularExpenditure: ResolverTypeWrapper<Omit<CustomRegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversTypes['AccountBookCategory'] }>;
-  CustomRegularExpenditureResponse: ResolverTypeWrapper<Omit<CustomRegularExpenditureResponse, 'list' | 'type'> & { list?: Maybe<Array<ResolversTypes['CustomRegularExpenditure']>>, type: ResolversTypes['AccountBookCategoryType'] }>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  DeleteAccountBookCategoryInput: DeleteAccountBookCategoryInput;
+  DeleteAccountBookInput: DeleteAccountBookInput;
+  DeleteAccountInput: DeleteAccountInput;
+  DeleteBucketListInput: DeleteBucketListInput;
+  DeleteBucketListTodoInput: DeleteBucketListTodoInput;
+  DeleteRegularExpenditureInput: DeleteRegularExpenditureInput;
   Deposit: ResolverTypeWrapper<Deposit>;
   MainInfo: ResolverTypeWrapper<MainInfo>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   RegularExpenditure: ResolverTypeWrapper<Omit<RegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversTypes['AccountBookCategory'] }>;
+  RegularExpenditureGroup: ResolverTypeWrapper<Omit<RegularExpenditureGroup, 'list' | 'type'> & { list: Array<ResolversTypes['CustomRegularExpenditure']>, type: ResolversTypes['AccountBookCategoryType'] }>;
+  RegularExpenditureGroupList: ResolverTypeWrapper<Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversTypes['RegularExpenditureGroup']> }>;
   SavingType: ResolverTypeWrapper<SavingType>;
-  ScheduledPaymentType: ResolverTypeWrapper<'repeat' | 'installment'>;
+  ScheduledPaymentType: ResolverTypeWrapper<'REPEAT' | 'INSTALLMENT'>;
   Statistic: ResolverTypeWrapper<Statistic>;
   StatisticItem: ResolverTypeWrapper<StatisticItem>;
-  Todo: ResolverTypeWrapper<Omit<Todo, 'bucketList' | 'user'> & { bucketList?: Maybe<ResolversTypes['BucketList']>, user?: Maybe<ResolversTypes['User']> }>;
-  TodoInput: TodoInput;
-  User: ResolverTypeWrapper<Omit<User, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversTypes['AccountBookCategory']>, accountBooks: Array<ResolversTypes['AccountBook']>, bucketLists: Array<ResolversTypes['BucketList']>, regularExpenditures: Array<ResolversTypes['RegularExpenditure']>, todos: Array<ResolversTypes['Todo']> }>;
+  StatisticList: ResolverTypeWrapper<StatisticList>;
+  UpdateAccountBookInput: UpdateAccountBookInput;
+  UpdateBucketListInput: UpdateBucketListInput;
+  UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
   UserShareCode: ResolverTypeWrapper<UserShareCode>;
+  WoolBankUser: ResolverTypeWrapper<Omit<WoolBankUser, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversTypes['AccountBookCategory']>, accountBooks: Array<ResolversTypes['AccountBook']>, bucketLists: Array<ResolversTypes['BucketList']>, regularExpenditures: Array<ResolversTypes['RegularExpenditure']>, todos: Array<ResolversTypes['BucketListTodo']> }>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -582,30 +720,55 @@ export type ResolversParentTypes = {
   AccountBook: Omit<AccountBook, 'accountBookCategory'> & { accountBookCategory: ResolversParentTypes['AccountBookCategory'] };
   AccountBookCategory: AccountBookCategory;
   AccountBookCategoryImage: AccountBookCategoryImage;
-  BucketList: Omit<BucketList, 'todoList' | 'user'> & { todoList?: Maybe<Array<ResolversParentTypes['Todo']>>, user?: Maybe<ResolversParentTypes['User']> };
+  AccountBookCategoryImageList: AccountBookCategoryImageList;
+  AccountBookCategoryList: Omit<AccountBookCategoryList, 'itemList'> & { itemList: Array<ResolversParentTypes['AccountBookCategory']> };
+  AccountBookList: Omit<AccountBookList, 'itemList'> & { itemList: Array<ResolversParentTypes['AccountBook']> };
+  AccountList: AccountList;
+  BucketList: Omit<BucketList, 'todoList' | 'user'> & { todoList: Array<ResolversParentTypes['BucketListTodo']>, user?: Maybe<ResolversParentTypes['WoolBankUser']> };
   BucketListSummary: BucketListSummary;
+  BucketListSummaryList: BucketListSummaryList;
+  BucketListTodo: Omit<BucketListTodo, 'bucketList' | 'user'> & { bucketList?: Maybe<ResolversParentTypes['BucketList']>, user?: Maybe<ResolversParentTypes['WoolBankUser']> };
+  BucketListTodoInput: BucketListTodoInput;
+  CompleteAccountExpirationInput: CompleteAccountExpirationInput;
+  CompleteBucketListInput: CompleteBucketListInput;
+  CreateAccountBookCategoryInput: CreateAccountBookCategoryInput;
+  CreateAccountBookInput: CreateAccountBookInput;
+  CreateAccountInput: CreateAccountInput;
+  CreateBucketListInput: CreateBucketListInput;
+  CreateBucketListTodoInput: CreateBucketListTodoInput;
+  CreateDepositInput: CreateDepositInput;
+  CreateRegularExpenditureInput: CreateRegularExpenditureInput;
   CustomRegularExpenditure: Omit<CustomRegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversParentTypes['AccountBookCategory'] };
-  CustomRegularExpenditureResponse: Omit<CustomRegularExpenditureResponse, 'list'> & { list?: Maybe<Array<ResolversParentTypes['CustomRegularExpenditure']>> };
   DateTime: Scalars['DateTime']['output'];
+  DeleteAccountBookCategoryInput: DeleteAccountBookCategoryInput;
+  DeleteAccountBookInput: DeleteAccountBookInput;
+  DeleteAccountInput: DeleteAccountInput;
+  DeleteBucketListInput: DeleteBucketListInput;
+  DeleteBucketListTodoInput: DeleteBucketListTodoInput;
+  DeleteRegularExpenditureInput: DeleteRegularExpenditureInput;
   Deposit: Deposit;
   MainInfo: MainInfo;
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   RegularExpenditure: Omit<RegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversParentTypes['AccountBookCategory'] };
+  RegularExpenditureGroup: Omit<RegularExpenditureGroup, 'list'> & { list: Array<ResolversParentTypes['CustomRegularExpenditure']> };
+  RegularExpenditureGroupList: Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversParentTypes['RegularExpenditureGroup']> };
   SavingType: SavingType;
   Statistic: Statistic;
   StatisticItem: StatisticItem;
-  Todo: Omit<Todo, 'bucketList' | 'user'> & { bucketList?: Maybe<ResolversParentTypes['BucketList']>, user?: Maybe<ResolversParentTypes['User']> };
-  TodoInput: TodoInput;
-  User: Omit<User, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversParentTypes['AccountBookCategory']>, accountBooks: Array<ResolversParentTypes['AccountBook']>, bucketLists: Array<ResolversParentTypes['BucketList']>, regularExpenditures: Array<ResolversParentTypes['RegularExpenditure']>, todos: Array<ResolversParentTypes['Todo']> };
+  StatisticList: StatisticList;
+  UpdateAccountBookInput: UpdateAccountBookInput;
+  UpdateBucketListInput: UpdateBucketListInput;
+  UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
   UserShareCode: UserShareCode;
+  WoolBankUser: Omit<WoolBankUser, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversParentTypes['AccountBookCategory']>, accountBooks: Array<ResolversParentTypes['AccountBook']>, bucketLists: Array<ResolversParentTypes['BucketList']>, regularExpenditures: Array<ResolversParentTypes['RegularExpenditure']>, todos: Array<ResolversParentTypes['BucketListTodo']> };
 };
 
 export type AccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Account'] = ResolversParentTypes['Account']> = {
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   currentAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  deposits?: Resolver<Maybe<Array<ResolversTypes['Deposit']>>, ParentType, ContextType>;
+  deposits?: Resolver<Array<ResolversTypes['Deposit']>, ParentType, ContextType>;
   endDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   isExpiration?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -661,7 +824,27 @@ export type AccountBookCategoryImageResolvers<ContextType = any, ParentType exte
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
-export type AccountBookCategoryTypeResolvers = EnumResolverSignature<{ expenditure?: any, income?: any }, ResolversTypes['AccountBookCategoryType']>;
+export type AccountBookCategoryImageListResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccountBookCategoryImageList'] = ResolversParentTypes['AccountBookCategoryImageList']> = {
+  itemList?: Resolver<Array<ResolversTypes['AccountBookCategoryImage']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type AccountBookCategoryListResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccountBookCategoryList'] = ResolversParentTypes['AccountBookCategoryList']> = {
+  itemList?: Resolver<Array<ResolversTypes['AccountBookCategory']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type AccountBookCategoryTypeResolvers = EnumResolverSignature<{ EXPENDITURE?: any, INCOME?: any }, ResolversTypes['AccountBookCategoryType']>;
+
+export type AccountBookListResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccountBookList'] = ResolversParentTypes['AccountBookList']> = {
+  itemList?: Resolver<Array<ResolversTypes['AccountBook']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type AccountListResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccountList'] = ResolversParentTypes['AccountList']> = {
+  itemList?: Resolver<Array<ResolversTypes['Account']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
 
 export type BucketListResolvers<ContextType = any, ParentType extends ResolversParentTypes['BucketList'] = ResolversParentTypes['BucketList']> = {
   completeDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -672,9 +855,9 @@ export type BucketListResolvers<ContextType = any, ParentType extends ResolversP
   isComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   thumbImageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  todoList?: Resolver<Maybe<Array<ResolversTypes['Todo']>>, ParentType, ContextType>;
+  todoList?: Resolver<Array<ResolversTypes['BucketListTodo']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['WoolBankUser']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
@@ -689,6 +872,23 @@ export type BucketListSummaryResolvers<ContextType = any, ParentType extends Res
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
+export type BucketListSummaryListResolvers<ContextType = any, ParentType extends ResolversParentTypes['BucketListSummaryList'] = ResolversParentTypes['BucketListSummaryList']> = {
+  itemList?: Resolver<Array<ResolversTypes['BucketListSummary']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type BucketListTodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['BucketListTodo'] = ResolversParentTypes['BucketListTodo']> = {
+  bucketList?: Resolver<Maybe<ResolversTypes['BucketList']>, ParentType, ContextType>;
+  bucketListId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['WoolBankUser']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type CustomRegularExpenditureResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomRegularExpenditure'] = ResolversParentTypes['CustomRegularExpenditure']> = {
   accountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType>;
   accountBookCategoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -701,13 +901,6 @@ export type CustomRegularExpenditureResolvers<ContextType = any, ParentType exte
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-};
-
-export type CustomRegularExpenditureResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomRegularExpenditureResponse'] = ResolversParentTypes['CustomRegularExpenditureResponse']> = {
-  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  list?: Resolver<Maybe<Array<ResolversTypes['CustomRegularExpenditure']>>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['AccountBookCategoryType'], ParentType, ContextType>;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -734,41 +927,41 @@ export type MainInfoResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  completeAccountExpiration?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcompleteAccountExpirationArgs, 'id'>>;
-  completeBucketList?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcompleteBucketListArgs, 'id'>>;
-  createAccount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcreateAccountArgs, 'amount' | 'endDate' | 'rate' | 'regularTransferDate' | 'savingTypeId' | 'startDate' | 'taxType' | 'title'>>;
-  createAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationcreateAccountBookArgs, 'amount' | 'categoryId' | 'registerDateTime' | 'title' | 'type'>>;
-  createAccountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType, RequireFields<MutationcreateAccountBookCategoryArgs, 'accountBookCategoryImageId' | 'name' | 'type' | 'useStatistic'>>;
-  createBucketList?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcreateBucketListArgs, 'completeDate' | 'description' | 'title'>>;
-  createDeposit?: Resolver<ResolversTypes['Deposit'], ParentType, ContextType, RequireFields<MutationcreateDepositArgs, 'accountId' | 'amount'>>;
-  createRegularExpenditure?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcreateRegularExpenditureArgs, 'amount' | 'categoryId' | 'isAutoExpenditure' | 'regularDate' | 'title'>>;
-  createTodo?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationcreateTodoArgs, 'bucketListId' | 'isComplete' | 'title'>>;
-  deleteAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountArgs, 'id'>>;
-  deleteAccountBook?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookArgs, 'id'>>;
-  deleteAccountBookCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookCategoryArgs, 'id'>>;
-  deleteBucketList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBucketListArgs, 'id'>>;
-  deleteRegularExpenditure?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationdeleteRegularExpenditureArgs, 'id'>>;
-  deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteTodoArgs, 'todoId'>>;
-  updateAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationupdateAccountBookArgs, 'id'>>;
-  updateBucketList?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<MutationupdateBucketListArgs, 'completeDate' | 'description' | 'id' | 'title'>>;
-  updateTodoComplete?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationupdateTodoCompleteArgs, 'isComplete' | 'todoId'>>;
+  completeAccountExpiration?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcompleteAccountExpirationArgs, 'input'>>;
+  completeBucketList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcompleteBucketListArgs, 'input'>>;
+  createAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, RequireFields<MutationcreateAccountArgs, 'input'>>;
+  createAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationcreateAccountBookArgs, 'input'>>;
+  createAccountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType, RequireFields<MutationcreateAccountBookCategoryArgs, 'input'>>;
+  createBucketList?: Resolver<ResolversTypes['BucketList'], ParentType, ContextType, RequireFields<MutationcreateBucketListArgs, 'input'>>;
+  createBucketListTodo?: Resolver<ResolversTypes['BucketListTodo'], ParentType, ContextType, RequireFields<MutationcreateBucketListTodoArgs, 'input'>>;
+  createDeposit?: Resolver<ResolversTypes['Deposit'], ParentType, ContextType, RequireFields<MutationcreateDepositArgs, 'input'>>;
+  createRegularExpenditure?: Resolver<ResolversTypes['RegularExpenditure'], ParentType, ContextType, RequireFields<MutationcreateRegularExpenditureArgs, 'input'>>;
+  deleteAccount?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountArgs, 'input'>>;
+  deleteAccountBook?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookArgs, 'input'>>;
+  deleteAccountBookCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteAccountBookCategoryArgs, 'input'>>;
+  deleteBucketList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBucketListArgs, 'input'>>;
+  deleteBucketListTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBucketListTodoArgs, 'input'>>;
+  deleteRegularExpenditure?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteRegularExpenditureArgs, 'input'>>;
+  updateAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationupdateAccountBookArgs, 'input'>>;
+  updateBucketList?: Resolver<ResolversTypes['BucketList'], ParentType, ContextType, RequireFields<MutationupdateBucketListArgs, 'input'>>;
+  updateBucketListTodoComplete?: Resolver<ResolversTypes['BucketListTodo'], ParentType, ContextType, RequireFields<MutationupdateBucketListTodoCompleteArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   account?: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType, RequireFields<QueryaccountArgs, 'id'>>;
   accountBook?: Resolver<Maybe<ResolversTypes['AccountBook']>, ParentType, ContextType, RequireFields<QueryaccountBookArgs, 'id'>>;
-  accountBookCategoryList?: Resolver<Maybe<Array<ResolversTypes['AccountBookCategory']>>, ParentType, ContextType>;
-  accountBookImageList?: Resolver<Maybe<Array<ResolversTypes['AccountBookCategoryImage']>>, ParentType, ContextType>;
-  accountBookList?: Resolver<Maybe<Array<ResolversTypes['AccountBook']>>, ParentType, ContextType, RequireFields<QueryaccountBookListArgs, 'dateTime'>>;
-  accountBookStatisticList?: Resolver<Maybe<Array<ResolversTypes['Statistic']>>, ParentType, ContextType, RequireFields<QueryaccountBookStatisticListArgs, 'endDate' | 'startDate' | 'type'>>;
-  accountLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  account_list?: Resolver<Maybe<Array<ResolversTypes['Account']>>, ParentType, ContextType, Partial<Queryaccount_listArgs>>;
-  bucketList?: Resolver<Array<ResolversTypes['BucketListSummary']>, ParentType, ContextType, Partial<QuerybucketListArgs>>;
-  bucketListDetail?: Resolver<Maybe<ResolversTypes['BucketList']>, ParentType, ContextType, RequireFields<QuerybucketListDetailArgs, 'id'>>;
-  bucketListItemLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<QuerybucketListItemLastUpdatedDateArgs, 'id'>>;
-  bucketListLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  accountBookCategoryImageList?: Resolver<ResolversTypes['AccountBookCategoryImageList'], ParentType, ContextType>;
+  accountBookCategoryList?: Resolver<ResolversTypes['AccountBookCategoryList'], ParentType, ContextType>;
+  accountBookList?: Resolver<ResolversTypes['AccountBookList'], ParentType, ContextType, RequireFields<QueryaccountBookListArgs, 'dateTime'>>;
+  accountList?: Resolver<ResolversTypes['AccountList'], ParentType, ContextType, Partial<QueryaccountListArgs>>;
+  bucketList?: Resolver<Maybe<ResolversTypes['BucketList']>, ParentType, ContextType, RequireFields<QuerybucketListArgs, 'id'>>;
+  bucketListSummaryList?: Resolver<ResolversTypes['BucketListSummaryList'], ParentType, ContextType, Partial<QuerybucketListSummaryListArgs>>;
+  getAccountBookStatisticList?: Resolver<ResolversTypes['StatisticList'], ParentType, ContextType, RequireFields<QuerygetAccountBookStatisticListArgs, 'endDate' | 'startDate' | 'type'>>;
+  getAccountLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  getBucketListItemLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<QuerygetBucketListItemLastUpdatedDateArgs, 'id'>>;
+  getBucketListLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   mainInfo?: Resolver<ResolversTypes['MainInfo'], ParentType, ContextType>;
-  regularExpenditureList?: Resolver<Maybe<Array<ResolversTypes['CustomRegularExpenditureResponse']>>, ParentType, ContextType, Partial<QueryregularExpenditureListArgs>>;
+  regularExpenditureGroupList?: Resolver<ResolversTypes['RegularExpenditureGroupList'], ParentType, ContextType, Partial<QueryregularExpenditureGroupListArgs>>;
 };
 
 export type RegularExpenditureResolvers<ContextType = any, ParentType extends ResolversParentTypes['RegularExpenditure'] = ResolversParentTypes['RegularExpenditure']> = {
@@ -784,6 +977,18 @@ export type RegularExpenditureResolvers<ContextType = any, ParentType extends Re
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type RegularExpenditureGroupResolvers<ContextType = any, ParentType extends ResolversParentTypes['RegularExpenditureGroup'] = ResolversParentTypes['RegularExpenditureGroup']> = {
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  list?: Resolver<Array<ResolversTypes['CustomRegularExpenditure']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['AccountBookCategoryType'], ParentType, ContextType>;
+};
+
+export type RegularExpenditureGroupListResolvers<ContextType = any, ParentType extends ResolversParentTypes['RegularExpenditureGroupList'] = ResolversParentTypes['RegularExpenditureGroupList']> = {
+  itemList?: Resolver<Array<ResolversTypes['RegularExpenditureGroup']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type SavingTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['SavingType'] = ResolversParentTypes['SavingType']> = {
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -792,13 +997,13 @@ export type SavingTypeResolvers<ContextType = any, ParentType extends ResolversP
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
-export type ScheduledPaymentTypeResolvers = EnumResolverSignature<{ installment?: any, repeat?: any }, ResolversTypes['ScheduledPaymentType']>;
+export type ScheduledPaymentTypeResolvers = EnumResolverSignature<{ INSTALLMENT?: any, REPEAT?: any }, ResolversTypes['ScheduledPaymentType']>;
 
 export type StatisticResolvers<ContextType = any, ParentType extends ResolversParentTypes['Statistic'] = ResolversParentTypes['Statistic']> = {
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   categoryId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   categoryName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  list?: Resolver<Maybe<Array<ResolversTypes['StatisticItem']>>, ParentType, ContextType>;
+  list?: Resolver<Array<ResolversTypes['StatisticItem']>, ParentType, ContextType>;
   percentage?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   useStatistic?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
 };
@@ -809,19 +1014,20 @@ export type StatisticItemResolvers<ContextType = any, ParentType extends Resolve
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
-  bucketList?: Resolver<Maybe<ResolversTypes['BucketList']>, ParentType, ContextType>;
-  bucketListId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+export type StatisticListResolvers<ContextType = any, ParentType extends ResolversParentTypes['StatisticList'] = ResolversParentTypes['StatisticList']> = {
+  itemList?: Resolver<Array<ResolversTypes['Statistic']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type UserShareCodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserShareCode'] = ResolversParentTypes['UserShareCode']> = {
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  isComplete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  shareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type WoolBankUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['WoolBankUser'] = ResolversParentTypes['WoolBankUser']> = {
   accountBookCategories?: Resolver<Array<ResolversTypes['AccountBookCategory']>, ParentType, ContextType>;
   accountBookCategoryImages?: Resolver<Array<ResolversTypes['AccountBookCategoryImage']>, ParentType, ContextType>;
   accountBooks?: Resolver<Array<ResolversTypes['AccountBook']>, ParentType, ContextType>;
@@ -833,20 +1039,11 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   loginType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profileImg?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   regularExpenditures?: Resolver<Array<ResolversTypes['RegularExpenditure']>, ParentType, ContextType>;
   socialId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
+  todos?: Resolver<Array<ResolversTypes['BucketListTodo']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-};
-
-export type UserShareCodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserShareCode'] = ResolversParentTypes['UserShareCode']> = {
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  shareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -854,23 +1051,30 @@ export type Resolvers<ContextType = any> = {
   AccountBook?: AccountBookResolvers<ContextType>;
   AccountBookCategory?: AccountBookCategoryResolvers<ContextType>;
   AccountBookCategoryImage?: AccountBookCategoryImageResolvers<ContextType>;
+  AccountBookCategoryImageList?: AccountBookCategoryImageListResolvers<ContextType>;
+  AccountBookCategoryList?: AccountBookCategoryListResolvers<ContextType>;
   AccountBookCategoryType?: AccountBookCategoryTypeResolvers;
+  AccountBookList?: AccountBookListResolvers<ContextType>;
+  AccountList?: AccountListResolvers<ContextType>;
   BucketList?: BucketListResolvers<ContextType>;
   BucketListSummary?: BucketListSummaryResolvers<ContextType>;
+  BucketListSummaryList?: BucketListSummaryListResolvers<ContextType>;
+  BucketListTodo?: BucketListTodoResolvers<ContextType>;
   CustomRegularExpenditure?: CustomRegularExpenditureResolvers<ContextType>;
-  CustomRegularExpenditureResponse?: CustomRegularExpenditureResponseResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Deposit?: DepositResolvers<ContextType>;
   MainInfo?: MainInfoResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RegularExpenditure?: RegularExpenditureResolvers<ContextType>;
+  RegularExpenditureGroup?: RegularExpenditureGroupResolvers<ContextType>;
+  RegularExpenditureGroupList?: RegularExpenditureGroupListResolvers<ContextType>;
   SavingType?: SavingTypeResolvers<ContextType>;
   ScheduledPaymentType?: ScheduledPaymentTypeResolvers;
   Statistic?: StatisticResolvers<ContextType>;
   StatisticItem?: StatisticItemResolvers<ContextType>;
-  Todo?: TodoResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
+  StatisticList?: StatisticListResolvers<ContextType>;
   UserShareCode?: UserShareCodeResolvers<ContextType>;
+  WoolBankUser?: WoolBankUserResolvers<ContextType>;
 };
 

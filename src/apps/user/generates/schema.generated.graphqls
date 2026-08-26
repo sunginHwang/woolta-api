@@ -3,12 +3,28 @@ type AuthTokens {
   refreshToken: String!
 }
 
+input CheckRefreshTokenInput {
+  refreshToken: String!
+}
+
 type CheckTokenResult {
   authTokens: AuthTokens!
   userInfo: UserInfo!
 }
 
 scalar DateTime
+
+input LoginByShareCodeInput {
+  shareCode: String!
+}
+
+input LoginBySocialInput {
+  email: String
+  imageUrl: String!
+  loginType: SocialLoginType!
+  name: String
+  socialId: String!
+}
 
 type LoginResult {
   accessToken: String!
@@ -17,24 +33,24 @@ type LoginResult {
 }
 
 type Mutation {
-  loginByShareCode(shareCode: String!): LoginResult!
-  loginBySocial(email: String, imageUrl: String!, loginType: SocialLoginType!, name: String, socialId: String!): LoginResult!
+  checkRefreshToken(input: CheckRefreshTokenInput!): AuthTokens!
+  loginByShareCode(input: LoginByShareCodeInput!): LoginResult!
+  loginBySocial(input: LoginBySocialInput!): LoginResult!
   logout: Boolean!
-  refreshTokenCheck(refreshToken: String!): AuthTokens!
   upsertShareCode: String!
 }
 
 type Query {
-  accessCheck: Int!
+  checkAccess: Int!
   checkToken: CheckTokenResult!
+  getShareCode: String!
   me: UserInfo!
-  shareCode: String!
 }
 
 enum SocialLoginType {
-  facebook
-  google
-  kakaoTalk
+  FACEBOOK
+  GOOGLE
+  KAKAO_TALK
 }
 
 type UserInfo {

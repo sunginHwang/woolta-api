@@ -1,4 +1,28 @@
+input CompleteTodoInput {
+  id: String!
+  isCompleted: Boolean!
+}
+
+input CreateTodoCategoryInput {
+  name: String!
+}
+
+input CreateTodoInput {
+  categoryId: String
+  dueDate: String
+  priority: TodoPriority
+  title: String!
+}
+
 scalar DateTime
+
+input DeleteTodoCategoryInput {
+  id: String!
+}
+
+input DeleteTodoInput {
+  id: String!
+}
 
 type IdMapping {
   from: String!
@@ -27,23 +51,32 @@ input ImportTodoInput {
   updatedAt: DateTime
 }
 
+input ImportTodoListInput {
+  categoryList: [ImportTodoCategoryInput!]!
+  itemList: [ImportTodoInput!]!
+}
+
 type Mutation {
-  completeTodo(id: String!, isCompleted: Boolean!): Todo!
-  createTodo(categoryId: String, dueDate: String, priority: TodoPriority, title: String!): Todo!
-  createTodoCategory(name: String!): TodoCategory!
-  deleteTodo(id: String!): Boolean!
-  deleteTodoCategory(id: String!): Boolean!
-  emptyTrash: Int!
-  importTodos(categories: [ImportTodoCategoryInput!]!, todos: [ImportTodoInput!]!): TodoImportResult!
-  restoreTodo(id: String!): Todo!
-  trashTodo(id: String!): Todo!
-  updateTodo(id: String!, input: UpdateTodoInput!): Todo!
-  updateTodoCategory(id: String!, name: String!): TodoCategory!
+  completeTodo(input: CompleteTodoInput!): Todo!
+  createTodo(input: CreateTodoInput!): Todo!
+  createTodoCategory(input: CreateTodoCategoryInput!): TodoCategory!
+  deleteTodo(input: DeleteTodoInput!): Boolean!
+  deleteTodoCategory(input: DeleteTodoCategoryInput!): Boolean!
+  emptyTrash: Boolean!
+  importTodoList(input: ImportTodoListInput!): TodoImportResult!
+  restoreTodo(input: RestoreTodoInput!): Todo!
+  trashTodo(input: TrashTodoInput!): Todo!
+  updateTodo(input: UpdateTodoInput!): Todo!
+  updateTodoCategory(input: UpdateTodoCategoryInput!): TodoCategory!
 }
 
 type Query {
-  todoCategories: [TodoCategory!]!
-  todos: [Todo!]!
+  todoCategoryList: TodoCategoryList!
+  todoList: TodoList!
+}
+
+input RestoreTodoInput {
+  id: String!
 }
 
 type Todo {
@@ -68,21 +101,41 @@ type TodoCategory {
   order: Int!
 }
 
+type TodoCategoryList {
+  itemList: [TodoCategory!]!
+  totalCount: Int!
+}
+
 type TodoImportResult {
   categoryIdMap: [IdMapping!]!
   todoIdMap: [IdMapping!]!
 }
 
+type TodoList {
+  itemList: [Todo!]!
+  totalCount: Int!
+}
+
 enum TodoPriority {
-  high
-  low
-  medium
-  none
+  HIGH
+  LOW
+  MEDIUM
+  NONE
+}
+
+input TrashTodoInput {
+  id: String!
+}
+
+input UpdateTodoCategoryInput {
+  id: String!
+  name: String!
 }
 
 input UpdateTodoInput {
   categoryId: String
   dueDate: String
+  id: String!
   memo: String
   priority: TodoPriority
   title: String

@@ -10,7 +10,7 @@ export const deleteRegularExpenditure: NonNullable<MutationResolvers['deleteRegu
 ) => {
   requireRealUser(_ctx);
 
-  const regularExpenditure = await prisma.regularExpenditure.findUnique({ where: { id: Number(_arg.id) } });
+  const regularExpenditure = await prisma.regularExpenditure.findUnique({ where: { id: Number(_arg.input.id) } });
 
   if (!regularExpenditure) {
     throw new GraphQLError('삭제할 정기 내역이 존재하지 않습니다.', {
@@ -22,11 +22,9 @@ export const deleteRegularExpenditure: NonNullable<MutationResolvers['deleteRegu
   }
 
   try {
-    await prisma.regularExpenditure.delete({
-      where: { id: Number(_arg.id) },
-    });
-    return Number(_arg.id);
+    await prisma.regularExpenditure.delete({ where: { id: regularExpenditure.id } });
+    return true;
   } catch {
-    return -1;
+    return false;
   }
 };

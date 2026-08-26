@@ -13,12 +13,20 @@ export type Scalars = {
   JSON: { input: any; output: any; }
 };
 
+export type DeleteMemoInput = {
+  id: Scalars['String']['input'];
+};
+
 export type ImportMemoInput = {
   clientId: Scalars['String']['input'];
   content: Scalars['JSON']['input'];
   createdAt?: InputMaybe<Scalars['DateTime']['input']>;
   title: Scalars['String']['input'];
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type ImportMemoListInput = {
+  itemList: Array<ImportMemoInput>;
 };
 
 export type Memo = {
@@ -41,6 +49,12 @@ export type MemoImportResult = {
   memoIdMap: Array<MemoIdMapping>;
 };
 
+export type MemoList = {
+  __typename?: 'MemoList';
+  itemList: Array<MemoSummary>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type MemoSummary = {
   __typename?: 'MemoSummary';
   createdAt: Scalars['DateTime']['output'];
@@ -53,36 +67,40 @@ export type Mutation = {
   __typename?: 'Mutation';
   createMemo: Memo;
   deleteMemo: Scalars['Boolean']['output'];
-  importMemos: MemoImportResult;
+  importMemoList: MemoImportResult;
   updateMemo: Memo;
 };
 
 
 export type MutationdeleteMemoArgs = {
-  id: Scalars['String']['input'];
+  input: DeleteMemoInput;
 };
 
 
-export type MutationimportMemosArgs = {
-  memos: Array<ImportMemoInput>;
+export type MutationimportMemoListArgs = {
+  input: ImportMemoListInput;
 };
 
 
 export type MutationupdateMemoArgs = {
-  content?: InputMaybe<Scalars['JSON']['input']>;
-  id: Scalars['String']['input'];
-  title?: InputMaybe<Scalars['String']['input']>;
+  input: UpdateMemoInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  memo: Memo;
-  memos: Array<MemoSummary>;
+  memo?: Maybe<Memo>;
+  memoList: MemoList;
 };
 
 
 export type QuerymemoArgs = {
   id: Scalars['String']['input'];
+};
+
+export type UpdateMemoInput = {
+  content?: InputMaybe<Scalars['JSON']['input']>;
+  id: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -159,31 +177,41 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
-  ImportMemoInput: ImportMemoInput;
+  DeleteMemoInput: DeleteMemoInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  ImportMemoInput: ImportMemoInput;
+  ImportMemoListInput: ImportMemoListInput;
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
   Memo: ResolverTypeWrapper<Memo>;
   MemoIdMapping: ResolverTypeWrapper<MemoIdMapping>;
   MemoImportResult: ResolverTypeWrapper<MemoImportResult>;
+  MemoList: ResolverTypeWrapper<MemoList>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   MemoSummary: ResolverTypeWrapper<MemoSummary>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  UpdateMemoInput: UpdateMemoInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   DateTime: Scalars['DateTime']['output'];
-  ImportMemoInput: ImportMemoInput;
+  DeleteMemoInput: DeleteMemoInput;
   String: Scalars['String']['output'];
+  ImportMemoInput: ImportMemoInput;
+  ImportMemoListInput: ImportMemoListInput;
   JSON: Scalars['JSON']['output'];
   Memo: Memo;
   MemoIdMapping: MemoIdMapping;
   MemoImportResult: MemoImportResult;
+  MemoList: MemoList;
+  Int: Scalars['Int']['output'];
   MemoSummary: MemoSummary;
   Mutation: Record<PropertyKey, never>;
   Boolean: Scalars['Boolean']['output'];
   Query: Record<PropertyKey, never>;
+  UpdateMemoInput: UpdateMemoInput;
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -211,6 +239,11 @@ export type MemoImportResultResolvers<ContextType = any, ParentType extends Reso
   memoIdMap?: Resolver<Array<ResolversTypes['MemoIdMapping']>, ParentType, ContextType>;
 };
 
+export type MemoListResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemoList'] = ResolversParentTypes['MemoList']> = {
+  itemList?: Resolver<Array<ResolversTypes['MemoSummary']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type MemoSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['MemoSummary'] = ResolversParentTypes['MemoSummary']> = {
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -220,14 +253,14 @@ export type MemoSummaryResolvers<ContextType = any, ParentType extends Resolvers
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createMemo?: Resolver<ResolversTypes['Memo'], ParentType, ContextType>;
-  deleteMemo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteMemoArgs, 'id'>>;
-  importMemos?: Resolver<ResolversTypes['MemoImportResult'], ParentType, ContextType, RequireFields<MutationimportMemosArgs, 'memos'>>;
-  updateMemo?: Resolver<ResolversTypes['Memo'], ParentType, ContextType, RequireFields<MutationupdateMemoArgs, 'id'>>;
+  deleteMemo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteMemoArgs, 'input'>>;
+  importMemoList?: Resolver<ResolversTypes['MemoImportResult'], ParentType, ContextType, RequireFields<MutationimportMemoListArgs, 'input'>>;
+  updateMemo?: Resolver<ResolversTypes['Memo'], ParentType, ContextType, RequireFields<MutationupdateMemoArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  memo?: Resolver<ResolversTypes['Memo'], ParentType, ContextType, RequireFields<QuerymemoArgs, 'id'>>;
-  memos?: Resolver<Array<ResolversTypes['MemoSummary']>, ParentType, ContextType>;
+  memo?: Resolver<Maybe<ResolversTypes['Memo']>, ParentType, ContextType, RequireFields<QuerymemoArgs, 'id'>>;
+  memoList?: Resolver<ResolversTypes['MemoList'], ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
@@ -236,6 +269,7 @@ export type Resolvers<ContextType = any> = {
   Memo?: MemoResolvers<ContextType>;
   MemoIdMapping?: MemoIdMappingResolvers<ContextType>;
   MemoImportResult?: MemoImportResultResolvers<ContextType>;
+  MemoList?: MemoListResolvers<ContextType>;
   MemoSummary?: MemoSummaryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

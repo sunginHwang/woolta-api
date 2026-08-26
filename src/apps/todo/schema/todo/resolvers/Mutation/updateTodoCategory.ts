@@ -6,14 +6,15 @@ import { prismaTodo } from '../../../../utils/prismaClient';
 
 export const updateTodoCategory: NonNullable<MutationResolvers['updateTodoCategory']> = async (_parent, _arg, _ctx) => {
   const { userId } = requireRealUser(_ctx);
-  await assertOwnCategory(_arg.id, userId);
+  const { id, name } = _arg.input;
+  await assertOwnCategory(id, userId);
 
-  if (_arg.name.trim().length === 0) {
+  if (name.trim().length === 0) {
     throw new GraphQLError('카테고리 이름을 입력해주세요.', { extensions: { code: 'BAD_REQUEST' } });
   }
 
   return prismaTodo.todoCategory.update({
-    where: { id: _arg.id },
-    data: { name: _arg.name },
+    where: { id },
+    data: { name },
   });
 };

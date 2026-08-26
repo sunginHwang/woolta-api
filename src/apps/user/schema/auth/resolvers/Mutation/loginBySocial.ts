@@ -2,10 +2,15 @@ import { GraphQLError } from 'graphql/error';
 import type { MutationResolvers } from './../../../../generates/types.generated';
 import { setAuthCookie } from '../../../../../../shared/auth';
 import { getSocialUser, getUserWithToken, saveSocialUser } from '../../../../services/UserService';
+import { gqlToDbSocialLoginType } from '../../../../utils/enums';
 
 // 원본 POST /user/login/social: 가입된 유저는 로그인, 미가입이면 자동 회원가입 후 로그인
 export const loginBySocial: NonNullable<MutationResolvers['loginBySocial']> = async (_parent, _arg, _ctx) => {
-  const userInfo = await getSocialUser(_arg.socialId, _arg.loginType);
+  const { input } = _arg;
+  // Map GraphQL UPPER_CASE enum to legacy DB/JWT string
+  const dbLoginType = gqlToDbSocialLoginType(input.loginType);
+
+  const userInfo = await getSocialUser(input.socialId, dbLoginType);
 
   if (userInfo) {
     const userRes = getUserWithToken(userInfo);
@@ -14,11 +19,11 @@ export const loginBySocial: NonNullable<MutationResolvers['loginBySocial']> = as
   }
 
   const savedUser = await saveSocialUser({
-    name: _arg.name,
-    email: _arg.email,
-    imageUrl: _arg.imageUrl,
-    loginType: _arg.loginType,
-    socialId: _arg.socialId,
+    name: input.name,
+    email: input.email,
+    imageUrl: input.imageUrl,
+    loginType: dbLoginType,
+    socialId: input.socialId,
   }).catch(() => null);
 
   if (!savedUser) {

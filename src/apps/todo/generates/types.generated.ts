@@ -14,6 +14,30 @@ export type Scalars = {
   DateTime: { input: Date | string; output: Date | string; }
 };
 
+export type CompleteTodoInput = {
+  id: Scalars['String']['input'];
+  isCompleted: Scalars['Boolean']['input'];
+};
+
+export type CreateTodoCategoryInput = {
+  name: Scalars['String']['input'];
+};
+
+export type CreateTodoInput = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  dueDate?: InputMaybe<Scalars['String']['input']>;
+  priority?: InputMaybe<TodoPriority>;
+  title: Scalars['String']['input'];
+};
+
+export type DeleteTodoCategoryInput = {
+  id: Scalars['String']['input'];
+};
+
+export type DeleteTodoInput = {
+  id: Scalars['String']['input'];
+};
+
 export type IdMapping = {
   __typename?: 'IdMapping';
   from: Scalars['String']['output'];
@@ -42,6 +66,11 @@ export type ImportTodoInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
+export type ImportTodoListInput = {
+  categoryList: Array<ImportTodoCategoryInput>;
+  itemList: Array<ImportTodoInput>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   completeTodo: Todo;
@@ -49,8 +78,8 @@ export type Mutation = {
   createTodoCategory: TodoCategory;
   deleteTodo: Scalars['Boolean']['output'];
   deleteTodoCategory: Scalars['Boolean']['output'];
-  emptyTrash: Scalars['Int']['output'];
-  importTodos: TodoImportResult;
+  emptyTrash: Scalars['Boolean']['output'];
+  importTodoList: TodoImportResult;
   restoreTodo: Todo;
   trashTodo: Todo;
   updateTodo: Todo;
@@ -59,65 +88,62 @@ export type Mutation = {
 
 
 export type MutationcompleteTodoArgs = {
-  id: Scalars['String']['input'];
-  isCompleted: Scalars['Boolean']['input'];
+  input: CompleteTodoInput;
 };
 
 
 export type MutationcreateTodoArgs = {
-  categoryId?: InputMaybe<Scalars['String']['input']>;
-  dueDate?: InputMaybe<Scalars['String']['input']>;
-  priority?: InputMaybe<TodoPriority>;
-  title: Scalars['String']['input'];
+  input: CreateTodoInput;
 };
 
 
 export type MutationcreateTodoCategoryArgs = {
-  name: Scalars['String']['input'];
+  input: CreateTodoCategoryInput;
 };
 
 
 export type MutationdeleteTodoArgs = {
-  id: Scalars['String']['input'];
+  input: DeleteTodoInput;
 };
 
 
 export type MutationdeleteTodoCategoryArgs = {
-  id: Scalars['String']['input'];
+  input: DeleteTodoCategoryInput;
 };
 
 
-export type MutationimportTodosArgs = {
-  categories: Array<ImportTodoCategoryInput>;
-  todos: Array<ImportTodoInput>;
+export type MutationimportTodoListArgs = {
+  input: ImportTodoListInput;
 };
 
 
 export type MutationrestoreTodoArgs = {
-  id: Scalars['String']['input'];
+  input: RestoreTodoInput;
 };
 
 
 export type MutationtrashTodoArgs = {
-  id: Scalars['String']['input'];
+  input: TrashTodoInput;
 };
 
 
 export type MutationupdateTodoArgs = {
-  id: Scalars['String']['input'];
   input: UpdateTodoInput;
 };
 
 
 export type MutationupdateTodoCategoryArgs = {
-  id: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  input: UpdateTodoCategoryInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  todoCategories: Array<TodoCategory>;
-  todos: Array<Todo>;
+  todoCategoryList: TodoCategoryList;
+  todoList: TodoList;
+};
+
+export type RestoreTodoInput = {
+  id: Scalars['String']['input'];
 };
 
 export type Todo = {
@@ -144,21 +170,43 @@ export type TodoCategory = {
   order: Scalars['Int']['output'];
 };
 
+export type TodoCategoryList = {
+  __typename?: 'TodoCategoryList';
+  itemList: Array<TodoCategory>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type TodoImportResult = {
   __typename?: 'TodoImportResult';
   categoryIdMap: Array<IdMapping>;
   todoIdMap: Array<IdMapping>;
 };
 
+export type TodoList = {
+  __typename?: 'TodoList';
+  itemList: Array<Todo>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type TodoPriority =
-  | 'high'
-  | 'low'
-  | 'medium'
-  | 'none';
+  | 'HIGH'
+  | 'LOW'
+  | 'MEDIUM'
+  | 'NONE';
+
+export type TrashTodoInput = {
+  id: Scalars['String']['input'];
+};
+
+export type UpdateTodoCategoryInput = {
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
 
 export type UpdateTodoInput = {
   categoryId?: InputMaybe<Scalars['String']['input']>;
   dueDate?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
   memo?: InputMaybe<Scalars['String']['input']>;
   priority?: InputMaybe<TodoPriority>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -237,36 +285,58 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
-  IdMapping: ResolverTypeWrapper<IdMapping>;
+  CompleteTodoInput: CompleteTodoInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CreateTodoCategoryInput: CreateTodoCategoryInput;
+  CreateTodoInput: CreateTodoInput;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  DeleteTodoCategoryInput: DeleteTodoCategoryInput;
+  DeleteTodoInput: DeleteTodoInput;
+  IdMapping: ResolverTypeWrapper<IdMapping>;
   ImportTodoCategoryInput: ImportTodoCategoryInput;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   ImportTodoInput: ImportTodoInput;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  ImportTodoListInput: ImportTodoListInput;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  RestoreTodoInput: RestoreTodoInput;
   Todo: ResolverTypeWrapper<Omit<Todo, 'priority'> & { priority: ResolversTypes['TodoPriority'] }>;
   TodoCategory: ResolverTypeWrapper<TodoCategory>;
+  TodoCategoryList: ResolverTypeWrapper<TodoCategoryList>;
   TodoImportResult: ResolverTypeWrapper<TodoImportResult>;
-  TodoPriority: ResolverTypeWrapper<'none' | 'low' | 'medium' | 'high'>;
+  TodoList: ResolverTypeWrapper<Omit<TodoList, 'itemList'> & { itemList: Array<ResolversTypes['Todo']> }>;
+  TodoPriority: ResolverTypeWrapper<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>;
+  TrashTodoInput: TrashTodoInput;
+  UpdateTodoCategoryInput: UpdateTodoCategoryInput;
   UpdateTodoInput: UpdateTodoInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  DateTime: Scalars['DateTime']['output'];
-  IdMapping: IdMapping;
+  CompleteTodoInput: CompleteTodoInput;
   String: Scalars['String']['output'];
+  Boolean: Scalars['Boolean']['output'];
+  CreateTodoCategoryInput: CreateTodoCategoryInput;
+  CreateTodoInput: CreateTodoInput;
+  DateTime: Scalars['DateTime']['output'];
+  DeleteTodoCategoryInput: DeleteTodoCategoryInput;
+  DeleteTodoInput: DeleteTodoInput;
+  IdMapping: IdMapping;
   ImportTodoCategoryInput: ImportTodoCategoryInput;
   Int: Scalars['Int']['output'];
   ImportTodoInput: ImportTodoInput;
-  Boolean: Scalars['Boolean']['output'];
+  ImportTodoListInput: ImportTodoListInput;
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
+  RestoreTodoInput: RestoreTodoInput;
   Todo: Todo;
   TodoCategory: TodoCategory;
+  TodoCategoryList: TodoCategoryList;
   TodoImportResult: TodoImportResult;
+  TodoList: Omit<TodoList, 'itemList'> & { itemList: Array<ResolversParentTypes['Todo']> };
+  TrashTodoInput: TrashTodoInput;
+  UpdateTodoCategoryInput: UpdateTodoCategoryInput;
   UpdateTodoInput: UpdateTodoInput;
 };
 
@@ -280,22 +350,22 @@ export type IdMappingResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  completeTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationcompleteTodoArgs, 'id' | 'isCompleted'>>;
-  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationcreateTodoArgs, 'title'>>;
-  createTodoCategory?: Resolver<ResolversTypes['TodoCategory'], ParentType, ContextType, RequireFields<MutationcreateTodoCategoryArgs, 'name'>>;
-  deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteTodoArgs, 'id'>>;
-  deleteTodoCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteTodoCategoryArgs, 'id'>>;
-  emptyTrash?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  importTodos?: Resolver<ResolversTypes['TodoImportResult'], ParentType, ContextType, RequireFields<MutationimportTodosArgs, 'categories' | 'todos'>>;
-  restoreTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationrestoreTodoArgs, 'id'>>;
-  trashTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationtrashTodoArgs, 'id'>>;
-  updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationupdateTodoArgs, 'id' | 'input'>>;
-  updateTodoCategory?: Resolver<ResolversTypes['TodoCategory'], ParentType, ContextType, RequireFields<MutationupdateTodoCategoryArgs, 'id' | 'name'>>;
+  completeTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationcompleteTodoArgs, 'input'>>;
+  createTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationcreateTodoArgs, 'input'>>;
+  createTodoCategory?: Resolver<ResolversTypes['TodoCategory'], ParentType, ContextType, RequireFields<MutationcreateTodoCategoryArgs, 'input'>>;
+  deleteTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteTodoArgs, 'input'>>;
+  deleteTodoCategory?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteTodoCategoryArgs, 'input'>>;
+  emptyTrash?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  importTodoList?: Resolver<ResolversTypes['TodoImportResult'], ParentType, ContextType, RequireFields<MutationimportTodoListArgs, 'input'>>;
+  restoreTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationrestoreTodoArgs, 'input'>>;
+  trashTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationtrashTodoArgs, 'input'>>;
+  updateTodo?: Resolver<ResolversTypes['Todo'], ParentType, ContextType, RequireFields<MutationupdateTodoArgs, 'input'>>;
+  updateTodoCategory?: Resolver<ResolversTypes['TodoCategory'], ParentType, ContextType, RequireFields<MutationupdateTodoCategoryArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  todoCategories?: Resolver<Array<ResolversTypes['TodoCategory']>, ParentType, ContextType>;
-  todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
+  todoCategoryList?: Resolver<ResolversTypes['TodoCategoryList'], ParentType, ContextType>;
+  todoList?: Resolver<ResolversTypes['TodoList'], ParentType, ContextType>;
 };
 
 export type TodoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = {
@@ -320,12 +390,22 @@ export type TodoCategoryResolvers<ContextType = any, ParentType extends Resolver
   order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type TodoCategoryListResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoCategoryList'] = ResolversParentTypes['TodoCategoryList']> = {
+  itemList?: Resolver<Array<ResolversTypes['TodoCategory']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type TodoImportResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoImportResult'] = ResolversParentTypes['TodoImportResult']> = {
   categoryIdMap?: Resolver<Array<ResolversTypes['IdMapping']>, ParentType, ContextType>;
   todoIdMap?: Resolver<Array<ResolversTypes['IdMapping']>, ParentType, ContextType>;
 };
 
-export type TodoPriorityResolvers = EnumResolverSignature<{ high?: any, low?: any, medium?: any, none?: any }, ResolversTypes['TodoPriority']>;
+export type TodoListResolvers<ContextType = any, ParentType extends ResolversParentTypes['TodoList'] = ResolversParentTypes['TodoList']> = {
+  itemList?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type TodoPriorityResolvers = EnumResolverSignature<{ HIGH?: any, LOW?: any, MEDIUM?: any, NONE?: any }, ResolversTypes['TodoPriority']>;
 
 export type Resolvers<ContextType = any> = {
   DateTime?: GraphQLScalarType;
@@ -334,7 +414,9 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   TodoCategory?: TodoCategoryResolvers<ContextType>;
+  TodoCategoryList?: TodoCategoryListResolvers<ContextType>;
   TodoImportResult?: TodoImportResultResolvers<ContextType>;
+  TodoList?: TodoListResolvers<ContextType>;
   TodoPriority?: TodoPriorityResolvers;
 };
 

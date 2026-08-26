@@ -2,7 +2,7 @@ type Account {
   amount: Int!
   createdAt: DateTime!
   currentAmount: Int!
-  deposits: [Deposit!]
+  deposits: [Deposit!]!
   endDate: DateTime!
   id: ID!
   isExpiration: Boolean!
@@ -58,9 +58,29 @@ type AccountBookCategoryImage {
   userId: Int!
 }
 
+type AccountBookCategoryImageList {
+  itemList: [AccountBookCategoryImage!]!
+  totalCount: Int!
+}
+
+type AccountBookCategoryList {
+  itemList: [AccountBookCategory!]!
+  totalCount: Int!
+}
+
 enum AccountBookCategoryType {
-  expenditure
-  income
+  EXPENDITURE
+  INCOME
+}
+
+type AccountBookList {
+  itemList: [AccountBook!]!
+  totalCount: Int!
+}
+
+type AccountList {
+  itemList: [Account!]!
+  totalCount: Int!
 }
 
 type BucketList {
@@ -72,9 +92,9 @@ type BucketList {
   isComplete: Boolean!
   thumbImageUrl: String!
   title: String!
-  todoList: [Todo!]
+  todoList: [BucketListTodo!]!
   updatedAt: DateTime!
-  user: User
+  user: WoolBankUser
   userId: Int!
 }
 
@@ -87,6 +107,96 @@ type BucketListSummary {
   title: String!
   todoCount: Int!
   updatedAt: DateTime!
+}
+
+type BucketListSummaryList {
+  itemList: [BucketListSummary!]!
+  totalCount: Int!
+}
+
+type BucketListTodo {
+  bucketList: BucketList
+  bucketListId: Int!
+  createdAt: DateTime!
+  id: ID!
+  isComplete: Boolean!
+  title: String!
+  updatedAt: DateTime!
+  user: WoolBankUser
+  userId: Int!
+}
+
+input BucketListTodoInput {
+  isComplete: Boolean!
+  title: String!
+}
+
+input CompleteAccountExpirationInput {
+  id: ID!
+}
+
+input CompleteBucketListInput {
+  id: ID!
+}
+
+input CreateAccountBookCategoryInput {
+  accountBookCategoryImageId: Int!
+  name: String!
+  type: AccountBookCategoryType!
+  useStatistic: Boolean!
+}
+
+input CreateAccountBookInput {
+  amount: Int!
+  categoryId: Int!
+  installmentMonth: Int
+  isDisabledBudget: Boolean
+  memo: String
+  registerDateTime: DateTime!
+  scheduledPaymentDay: Int
+  scheduledPaymentType: ScheduledPaymentType
+  title: String!
+  type: AccountBookCategoryType!
+}
+
+input CreateAccountInput {
+  amount: Int!
+  endDate: DateTime!
+  rate: Float!
+  regularTransferDate: Int!
+  savingTypeId: Int!
+  startDate: DateTime!
+  taxType: String!
+  title: String!
+}
+
+input CreateBucketListInput {
+  completeDate: DateTime!
+  description: String!
+  imageUrl: String
+  thumbImageUrl: String
+  title: String!
+  todoList: [BucketListTodoInput!]
+}
+
+input CreateBucketListTodoInput {
+  bucketListId: Int!
+  isComplete: Boolean!
+  title: String!
+}
+
+input CreateDepositInput {
+  accountId: Int!
+  amount: Int!
+  depositDate: DateTime
+}
+
+input CreateRegularExpenditureInput {
+  amount: Int!
+  categoryId: Int!
+  isAutoExpenditure: Boolean!
+  regularDate: Int!
+  title: String!
 }
 
 type CustomRegularExpenditure {
@@ -103,14 +213,31 @@ type CustomRegularExpenditure {
   userId: Int!
 }
 
-type CustomRegularExpenditureResponse {
-  imageUrl: String!
-  list: [CustomRegularExpenditure!]
-  name: String!
-  type: AccountBookCategoryType!
+scalar DateTime
+
+input DeleteAccountBookCategoryInput {
+  id: ID!
 }
 
-scalar DateTime
+input DeleteAccountBookInput {
+  id: ID!
+}
+
+input DeleteAccountInput {
+  id: ID!
+}
+
+input DeleteBucketListInput {
+  id: ID!
+}
+
+input DeleteBucketListTodoInput {
+  todoId: ID!
+}
+
+input DeleteRegularExpenditureInput {
+  id: ID!
+}
 
 type Deposit {
   account: Account
@@ -132,41 +259,41 @@ type MainInfo {
 }
 
 type Mutation {
-  completeAccountExpiration(id: ID!): Int!
-  completeBucketList(id: ID!): Int!
-  createAccount(amount: Int!, endDate: DateTime!, rate: Float!, regularTransferDate: Int!, savingTypeId: Int!, startDate: DateTime!, taxType: String!, title: String!): Int!
-  createAccountBook(amount: Int!, categoryId: Int!, installmentMonth: Int, isDisabledBudget: Boolean, memo: String, registerDateTime: DateTime!, scheduledPaymentDay: Int, scheduledPaymentType: ScheduledPaymentType, title: String!, type: AccountBookCategoryType!): AccountBook!
-  createAccountBookCategory(accountBookCategoryImageId: Int!, name: String!, type: AccountBookCategoryType!, useStatistic: Boolean!): AccountBookCategory!
-  createBucketList(completeDate: DateTime!, description: String!, imageUrl: String, thumbImageUrl: String, title: String!, todoList: [TodoInput!]): Int!
-  createDeposit(accountId: Int!, amount: Int!, depositDate: DateTime): Deposit!
-  createRegularExpenditure(amount: Int!, categoryId: Int!, isAutoExpenditure: Boolean!, regularDate: Int!, title: String!): Int!
-  createTodo(bucketListId: Int!, isComplete: Boolean!, title: String!): Int!
-  deleteAccount(id: ID!): Boolean!
-  deleteAccountBook(id: ID!): Int!
-  deleteAccountBookCategory(id: ID!): Boolean!
-  deleteBucketList(id: ID!): Boolean!
-  deleteRegularExpenditure(id: ID!): Int!
-  deleteTodo(todoId: ID!): Boolean!
-  updateAccountBook(amount: Int, categoryId: Int, id: ID!, isDisabledBudget: Boolean, memo: String, registerDateTime: DateTime, title: String, type: AccountBookCategoryType): AccountBook!
-  updateBucketList(completeDate: DateTime!, description: String!, id: ID!, imageUrl: String, thumbImageUrl: String, title: String!): Int!
-  updateTodoComplete(isComplete: Boolean!, todoId: ID!): Todo!
+  completeAccountExpiration(input: CompleteAccountExpirationInput!): Boolean!
+  completeBucketList(input: CompleteBucketListInput!): Boolean!
+  createAccount(input: CreateAccountInput!): Account!
+  createAccountBook(input: CreateAccountBookInput!): AccountBook!
+  createAccountBookCategory(input: CreateAccountBookCategoryInput!): AccountBookCategory!
+  createBucketList(input: CreateBucketListInput!): BucketList!
+  createBucketListTodo(input: CreateBucketListTodoInput!): BucketListTodo!
+  createDeposit(input: CreateDepositInput!): Deposit!
+  createRegularExpenditure(input: CreateRegularExpenditureInput!): RegularExpenditure!
+  deleteAccount(input: DeleteAccountInput!): Boolean!
+  deleteAccountBook(input: DeleteAccountBookInput!): Boolean!
+  deleteAccountBookCategory(input: DeleteAccountBookCategoryInput!): Boolean!
+  deleteBucketList(input: DeleteBucketListInput!): Boolean!
+  deleteBucketListTodo(input: DeleteBucketListTodoInput!): Boolean!
+  deleteRegularExpenditure(input: DeleteRegularExpenditureInput!): Boolean!
+  updateAccountBook(input: UpdateAccountBookInput!): AccountBook!
+  updateBucketList(input: UpdateBucketListInput!): BucketList!
+  updateBucketListTodoComplete(input: UpdateBucketListTodoCompleteInput!): BucketListTodo!
 }
 
 type Query {
   account(id: ID!): Account
   accountBook(id: ID!): AccountBook
-  accountBookCategoryList: [AccountBookCategory!]
-  accountBookImageList: [AccountBookCategoryImage!]
-  accountBookList(dateTime: DateTime!): [AccountBook!]
-  accountBookStatisticList(endDate: DateTime!, startDate: DateTime!, type: AccountBookCategoryType!): [Statistic!]
-  accountLastUpdatedDate: DateTime!
-  account_list(limit: Int): [Account!]
-  bucketList(limit: Int): [BucketListSummary!]!
-  bucketListDetail(id: ID!): BucketList
-  bucketListItemLastUpdatedDate(id: ID!): DateTime!
-  bucketListLastUpdatedDate: DateTime!
+  accountBookCategoryImageList: AccountBookCategoryImageList!
+  accountBookCategoryList: AccountBookCategoryList!
+  accountBookList(dateTime: DateTime!): AccountBookList!
+  accountList(limitCount: Int): AccountList!
+  bucketList(id: ID!): BucketList
+  bucketListSummaryList(limitCount: Int): BucketListSummaryList!
+  getAccountBookStatisticList(endDate: DateTime!, startDate: DateTime!, type: AccountBookCategoryType!): StatisticList!
+  getAccountLastUpdatedDate: DateTime!
+  getBucketListItemLastUpdatedDate(id: ID!): DateTime!
+  getBucketListLastUpdatedDate: DateTime!
   mainInfo: MainInfo!
-  regularExpenditureList(limit: Int): [CustomRegularExpenditureResponse!]
+  regularExpenditureGroupList(limitCount: Int): RegularExpenditureGroupList!
 }
 
 type RegularExpenditure {
@@ -182,6 +309,18 @@ type RegularExpenditure {
   userId: Int!
 }
 
+type RegularExpenditureGroup {
+  imageUrl: String!
+  list: [CustomRegularExpenditure!]!
+  name: String!
+  type: AccountBookCategoryType!
+}
+
+type RegularExpenditureGroupList {
+  itemList: [RegularExpenditureGroup!]!
+  totalCount: Int!
+}
+
 type SavingType {
   createdAt: DateTime!
   id: ID!
@@ -191,15 +330,15 @@ type SavingType {
 }
 
 enum ScheduledPaymentType {
-  installment
-  repeat
+  INSTALLMENT
+  REPEAT
 }
 
 type Statistic {
   amount: Int!
   categoryId: String!
   categoryName: String!
-  list: [StatisticItem!]
+  list: [StatisticItem!]!
   percentage: Float!
   useStatistic: Boolean!
 }
@@ -210,24 +349,45 @@ type StatisticItem {
   title: String!
 }
 
-type Todo {
-  bucketList: BucketList
-  bucketListId: Int!
+type StatisticList {
+  itemList: [Statistic!]!
+  totalCount: Int!
+}
+
+input UpdateAccountBookInput {
+  amount: Int
+  categoryId: Int
+  id: ID!
+  isDisabledBudget: Boolean
+  memo: String
+  registerDateTime: DateTime
+  title: String
+  type: AccountBookCategoryType
+}
+
+input UpdateBucketListInput {
+  completeDate: DateTime!
+  description: String!
+  id: ID!
+  imageUrl: String
+  thumbImageUrl: String
+  title: String!
+}
+
+input UpdateBucketListTodoCompleteInput {
+  isComplete: Boolean!
+  todoId: ID!
+}
+
+type UserShareCode {
   createdAt: DateTime!
   id: ID!
-  isComplete: Boolean!
-  title: String!
+  shareCode: String!
   updatedAt: DateTime!
-  user: User
   userId: Int!
 }
 
-input TodoInput {
-  isComplete: Boolean!
-  title: String!
-}
-
-type User {
+type WoolBankUser {
   accountBookCategories: [AccountBookCategory!]!
   accountBookCategoryImages: [AccountBookCategoryImage!]!
   accountBooks: [AccountBook!]!
@@ -239,18 +399,9 @@ type User {
   id: ID!
   loginType: String!
   name: String!
-  password: String!
   profileImg: String!
   regularExpenditures: [RegularExpenditure!]!
   socialId: String!
-  todos: [Todo!]!
+  todos: [BucketListTodo!]!
   updatedAt: DateTime!
-}
-
-type UserShareCode {
-  createdAt: DateTime!
-  id: ID!
-  shareCode: String!
-  updatedAt: DateTime!
-  userId: Int!
 }

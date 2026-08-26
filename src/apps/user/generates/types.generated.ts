@@ -19,10 +19,26 @@ export type AuthTokens = {
   refreshToken: Scalars['String']['output'];
 };
 
+export type CheckRefreshTokenInput = {
+  refreshToken: Scalars['String']['input'];
+};
+
 export type CheckTokenResult = {
   __typename?: 'CheckTokenResult';
   authTokens: AuthTokens;
   userInfo: UserInfo;
+};
+
+export type LoginByShareCodeInput = {
+  shareCode: Scalars['String']['input'];
+};
+
+export type LoginBySocialInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  imageUrl: Scalars['String']['input'];
+  loginType: SocialLoginType;
+  name?: InputMaybe<Scalars['String']['input']>;
+  socialId: Scalars['String']['input'];
 };
 
 export type LoginResult = {
@@ -34,44 +50,40 @@ export type LoginResult = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  checkRefreshToken: AuthTokens;
   loginByShareCode: LoginResult;
   loginBySocial: LoginResult;
   logout: Scalars['Boolean']['output'];
-  refreshTokenCheck: AuthTokens;
   upsertShareCode: Scalars['String']['output'];
 };
 
 
+export type MutationcheckRefreshTokenArgs = {
+  input: CheckRefreshTokenInput;
+};
+
+
 export type MutationloginByShareCodeArgs = {
-  shareCode: Scalars['String']['input'];
+  input: LoginByShareCodeInput;
 };
 
 
 export type MutationloginBySocialArgs = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  imageUrl: Scalars['String']['input'];
-  loginType: SocialLoginType;
-  name?: InputMaybe<Scalars['String']['input']>;
-  socialId: Scalars['String']['input'];
-};
-
-
-export type MutationrefreshTokenCheckArgs = {
-  refreshToken: Scalars['String']['input'];
+  input: LoginBySocialInput;
 };
 
 export type Query = {
   __typename?: 'Query';
-  accessCheck: Scalars['Int']['output'];
+  checkAccess: Scalars['Int']['output'];
   checkToken: CheckTokenResult;
+  getShareCode: Scalars['String']['output'];
   me: UserInfo;
-  shareCode: Scalars['String']['output'];
 };
 
 export type SocialLoginType =
-  | 'facebook'
-  | 'google'
-  | 'kakaoTalk';
+  | 'FACEBOOK'
+  | 'GOOGLE'
+  | 'KAKAO_TALK';
 
 export type UserInfo = {
   __typename?: 'UserInfo';
@@ -161,14 +173,17 @@ export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = 
 export type ResolversTypes = {
   AuthTokens: ResolverTypeWrapper<AuthTokens>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  CheckRefreshTokenInput: CheckRefreshTokenInput;
   CheckTokenResult: ResolverTypeWrapper<CheckTokenResult>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']['output']>;
+  LoginByShareCodeInput: LoginByShareCodeInput;
+  LoginBySocialInput: LoginBySocialInput;
   LoginResult: ResolverTypeWrapper<LoginResult>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
-  SocialLoginType: ResolverTypeWrapper<'facebook' | 'kakaoTalk' | 'google'>;
+  SocialLoginType: ResolverTypeWrapper<'FACEBOOK' | 'KAKAO_TALK' | 'GOOGLE'>;
   UserInfo: ResolverTypeWrapper<UserInfo>;
 };
 
@@ -176,8 +191,11 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthTokens: AuthTokens;
   String: Scalars['String']['output'];
+  CheckRefreshTokenInput: CheckRefreshTokenInput;
   CheckTokenResult: CheckTokenResult;
   DateTime: Scalars['DateTime']['output'];
+  LoginByShareCodeInput: LoginByShareCodeInput;
+  LoginBySocialInput: LoginBySocialInput;
   LoginResult: LoginResult;
   Mutation: Record<PropertyKey, never>;
   Boolean: Scalars['Boolean']['output'];
@@ -207,21 +225,21 @@ export type LoginResultResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  loginByShareCode?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginByShareCodeArgs, 'shareCode'>>;
-  loginBySocial?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginBySocialArgs, 'imageUrl' | 'loginType' | 'socialId'>>;
+  checkRefreshToken?: Resolver<ResolversTypes['AuthTokens'], ParentType, ContextType, RequireFields<MutationcheckRefreshTokenArgs, 'input'>>;
+  loginByShareCode?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginByShareCodeArgs, 'input'>>;
+  loginBySocial?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationloginBySocialArgs, 'input'>>;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  refreshTokenCheck?: Resolver<ResolversTypes['AuthTokens'], ParentType, ContextType, RequireFields<MutationrefreshTokenCheckArgs, 'refreshToken'>>;
   upsertShareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  accessCheck?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  checkAccess?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   checkToken?: Resolver<ResolversTypes['CheckTokenResult'], ParentType, ContextType>;
+  getShareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   me?: Resolver<ResolversTypes['UserInfo'], ParentType, ContextType>;
-  shareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type SocialLoginTypeResolvers = EnumResolverSignature<{ facebook?: any, google?: any, kakaoTalk?: any }, ResolversTypes['SocialLoginType']>;
+export type SocialLoginTypeResolvers = EnumResolverSignature<{ FACEBOOK?: any, GOOGLE?: any, KAKAO_TALK?: any }, ResolversTypes['SocialLoginType']>;
 
 export type UserInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserInfo'] = ResolversParentTypes['UserInfo']> = {
   authType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

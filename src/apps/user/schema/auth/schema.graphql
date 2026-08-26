@@ -3,10 +3,11 @@ type Mutation
 scalar DateTime
 
 # 원본 woolbankApi SocialType: 'kakaoTalk' | 'facebook' | 'google'
+# GraphQL 경계에서만 UPPER_CASE 사용; DB/JWT는 기존 소문자/camel 값 유지
 enum SocialLoginType {
-  facebook
-  kakaoTalk
-  google
+  FACEBOOK
+  KAKAO_TALK
+  GOOGLE
 }
 
 type UserInfo {
@@ -37,17 +38,33 @@ type CheckTokenResult {
   authTokens: AuthTokens!
 }
 
-extend type Query {
-  me: UserInfo!
-  accessCheck: Int!
-  checkToken: CheckTokenResult!
+input LoginBySocialInput {
+  name: String
+  email: String
+  imageUrl: String!
+  loginType: SocialLoginType!
+  socialId: String!
+}
+
+input LoginByShareCodeInput {
   shareCode: String!
 }
 
+input CheckRefreshTokenInput {
+  refreshToken: String!
+}
+
+extend type Query {
+  me: UserInfo!
+  checkAccess: Int!
+  checkToken: CheckTokenResult!
+  getShareCode: String!
+}
+
 extend type Mutation {
-  loginBySocial(name: String, email: String, imageUrl: String!, loginType: SocialLoginType!, socialId: String!): LoginResult!
-  loginByShareCode(shareCode: String!): LoginResult!
+  loginBySocial(input: LoginBySocialInput!): LoginResult!
+  loginByShareCode(input: LoginByShareCodeInput!): LoginResult!
   logout: Boolean!
-  refreshTokenCheck(refreshToken: String!): AuthTokens!
+  checkRefreshToken(input: CheckRefreshTokenInput!): AuthTokens!
   upsertShareCode: String!
 }

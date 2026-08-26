@@ -1,13 +1,14 @@
 import { GraphQLError } from 'graphql/error';
 import type { Todo as PrismaTodo } from '../../../../prisma/generated/todo/client';
-import type { Todo, TodoPriority, TodoImportResult } from '../generates/types.generated';
+import type { Todo, TodoImportResult } from '../generates/types.generated';
 import type { ImportTodoCategoryInput, ImportTodoInput } from '../generates/types.generated';
 import { prismaTodo } from '../utils/prismaClient';
+import { priorityToDb, priorityToGql } from '../utils/enums';
 
-// priority 는 DB 에 문자열로 저장 — GraphQL enum 으로 좁혀서 반환
+// priority 는 DB 에 소문자 문자열로 저장 — GraphQL 경계에서 UPPER_CASE 로 변환
 export const toTodo = (todo: PrismaTodo): Todo => ({
   ...todo,
-  priority: todo.priority as TodoPriority,
+  priority: priorityToGql(todo.priority),
 });
 
 export const getOwnTodo = async (id: string, userId: number) => {
@@ -74,7 +75,7 @@ export const importTodos = async (
           memo: todo.memo,
           dueDate: todo.dueDate ?? null,
           categoryId: todo.categoryClientId ? categoryIds.get(todo.categoryClientId)! : null,
-          priority: todo.priority,
+          priority: priorityToDb(todo.priority), // GQL UPPER_CASE → DB 소문자
           isCompleted: todo.isCompleted,
           completedAt: todo.completedAt ?? null,
           deletedAt: todo.deletedAt ?? null,
