@@ -6,8 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev              # dev server (tsx watch, entry: src/app.ts, port 4000)
-npm run codegenAll       # graphql-codegen for all domains
+npm run codegenAll       # graphql-codegen for all domains + merged FE schema (mergeSchema)
 npm run codegen<Domain>  # codegen for one domain: Blog / WoolBank / User / Todo / Memo / Article
+npm run mergeSchema      # merge all domain SDLs into schema.generated.graphqls (repo root, for FE codegen)
 npx prisma generate --schema=prisma/schema<Domain>.prisma  # regenerate one domain's Prisma client
 ```
 
@@ -33,7 +34,13 @@ A single Express app (`src/app.ts`) hosts **six independent GraphQL domains**, e
 | memo | `/memo/graphql` | `src/apps/memo/` | `prisma/schemaMemo.prisma` → `prisma/generated/memo` |
 | article | `/article/graphql` | `src/apps/article/` | `prisma/schemaArticle.prisma` → `prisma/generated/article` |
 
-The todo/memo/article domains (woolta dashboard apps, spec: `../woolta/docs/api-spec-todo-memo-article.md`) share the `dashboard` DB via `DASHBOARD_DATABASE_URL`. Unlike the legacy-mapped domains, their tables were created by `scripts/dashboardDdl.sql` (plain SQL — never `prisma db push`, which risks dropping the other domains' tables in the shared DB). All their resolvers use `requireRealUser`, ids are server-issued UUIDs, and each domain has a bulk-import mutation (`importTodos`/`importMemos`/`importArticles`) for the one-time localStorage migration that returns clientId→server-id mappings.
+The todo/memo/article domains (woolta dashboard apps, spec: `../woolta/docs/api-spec-todo-memo-article.md`) share the `dashboard` DB via `DASHBOARD_DATABASE_URL`. Unlike the legacy-mapped domains, their tables were created by `scripts/dashboardDdl.sql` (plain SQL — never `prisma db push`, which risks dropping the other domains' tables in the shared DB). All their resolvers use `requireRealUser`, ids are server-issued UUIDs, and each domain has a bulk-import mutation (`importTodoList`/`importMemoList`/`importArticleList`) for the one-time localStorage migration that returns clientId→server-id mappings.
+
+### GraphQL conventions & merged FE schema
+
+All domain schemas follow the Croquis GraphQL style guide **minus snake_case** (see `docs/ARCHITECTURE.md` §4.6 for the full rules): single-model queries are the camelCase model name returning a nullable type; list queries are `<model>List` returning a `<Model>List { totalCount, itemList }` wrapper; non-model/special queries and all mutations are verb-first camelCase; every mutation with arguments takes a single `input: <MutationName>Input!`; mutations return a model or `Boolean!` (never bare `Int`); arrays in return types are `[X!]!`; enum values are UPPER_CASE with bidirectional DB mapping in each domain's `utils/enums.ts` (DB keeps the original lowercase/camel values — critical for `SocialLoginType`, whose legacy strings `facebook|kakaoTalk|google` must reach the DB and JWT `loginType` unchanged).
+
+`npm run mergeSchema` (chained at the end of `codegenAll`, script: `scripts/mergeSchema.ts`) merges the six per-domain `generates/schema.generated.graphqls` into root-level **`schema.generated.graphqls`** — the single schema the FE points its codegen at. It fails the build on any cross-domain Query/Mutation-field or type-name collision, so **type and root-field names must stay unique across domains** (that's why woolBank uses `BucketListTodo`/`WoolBankUser`/`createBucketListTodo` instead of `Todo`/`User`/`createTodo`). It is a build artifact only; runtime still serves six separate endpoints.
 
 Keep domains separate — never import across `src/apps/*` boundaries, and always use each domain's own Prisma client (`src/apps/<domain>/utils/prismaClient.ts`). The one shared layer is `src/shared/auth/`.
 

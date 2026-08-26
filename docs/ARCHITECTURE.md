@@ -96,6 +96,21 @@ Node 24 (`.nvmrc`) · **ESM**(`"type": "module"`) · TypeScript 6 · dev 러너 
 
 ESM 주의: CJS 패키지의 named import는 tsc를 통과해도 런타임에 실패할 수 있다(jsonwebtoken, lodash는 default import 후 구조분해). 새 CJS 의존성 추가 시 반드시 부팅 확인.
 
+## 4.6 GraphQL 스타일 가이드 (크로키 가이드, snake_case 제외 적용 — 2026-08)
+
+전 도메인 스키마가 크로키닷컴 GraphQL 스타일 가이드를 따르되 snake_case 네이밍만 제외한다(camelCase 사용). 새 query/mutation/타입 추가 시 반드시 준수:
+
+- **단일 모델 query**: 모델명 camelCase, 반환 **nullable** — 못 찾으면 에러가 아니라 null (예: `post(id: ID!): Post`, `bucketList(id: ID!): BucketList`).
+- **모델 배열 query**: `<model>List` 이름 + `<Model>List { totalCount: Int!, itemList: [<Model>!]! }` 래퍼 반환. totalCount는 필터 반영·pagination 무시. 래퍼는 루트 query 전용 — 중첩 필드는 단순 배열 유지.
+- **비모델/특수조건 query와 모든 mutation**: 동사 시작 lowerCamelCase (예: `getAccountLastUpdatedDate`, `getRecentPostList`). 집계는 가상 모델 query 허용 (`mainInfo`).
+- **mutation 입력**: 인자가 있으면 단일 `input: <MutationName의 PascalCase>Input!`. 반환은 모델 또는 `Boolean!` — bare `Int` 반환 금지.
+- **nullable**: 반환 배열은 항상 `[X!]!`(빈 배열 반환), Boolean은 non-null.
+- **enum 값 UPPER_CASE** + 도메인별 `utils/enums.ts`에서 DB 원본 값과 양방향 매핑. Prisma/DB에는 항상 원본 소문자·camel 값만 전달. 특히 `SocialLoginType`은 DB와 JWT `loginType`에 레거시 문자열(`facebook|kakaoTalk|google`)이 그대로 들어가야 레거시 woolbankApi 토큰과 호환된다.
+- **pagination 인자명**: `limitCount` / `skipCount`.
+- **크로스 도메인 이름 유일성**: 타입명과 Query/Mutation 필드명은 6개 도메인 전체에서 유일해야 한다(통합 스키마 병합 시 충돌 검사로 강제). 그래서 woolBank는 `BucketListTodo` / `WoolBankUser` / `createBucketListTodo` 등 도메인 한정 이름을 쓴다. woolBank의 `WoolBankUser`는 보안상 `password` 필드를 SDL에 노출하지 않는다.
+
+**통합 FE 스키마**: `npm run mergeSchema`(`scripts/mergeSchema.ts`, `codegenAll` 마지막에 자동 실행)가 6개 도메인의 `generates/schema.generated.graphqls`를 루트 `schema.generated.graphqls` 하나로 병합한다. FE는 이 파일 하나를 codegen 입력으로 쓴다. 병합 시 도메인 간 타입명/루트 필드명 충돌이 있으면 실패한다(scalar는 이름 기준 중복 제거). 런타임 서빙과는 무관한 빌드 산출물이다.
+
 ## 5. Prisma 컨벤션
 
 - **마이그레이션 없음** — 레거시 테이블은 Prisma가 매핑만 하고, 신규 테이블(dashboard DB)은 SQL DDL 스크립트(`scripts/dashboardDdl.sql`)로 만든 뒤 매핑한다. `prisma db push`는 쓰지 않는다(한 DB를 여러 스키마가 공유해 타 도메인 테이블 drop 위험). 스키마 작성/수정 시 실 DB에 `prisma db pull`을 스크래치 파일로 떠서 대조 후 확정한다.
@@ -104,7 +119,7 @@ ESM 주의: CJS 패키지의 named import는 tsc를 통과해도 런타임에 �
 - boolean 컬럼이 tinyint(4)여도 `Boolean` 매핑 정상 동작 (실데이터 검증 완료).
 - 클라이언트 출력은 `prisma/generated/<domain>` 고정. 스키마 수정 후 `npx prisma generate --schema=prisma/schema<Domain>.prisma`.
 - **Prisma 7**: generator는 `prisma-client`(TypeScript 소스 생성), import는 `<output>/client` 단일 entrypoint(모델 타입·Prisma 네임스페이스 포함). datasource 블록에 `url` 금지 — 접속 문자열은 각 도메인 `utils/prismaClient.ts`에서 `new PrismaClient({ adapter: new PrismaMariaDb(env) })`로 런타임 주입.
-- **GraphQL 관계 필드는 nullable로**: codegen 타입이 non-null 관계를 재귀적으로 요구해 include 부담이 커지므로, 응답에 항상 싣지 않는 관계(`Deposit.account`, `Todo.user` 등)는 SDL에서 nullable로 선언하고 리졸버는 필요한 include만 한다.
+- **GraphQL 관계 필드는 nullable로**: codegen 타입이 non-null 관계를 재귀적으로 요구해 include 부담이 커지므로, 응답에 항상 싣지 않는 관계(`Deposit.account`, `BucketListTodo.user` 등)는 SDL에서 nullable로 선언하고 리졸버는 필요한 include만 한다.
 
 ## 6. GraphQL로 옮기지 않는 것 (REST 유지)
 

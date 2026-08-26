@@ -1,6 +1,3 @@
-apps/**/api/*.ts
-apps/**/api2/*.ts
-static
-tools/external-schemas
-
-/.nx/cache
+src/apps/*/generates
+prisma/generated
+schema.generated.graphqls
