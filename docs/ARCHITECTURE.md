@@ -84,8 +84,9 @@ user 도메인 API: `loginBySocial`(미가입 시 자동 회원가입 — passwo
 
 ## 4. 리졸버/서비스 컨벤션
 
-- **에러**: `GraphQLError(한글 메시지, { extensions: { code } })`. code는 `UNAUTHENTICATED` | `FORBIDDEN` | `NOT_FOUND` | `BAD_REQUEST` 등. 레거시의 한글 메시지를 그대로 보존한다 ("존재 하지 않는 항목 카테고리 입니다." 등).
-- **서비스 레이어**: 2개 이상 리졸버가 공유하거나 트랜잭션이 필요한 로직은 `services/*.ts`로. 리졸버는 인증 → 검증 → 서비스 호출 → 매핑만.
+- **레이어 규율 (2026-08 확립)**: 리졸버는 ① 인증 가드(`requireAuth`/`requireRealUser` — 인증은 리졸버에서만, userId는 평범한 인자로 전달) → ② `_arg.input` 구조분해 + `gqlToDb*` enum 변환 → ③ **단일 서비스 호출**(조회 조립은 서비스 여러 개 `Promise.all` 허용) → ④ `toGql*` 매핑, 이 4단계만 갖는다. **Prisma 접근·`$transaction`·다단계 비즈니스 로직은 전부 `services/*.ts` 소유**(export 함수 모듈, 트랜잭션 경계 = 서비스 함수 1개). 리졸버에서 `utils/prismaClient` import 금지.
+- **에러**: 비즈니스 코드는 `src/shared/errors.ts`의 도메인 에러를 던진다 — `ValidationError`(BAD_REQUEST) | `NotFoundError` | `UnauthenticatedError` | `ForbiddenError` | `ConflictError`, 비표준 코드는 `AppError(message, code, detail?)`. `GraphQLError` 직접 사용 금지. GraphQL 변환은 유일한 경계인 `src/shared/apollo.ts`의 `formatError`(app.ts의 모든 ApolloServer에 배선)가 담당하며 `detail`은 응답의 `extensions.myExtension`으로 나간다. 레거시의 한글 메시지를 그대로 보존한다 ("존재 하지 않는 항목 카테고리 입니다." 등).
+- **서비스 레이어**: 2개 이상 리졸버가 공유하거나 트랜잭션이 필요한 로직은 `services/*.ts`로. 서비스는 GraphQL 에러를 모른다. enum 변환은 리졸버 경계에서 하는 것이 기본(woolBank 방식)이며, 도메인 매퍼가 서비스 안에서 일괄 변환하는 것도 허용(todo의 toTodo 방식) — 어느 쪽이든 Prisma에는 DB 원본 값만 전달한다. 생성된 types.generated 타입을 DTO로 재사용하는 것은 허용.
 - **트랜잭션**: 다중 쓰기는 반드시 `prisma.$transaction` (예: 입금 생성 + 계좌 잔액 갱신, 버킷 삭제 + 투두 삭제, 가계부 생성 + 정기지출 동시 생성).
 - **부수효과 패턴**: fire-and-forget은 `.catch(log)`로 요청 응답과 분리 (예: 포스트 생성 시 웹푸시).
 - **PrismaClient**: 도메인당 1개 싱글턴(`utils/prismaClient.ts`)만 사용. 파일마다 `new PrismaClient()` 금지.

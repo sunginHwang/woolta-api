@@ -71,7 +71,11 @@ Full migration of the legacy `../woolbankApi` (Koa REST): account book (with ins
 
 ### Errors
 
-Resolvers throw `GraphQLError` (from `graphql/error`) with `extensions: { code, myExtension }` for expected failures — follow that pattern rather than returning error payloads.
+Business code (resolvers, services, middlewares) throws **domain errors from `src/shared/errors.ts`** (`ValidationError`/`NotFoundError`/`UnauthenticatedError`/`ForbiddenError`/`ConflictError`, or `AppError(message, code, detail?)` for non-standard codes) — never `GraphQLError` and never error payloads. The single GraphQL boundary `src/shared/apollo.ts` (`formatError`, wired into every ApolloServer in `app.ts`) converts them to `extensions: { code, myExtension }` responses; `detail` becomes `myExtension`.
+
+### Layering rules
+
+Resolvers must contain only: ① auth guard (`requireAuth`/`requireRealUser` — identity stays in the resolver, pass `userId` down) → ② `_arg.input` unpacking + `gqlToDb*` enum conversion → ③ a single service call (or a `Promise.all` of service calls for read composition) → ④ `toGql*` response mapping. **Prisma access, `$transaction`, and multi-step business logic live only in `services/*.ts`** (function modules taking `userId` as a plain arg; one transaction = one service function). Never import `utils/prismaClient` from a resolver.
 
 ## Workspace context
 
