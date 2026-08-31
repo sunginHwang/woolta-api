@@ -1,14 +1,15 @@
-import { GraphQLError } from 'graphql/error';
 import type { Article as PrismaArticle } from '../../../../prisma/generated/article/client';
 import type {
   Article,
   ArticleImportResult,
   ArticleSeo,
+  ArticleSeoInput,
   ImportArticleCategoryInput,
   ImportArticleInput,
   ImportCurationInput,
   WeeklyCuration,
 } from '../generates/types.generated';
+import { ValidationError, NotFoundError, ConflictError } from '../../../shared/errors';
 import { prismaArticle } from '../utils/prismaClient';
 
 // 클라이언트 WEEKLY_CURATION_LIMIT (libs/article-curations constants) 와 동일
@@ -19,7 +20,7 @@ const WEEK_KEY_REGEX = /^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/;
 
 export const assertWeekKey = (weekKey: string) => {
   if (!WEEK_KEY_REGEX.test(weekKey)) {
-    throw new GraphQLError('올바르지 않은 주차 키 형식입니다.', { extensions: { code: 'BAD_REQUEST' } });
+    throw new ValidationError('올바르지 않은 주차 키 형식입니다.');
   }
 };
 
@@ -41,7 +42,7 @@ export const normalizeArticleUrl = (rawUrl: string): string | null => {
 export const normalizeUrlOrThrow = (rawUrl: string) => {
   const normalized = normalizeArticleUrl(rawUrl);
   if (!normalized) {
-    throw new GraphQLError('유효하지 않은 URL 입니다.', { extensions: { code: 'BAD_REQUEST' } });
+    throw new ValidationError('유효하지 않은 URL 입니다.');
   }
   return normalized;
 };
@@ -52,7 +53,7 @@ export const assertNoDuplicateUrl = async (userId: number, normalizedUrl: string
     where: { userId, normalizedUrl, ...(excludeId ? { id: { not: excludeId } } : {}) },
   });
   if (duplicate) {
-    throw new GraphQLError('이미 등록된 아티클입니다.', { extensions: { code: 'CONFLICT' } });
+    throw new ConflictError('이미 등록된 아티클입니다.');
   }
 };
 
@@ -65,7 +66,7 @@ export const toArticle = (article: PrismaArticle): Article => ({
 export const getOwnArticle = async (id: string, userId: number) => {
   const article = await prismaArticle.article.findFirst({ where: { id, userId } });
   if (!article) {
-    throw new GraphQLError('존재하지 않는 아티클입니다.', { extensions: { code: 'NOT_FOUND' } });
+    throw new NotFoundError('존재하지 않는 아티클입니다.');
   }
   return article;
 };
@@ -73,7 +74,7 @@ export const getOwnArticle = async (id: string, userId: number) => {
 export const assertOwnArticleCategory = async (categoryId: string, userId: number) => {
   const category = await prismaArticle.articleCategory.findFirst({ where: { id: categoryId, userId } });
   if (!category) {
-    throw new GraphQLError('존재하지 않는 카테고리입니다.', { extensions: { code: 'NOT_FOUND' } });
+    throw new NotFoundError('존재하지 않는 카테고리입니다.');
   }
   return category;
 };
@@ -128,9 +129,7 @@ export const importArticles = async (
     for (const article of articles) {
       const categoryId = categoryIds.get(article.categoryClientId);
       if (!categoryId) {
-        throw new GraphQLError('이관 데이터의 카테고리 참조가 올바르지 않습니다.', {
-          extensions: { code: 'BAD_REQUEST' },
-        });
+        throw new ValidationError('이관 데이터의 카테고리 참조가 올바르지 않습니다.');
       }
       const created = await tx.article.create({
         data: {
@@ -154,9 +153,7 @@ export const importArticles = async (
       for (const clientId of clientIds) {
         const articleId = articleIds.get(clientId);
         if (!articleId) {
-          throw new GraphQLError('이관 데이터의 큐레이션 아티클 참조가 올바르지 않습니다.', {
-            extensions: { code: 'BAD_REQUEST' },
-          });
+          throw new ValidationError('이관 데이터의 큐레이션 아티클 참조가 올바르지 않습니다.');
         }
         await tx.articleCuration.create({
           data: { userId, weekKey: curation.weekKey, articleId },
@@ -166,4 +163,181 @@ export const importArticles = async (
 
     return { categoryIdMap, articleIdMap };
   });
+};
+
+// --- 리졸버에서 이관된 서비스 함수 ---
+
+export const addArticleToCuration = async (
+  userId: number,
+  weekKey: string,
+  articleId: string,
+): Promise<WeeklyCuration> => {
+  assertWeekKey(weekKey);
+  await getOwnArticle(articleId, userId);
+
+  const existing = await prismaArticle.articleCuration.findMany({
+    where: { userId, weekKey },
+  });
+
+  // 이미 등록된 articleId 는 멱등 — 그대로 반환 (클라 토글 UX 대응)
+  if (!existing.some((row) => row.articleId === articleId)) {
+    // 주차당 최대 5개 — 스펙상 클라는 조용히 무시하지만 서버는 명시 에러 (409 대응)
+    if (existing.length >= WEEKLY_CURATION_LIMIT) {
+      throw new ConflictError('주간 큐레이션은 최대 5개까지 등록할 수 있습니다.');
+    }
+    await prismaArticle.articleCuration.create({
+      data: { userId, weekKey, articleId },
+    });
+  }
+
+  return buildWeeklyCuration(userId, weekKey);
+};
+
+// SEO 파싱은 클라이언트 플로우 유지 (/api/article-meta 프록시) — 파싱된 seo 를 인자로 받는다
+export const createArticle = async (
+  userId: number,
+  categoryId: string,
+  title: string,
+  url: string,
+  seo: ArticleSeoInput | null | undefined,
+): Promise<Article> => {
+  await assertOwnArticleCategory(categoryId, userId);
+  const normalizedUrl = normalizeUrlOrThrow(url);
+  await assertNoDuplicateUrl(userId, normalizedUrl);
+  const created = await prismaArticle.article.create({
+    data: { userId, categoryId, title, url, normalizedUrl, seo: seo ?? undefined },
+  });
+  return toArticle(created);
+};
+
+export const createArticleCategory = async (userId: number, name: string) => {
+  if (name.trim().length === 0) {
+    throw new ValidationError('카테고리 이름을 입력해주세요.');
+  }
+  const max = await prismaArticle.articleCategory.aggregate({ where: { userId }, _max: { order: true } });
+  return prismaArticle.articleCategory.create({
+    data: { userId, name, order: (max._max.order ?? 0) + 1 },
+  });
+};
+
+// 캐스케이드: 모든 주차 큐레이션에서 해당 articleId 제거 (빈 주차는 자연히 0행)
+export const deleteArticle = async (id: string, userId: number): Promise<boolean> => {
+  await getOwnArticle(id, userId);
+  await prismaArticle.$transaction([
+    prismaArticle.articleCuration.deleteMany({ where: { userId, articleId: id } }),
+    prismaArticle.article.delete({ where: { id } }),
+  ]);
+  return true;
+};
+
+// 캐스케이드: 소속 아티클 전체 삭제 + 그 아티클들의 큐레이션 행 제거 (이동 아님, 삭제 — 현재 클라 동작)
+export const deleteArticleCategory = async (id: string, userId: number): Promise<boolean> => {
+  await assertOwnArticleCategory(id, userId);
+  await prismaArticle.$transaction(async (tx) => {
+    const articles = await tx.article.findMany({
+      where: { userId, categoryId: id },
+      select: { id: true },
+    });
+    const articleIds = articles.map((article) => article.id);
+    await tx.articleCuration.deleteMany({ where: { userId, articleId: { in: articleIds } } });
+    await tx.article.deleteMany({ where: { userId, categoryId: id } });
+    await tx.articleCategory.delete({ where: { id } });
+  });
+  return true;
+};
+
+export const removeArticleFromCuration = async (
+  userId: number,
+  weekKey: string,
+  articleId: string,
+): Promise<WeeklyCuration> => {
+  assertWeekKey(weekKey);
+  await prismaArticle.articleCuration.deleteMany({ where: { userId, weekKey, articleId } });
+  return buildWeeklyCuration(userId, weekKey);
+};
+
+// 범용 PATCH — 현재 사용처는 seo 재수집 백필(setArticleSeo) 뿐이지만 title/url/categoryId 도 지원
+export const updateArticle = async (
+  userId: number,
+  id: string,
+  title: string | null | undefined,
+  url: string | null | undefined,
+  categoryId: string | null | undefined,
+  seo: ArticleSeoInput | null | undefined,
+): Promise<Article> => {
+  await getOwnArticle(id, userId);
+  if (categoryId != null) {
+    await assertOwnArticleCategory(categoryId, userId);
+  }
+  let normalizedUrl: string | undefined;
+  if (url != null) {
+    normalizedUrl = normalizeUrlOrThrow(url);
+    await assertNoDuplicateUrl(userId, normalizedUrl, id);
+  }
+  const updated = await prismaArticle.article.update({
+    where: { id },
+    data: {
+      title: title ?? undefined,
+      url: url ?? undefined,
+      normalizedUrl,
+      categoryId: categoryId ?? undefined,
+      seo: seo ?? undefined,
+    },
+  });
+  return toArticle(updated);
+};
+
+export const updateArticleCategory = async (userId: number, id: string, name: string) => {
+  await assertOwnArticleCategory(id, userId);
+  if (name.trim().length === 0) {
+    throw new ValidationError('카테고리 이름을 입력해주세요.');
+  }
+  return prismaArticle.articleCategory.update({ where: { id }, data: { name } });
+};
+
+export const getArticleCategoryList = async (userId: number) => {
+  const itemList = await prismaArticle.articleCategory.findMany({
+    where: { userId },
+    orderBy: { order: 'asc' },
+  });
+  return { totalCount: itemList.length, itemList };
+};
+
+export const getArticleList = async (userId: number, categoryId?: string | null) => {
+  const itemList = await prismaArticle.article.findMany({
+    where: { userId, ...(categoryId ? { categoryId } : {}) },
+    orderBy: { createdAt: 'desc' },
+  });
+  const mapped = itemList.map(toArticle);
+  return { totalCount: mapped.length, itemList: mapped };
+};
+
+// 전체 주차 반환 (주차 수 적음 — 스펙) — 최신 주차 먼저, 아티클 임베드
+export const getWeeklyCurationList = async (userId: number) => {
+  const rows = await prismaArticle.articleCuration.findMany({
+    where: { userId },
+    orderBy: [{ weekKey: 'desc' }, { createdAt: 'asc' }],
+  });
+  const articles = await prismaArticle.article.findMany({
+    where: { id: { in: rows.map((row) => row.articleId) } },
+  });
+  const articleById = new Map(articles.map((article) => [article.id, article]));
+
+  const byWeek = new Map<string, string[]>();
+  for (const row of rows) {
+    const ids = byWeek.get(row.weekKey) ?? [];
+    ids.push(row.articleId);
+    byWeek.set(row.weekKey, ids);
+  }
+
+  const itemList = [...byWeek.entries()].map(([weekKey, articleIds]) => ({
+    weekKey,
+    articleIds,
+    articles: articleIds
+      .map((id) => articleById.get(id))
+      .filter((article): article is PrismaArticle => Boolean(article))
+      .map(toArticle),
+  }));
+
+  return { totalCount: itemList.length, itemList };
 };

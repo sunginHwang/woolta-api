@@ -1,7 +1,6 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
 import { requireAuth } from '../../../../../shared/auth';
-import { getBucketListByUserId } from '../../../services/BucketListService';
-import { prismaWoolBank } from '../../../utils/prismaClient';
+import { getBucketListSummaryList } from '../../../services/BucketListService';
 
 export const bucketListSummaryList: NonNullable<QueryResolvers['bucketListSummaryList']> = async (
   _parent,
@@ -10,10 +9,5 @@ export const bucketListSummaryList: NonNullable<QueryResolvers['bucketListSummar
 ) => {
   const { userId } = requireAuth(_ctx);
 
-  const [itemList, totalCount] = await Promise.all([
-    getBucketListByUserId(userId, _arg.limitCount ?? 100),
-    prismaWoolBank.bucketList.count({ where: { userId } }),
-  ]);
-
-  return { totalCount, itemList };
+  return getBucketListSummaryList(userId, _arg.limitCount ?? 100);
 };

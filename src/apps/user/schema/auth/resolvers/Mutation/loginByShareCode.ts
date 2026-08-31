@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql/error';
 import type { MutationResolvers } from './../../../../generates/types.generated';
 import { setAuthCookie } from '../../../../../../shared/auth';
+import { UnauthenticatedError } from '../../../../../../shared/errors';
 import { getShareCodeInfoByShareCode } from '../../../../services/ShareCodeService';
 import { getUserById, getUserWithToken } from '../../../../services/UserService';
 
@@ -10,17 +10,13 @@ export const loginByShareCode: NonNullable<MutationResolvers['loginByShareCode']
   const userShareCode = await getShareCodeInfoByShareCode(shareCode);
 
   if (!userShareCode) {
-    throw new GraphQLError(`share-code: ${shareCode} is not exist share-code`, {
-      extensions: { code: 'UNAUTHENTICATED' },
-    });
+    throw new UnauthenticatedError(`share-code: ${shareCode} is not exist share-code`);
   }
 
   const userInfo = await getUserById(userShareCode.userId);
 
   if (!userInfo) {
-    throw new GraphQLError(`share-code: ${shareCode} is not exist share-code user-info`, {
-      extensions: { code: 'UNAUTHENTICATED' },
-    });
+    throw new UnauthenticatedError(`share-code: ${shareCode} is not exist share-code user-info`);
   }
 
   const userRes = getUserWithToken(userInfo, 'share');

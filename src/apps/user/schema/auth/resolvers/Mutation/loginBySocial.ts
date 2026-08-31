@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql/error';
 import type { MutationResolvers } from './../../../../generates/types.generated';
 import { setAuthCookie } from '../../../../../../shared/auth';
+import { AppError } from '../../../../../../shared/errors';
 import { getSocialUser, getUserWithToken, saveSocialUser } from '../../../../services/UserService';
 import { gqlToDbSocialLoginType } from '../../../../utils/enums';
 
@@ -27,7 +27,7 @@ export const loginBySocial: NonNullable<MutationResolvers['loginBySocial']> = as
   }).catch(() => null);
 
   if (!savedUser) {
-    throw new GraphQLError('social register fail', { extensions: { code: 'INTERNAL_SERVER_ERROR' } });
+    throw new AppError('social register fail', 'INTERNAL_SERVER_ERROR');
   }
 
   const userRes = getUserWithToken(savedUser);

@@ -1,7 +1,6 @@
 import type { MutationResolvers } from './../../../generates/types.generated';
-import { GraphQLError } from 'graphql';
 import { requireRealUser } from '../../../../../shared/auth';
-import { prismaWoolBank as prisma } from '../../../utils/prismaClient';
+import { deleteRegularExpenditure as deleteRegularExpenditureService } from '../../../services/RegularExpenditureService';
 
 export const deleteRegularExpenditure: NonNullable<MutationResolvers['deleteRegularExpenditure']> = async (
   _parent,
@@ -10,21 +9,5 @@ export const deleteRegularExpenditure: NonNullable<MutationResolvers['deleteRegu
 ) => {
   requireRealUser(_ctx);
 
-  const regularExpenditure = await prisma.regularExpenditure.findUnique({ where: { id: Number(_arg.input.id) } });
-
-  if (!regularExpenditure) {
-    throw new GraphQLError('삭제할 정기 내역이 존재하지 않습니다.', {
-      extensions: {
-        code: 'FORBIDDEN',
-        myExtension: 'not found regular expenditure',
-      },
-    });
-  }
-
-  try {
-    await prisma.regularExpenditure.delete({ where: { id: regularExpenditure.id } });
-    return true;
-  } catch {
-    return false;
-  }
+  return deleteRegularExpenditureService(Number(_arg.input.id));
 };

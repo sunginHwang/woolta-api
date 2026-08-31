@@ -1,6 +1,6 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
 import { requireAuth } from '../../../../../shared/auth';
-import { prismaWoolBank } from '../../../utils/prismaClient';
+import { getAccountBookCategoryImageList } from '../../../services/AccountBookCategoryService';
 
 export const accountBookCategoryImageList: NonNullable<QueryResolvers['accountBookCategoryImageList']> = async (
   _parent,
@@ -9,9 +9,7 @@ export const accountBookCategoryImageList: NonNullable<QueryResolvers['accountBo
 ) => {
   requireAuth(_ctx);
 
-  const accountBookCategoryImageList = await prismaWoolBank.accountBookCategoryImage.findMany({
-    orderBy: { id: 'desc' },
-  });
+  const accountBookCategoryImageList = await getAccountBookCategoryImageList();
 
   const itemList = accountBookCategoryImageList.map((accountBookCategoryImage) => ({
     ...accountBookCategoryImage,

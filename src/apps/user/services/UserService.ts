@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { GraphQLError } from 'graphql/error';
 import { User } from '../../../../prisma/generated/user/client';
+import { UnauthenticatedError } from '../../../shared/errors';
 import { AuthType, createAuthToken } from '../../../shared/auth';
 import { prismaUser } from '../utils/prismaClient';
 
@@ -12,7 +12,7 @@ export const getUserByIdOrThrow = async (id: number) => {
   const user = await getUserById(id);
 
   if (!user) {
-    throw new GraphQLError(`userId: ${id} is not exist user`, { extensions: { code: 'UNAUTHENTICATED' } });
+    throw new UnauthenticatedError(`userId: ${id} is not exist user`);
   }
 
   return user;

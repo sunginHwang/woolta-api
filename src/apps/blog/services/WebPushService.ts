@@ -1,6 +1,6 @@
 import webpush from 'web-push';
-import { GraphQLError } from 'graphql/error';
 import { WebPushSubscription } from '../../../../prisma/generated/blog/client';
+import { NotFoundError } from '../../../shared/errors';
 import { prismaBlog } from '../utils/prismaClient';
 
 export interface PushNotification {
@@ -16,7 +16,7 @@ const getWebPushKey = async () => {
   const webPushKey = await prismaBlog.webPushKey.findUnique({ where: { id: 1 } });
 
   if (!webPushKey) {
-    throw new GraphQLError('not found webPushKey', { extensions: { code: 'NOT_FOUND' } });
+    throw new NotFoundError('not found webPushKey');
   }
 
   return webPushKey;

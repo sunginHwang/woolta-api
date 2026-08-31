@@ -1,7 +1,7 @@
-import { GraphQLError } from 'graphql/error';
 import type { Todo as PrismaTodo } from '../../../../prisma/generated/todo/client';
-import type { Todo, TodoImportResult } from '../generates/types.generated';
+import type { Todo, TodoImportResult, TodoPriority } from '../generates/types.generated';
 import type { ImportTodoCategoryInput, ImportTodoInput } from '../generates/types.generated';
+import { ValidationError, NotFoundError } from '../../../shared/errors';
 import { prismaTodo } from '../utils/prismaClient';
 import { priorityToDb, priorityToGql } from '../utils/enums';
 
@@ -14,7 +14,7 @@ export const toTodo = (todo: PrismaTodo): Todo => ({
 export const getOwnTodo = async (id: string, userId: number) => {
   const todo = await prismaTodo.todo.findFirst({ where: { id, userId } });
   if (!todo) {
-    throw new GraphQLError('존재하지 않는 할 일입니다.', { extensions: { code: 'NOT_FOUND' } });
+    throw new NotFoundError('존재하지 않는 할 일입니다.');
   }
   return todo;
 };
@@ -23,7 +23,7 @@ export const getOwnTodo = async (id: string, userId: number) => {
 export const assertOwnCategory = async (categoryId: string, userId: number) => {
   const category = await prismaTodo.todoCategory.findFirst({ where: { id: categoryId, userId } });
   if (!category) {
-    throw new GraphQLError('존재하지 않는 카테고리입니다.', { extensions: { code: 'NOT_FOUND' } });
+    throw new NotFoundError('존재하지 않는 카테고리입니다.');
   }
   return category;
 };
@@ -64,9 +64,7 @@ export const importTodos = async (
     const todoIdMap: { from: string; to: string }[] = [];
     for (const todo of todos) {
       if (todo.categoryClientId && !categoryIds.has(todo.categoryClientId)) {
-        throw new GraphQLError('이관 데이터의 카테고리 참조가 올바르지 않습니다.', {
-          extensions: { code: 'BAD_REQUEST' },
-        });
+        throw new ValidationError('이관 데이터의 카테고리 참조가 올바르지 않습니다.');
       }
       const created = await tx.todo.create({
         data: {
@@ -89,4 +87,145 @@ export const importTodos = async (
 
     return { categoryIdMap, todoIdMap };
   });
+};
+
+// --- 리졸버에서 이관된 서비스 함수 ---
+
+// 토글이 아닌 명시값(동시성 안전) — completedAt 은 서버가 세팅/해제
+export const completeTodo = async (id: string, userId: number, isCompleted: boolean): Promise<Todo> => {
+  await getOwnTodo(id, userId);
+  const updated = await prismaTodo.todo.update({
+    where: { id },
+    data: { isCompleted, completedAt: isCompleted ? new Date() : null },
+  });
+  return toTodo(updated);
+};
+
+export const createTodo = async (
+  userId: number,
+  title: string,
+  dueDate: string | null | undefined,
+  categoryId: string | null | undefined,
+  priority: TodoPriority | null | undefined,
+): Promise<Todo> => {
+  if (title.trim().length === 0) {
+    throw new ValidationError('제목을 입력해주세요.');
+  }
+  if (categoryId) {
+    await assertOwnCategory(categoryId, userId);
+  }
+  const created = await prismaTodo.todo.create({
+    data: {
+      userId,
+      title,
+      memo: '',
+      dueDate: dueDate ?? null,
+      categoryId: categoryId ?? null,
+      priority: priority ? priorityToDb(priority) : 'none',
+      isCompleted: false,
+      order: await getNextTodoOrder(userId),
+    },
+  });
+  return toTodo(created);
+};
+
+export const createTodoCategory = async (userId: number, name: string) => {
+  if (name.trim().length === 0) {
+    throw new ValidationError('카테고리 이름을 입력해주세요.');
+  }
+  return prismaTodo.todoCategory.create({
+    data: { userId, name, order: await getNextCategoryOrder(userId) },
+  });
+};
+
+// 영구 삭제
+export const deleteTodo = async (id: string, userId: number): Promise<boolean> => {
+  await getOwnTodo(id, userId);
+  await prismaTodo.todo.delete({ where: { id } });
+  return true;
+};
+
+// 캐스케이드: 소속 todo 는 categoryId = null (기본함 이동) — 현재 클라 동작과 동일
+export const deleteTodoCategory = async (id: string, userId: number): Promise<boolean> => {
+  await assertOwnCategory(id, userId);
+  await prismaTodo.$transaction([
+    prismaTodo.todo.updateMany({ where: { userId, categoryId: id }, data: { categoryId: null } }),
+    prismaTodo.todoCategory.delete({ where: { id } }),
+  ]);
+  return true;
+};
+
+// 휴지통 비우기 — deletedAt NOT NULL 일괄 영구 삭제
+export const emptyTrash = async (userId: number): Promise<boolean> => {
+  await prismaTodo.todo.deleteMany({ where: { userId, deletedAt: { not: null } } });
+  return true;
+};
+
+export const restoreTodo = async (id: string, userId: number): Promise<Todo> => {
+  await getOwnTodo(id, userId);
+  const updated = await prismaTodo.todo.update({ where: { id }, data: { deletedAt: null } });
+  return toTodo(updated);
+};
+
+export const trashTodo = async (id: string, userId: number): Promise<Todo> => {
+  await getOwnTodo(id, userId);
+  const updated = await prismaTodo.todo.update({ where: { id }, data: { deletedAt: new Date() } });
+  return toTodo(updated);
+};
+
+// 부분 업데이트·멱등 — 상세 패널 자동 저장(debounce)과 칸반 카테고리 이동이 공유하는 진입점
+export const updateTodo = async (
+  userId: number,
+  id: string,
+  title: string | null | undefined,
+  memo: string | null | undefined,
+  priority: TodoPriority | null | undefined,
+  dueDate: string | null | undefined,
+  categoryId: string | null | undefined,
+): Promise<Todo> => {
+  await getOwnTodo(id, userId);
+  if (title != null && title.trim().length === 0) {
+    throw new ValidationError('제목을 입력해주세요.');
+  }
+  // categoryId 는 null(기본함 이동)과 미전달을 구분한다
+  if (categoryId != null) {
+    await assertOwnCategory(categoryId, userId);
+  }
+  const updated = await prismaTodo.todo.update({
+    where: { id },
+    data: {
+      title: title ?? undefined,
+      memo: memo ?? undefined,
+      priority: priority != null ? priorityToDb(priority) : undefined,
+      dueDate: dueDate === undefined ? undefined : dueDate,
+      categoryId: categoryId === undefined ? undefined : categoryId,
+    },
+  });
+  return toTodo(updated);
+};
+
+export const updateTodoCategory = async (userId: number, id: string, name: string) => {
+  await assertOwnCategory(id, userId);
+  if (name.trim().length === 0) {
+    throw new ValidationError('카테고리 이름을 입력해주세요.');
+  }
+  return prismaTodo.todoCategory.update({ where: { id }, data: { name } });
+};
+
+export const getTodoCategoryList = async (userId: number) => {
+  const itemList = await prismaTodo.todoCategory.findMany({
+    where: { userId },
+    orderBy: { order: 'asc' },
+  });
+  return { totalCount: itemList.length, itemList };
+};
+
+// v1: 휴지통 포함 전체 1회 조회 — 스마트 리스트 필터/카운트는 클라이언트 유지 (스펙 허용안)
+export const getTodoList = async (userId: number) => {
+  const itemList = await prismaTodo.todo.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'asc' },
+  });
+  const mapped = itemList.map(toTodo);
+  return { totalCount: mapped.length, itemList: mapped };
 };

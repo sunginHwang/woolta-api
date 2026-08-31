@@ -1,9 +1,12 @@
 import type { QueryResolvers } from './../../../generates/types.generated';
 import { Prisma } from '../../../../../../prisma/generated/woolBank/client';
 import { requireAuth } from '../../../../../shared/auth';
+import {
+  getExpenditureAccountBookCategories,
+  getRegularExpenditureListByUserId,
+} from '../../../services/RegularExpenditureService';
 import { getNowDate, getRemainDate } from '../../../utils/date';
 import { dbToGqlAccountBookCategoryType, toGqlAccountBookCategory } from '../../../utils/enums';
-import { prismaWoolBank as prisma } from '../../../utils/prismaClient';
 
 type AccountBookCategoryWithImageType = Prisma.AccountBookCategoryGetPayload<{
   include: { accountBookCategoryImage: true };
@@ -36,31 +39,6 @@ export const regularExpenditureGroupList: NonNullable<QueryResolvers['regularExp
     .filter((item) => item.list.length > 0);
 
   return { totalCount: itemList.length, itemList };
-};
-
-export const getRegularExpenditureListByUserId = async (userId: number, limit: number = 100) => {
-  return prisma.regularExpenditure.findMany({
-    where: { userId },
-    orderBy: { id: 'desc' },
-    take: limit,
-    include: {
-      accountBookCategory: {
-        include: {
-          accountBookCategoryImage: true,
-        },
-      },
-    },
-  });
-};
-
-export const getExpenditureAccountBookCategories = async (userId: number) => {
-  return prisma.accountBookCategory.findMany({
-    where: { userId, delYn: false, type: 'expenditure' },
-    orderBy: { id: 'desc' },
-    include: {
-      accountBookCategoryImage: true,
-    },
-  });
 };
 
 export const getRegularExpenditureWithType = (
