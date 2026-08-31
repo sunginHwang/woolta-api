@@ -20,6 +20,7 @@ import cookieParser from 'cookie-parser';
 import blogFileUploadRouter from './apps/blog/routes/fileUpload';
 import woolBankFileUploadRouter from './apps/woolBank/routes/fileUpload';
 import { buildAuthContext } from './shared/auth';
+import { formatError } from './shared/apollo';
 import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
 
 async function startServer() {
@@ -28,27 +29,33 @@ async function startServer() {
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
     const blogServer = new ApolloServer<any>({
+        formatError,
         typeDefs: BlogTypeDefs,
         resolvers: BlogResolvers,
 
     });
     const woolBankServer = new ApolloServer<any>({
+        formatError,
         typeDefs: WoolBankTypeDefs,
         resolvers: WoolBankResolvers,
     });
     const userServer = new ApolloServer<any>({
+        formatError,
         typeDefs: UserTypeDefs,
         resolvers: UserResolvers,
     });
     const todoServer = new ApolloServer<any>({
+        formatError,
         typeDefs: TodoTypeDefs,
         resolvers: TodoResolvers,
     });
     const memoServer = new ApolloServer<any>({
+        formatError,
         typeDefs: MemoTypeDefs,
         resolvers: MemoResolvers,
     });
     const articleServer = new ApolloServer<any>({
+        formatError,
         typeDefs: ArticleTypeDefs,
         resolvers: ArticleResolvers,
     });
