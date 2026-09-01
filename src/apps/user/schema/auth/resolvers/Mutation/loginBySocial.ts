@@ -1,37 +1,28 @@
 import type { MutationResolvers } from './../../../../generates/types.generated';
-import { setAuthCookie } from '../../../../../../shared/auth';
-import { AppError } from '../../../../../../shared/errors';
-import { getSocialUser, getUserWithToken, saveSocialUser } from '../../../../services/UserService';
+import { startAuthSession } from '../../../../../../shared/auth';
+import { getSocialUser, saveSocialUser, toUserInfo } from '../../../../services/UserService';
+import { verifySocialToken } from '../../../../services/SocialAuthService';
 import { gqlToDbSocialLoginType } from '../../../../utils/enums';
 
-// 원본 POST /user/login/social: 가입된 유저는 로그인, 미가입이면 자동 회원가입 후 로그인
+// 원본 POST /user/login/social: 가입된 유저는 로그인, 미가입이면 자동 회원가입 후 로그인.
+// socialId는 클라이언트 입력이 아니라 provider 토큰 검증 결과에서만 얻는다.
 export const loginBySocial: NonNullable<MutationResolvers['loginBySocial']> = async (_parent, _arg, _ctx) => {
   const { input } = _arg;
   // Map GraphQL UPPER_CASE enum to legacy DB/JWT string
   const dbLoginType = gqlToDbSocialLoginType(input.loginType);
+  const identity = await verifySocialToken(dbLoginType, input.token);
 
-  const userInfo = await getSocialUser(input.socialId, dbLoginType);
+  const user =
+    (await getSocialUser(identity.socialId, dbLoginType)) ??
+    (await saveSocialUser({
+      name: input.name ?? identity.name,
+      email: input.email ?? identity.email,
+      imageUrl: input.imageUrl ?? identity.imageUrl,
+      loginType: dbLoginType,
+      socialId: identity.socialId,
+    }));
 
-  if (userInfo) {
-    const userRes = getUserWithToken(userInfo);
-    setAuthCookie(_ctx.res, userRes.accessToken, userRes.refreshToken);
-    return userRes;
-  }
+  await startAuthSession(_ctx.res, user.id, 'user');
 
-  const savedUser = await saveSocialUser({
-    name: input.name,
-    email: input.email,
-    imageUrl: input.imageUrl,
-    loginType: dbLoginType,
-    socialId: input.socialId,
-  }).catch(() => null);
-
-  if (!savedUser) {
-    throw new AppError('social register fail', 'INTERNAL_SERVER_ERROR');
-  }
-
-  const userRes = getUserWithToken(savedUser);
-  setAuthCookie(_ctx.res, userRes.accessToken, userRes.refreshToken);
-
-  return userRes;
+  return toUserInfo(user, 'user');
 };

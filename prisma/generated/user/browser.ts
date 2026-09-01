@@ -27,3 +27,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type UserShareCode = Prisma.UserShareCodeModel
+/**
+ * Model UserRefreshToken
+ * 
+ */
+export type UserRefreshToken = Prisma.UserRefreshTokenModel

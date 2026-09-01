@@ -18,7 +18,6 @@ type Query {
   bucketListSummaryList(limitCount: Int): BucketListSummaryList!
   categoryList: CategoryList!
   checkAccess: Int!
-  checkToken: CheckTokenResult!
   getAccountBookStatisticList(endDate: DateTime!, startDate: DateTime!, type: AccountBookCategoryType!): StatisticList!
   getAccountLastUpdatedDate: DateTime!
   getBucketListItemLastUpdatedDate(id: ID!): DateTime!
@@ -40,7 +39,6 @@ type Query {
 
 type Mutation {
   addArticleToCuration(input: AddArticleToCurationInput!): WeeklyCuration!
-  checkRefreshToken(input: CheckRefreshTokenInput!): AuthTokens!
   completeAccountExpiration(input: CompleteAccountExpirationInput!): Boolean!
   completeBucketList(input: CompleteBucketListInput!): Boolean!
   completeTodo(input: CompleteTodoInput!): Todo!
@@ -73,9 +71,11 @@ type Mutation {
   importArticleList(input: ImportArticleListInput!): ArticleImportResult!
   importMemoList(input: ImportMemoListInput!): MemoImportResult!
   importTodoList(input: ImportTodoListInput!): TodoImportResult!
-  loginByShareCode(input: LoginByShareCodeInput!): LoginResult!
-  loginBySocial(input: LoginBySocialInput!): LoginResult!
+  loginByShareCode(input: LoginByShareCodeInput!): UserInfo!
+  loginBySocial(input: LoginBySocialInput!): UserInfo!
   logout: Boolean!
+  """refresh 쿠키로 세션 갱신(회전). 토큰 값은 인자로도 응답으로도 오가지 않고 쿠키로만 처리된다."""
+  refreshSession: Boolean!
   removeArticleFromCuration(input: RemoveArticleFromCurationInput!): WeeklyCuration!
   restoreTodo(input: RestoreTodoInput!): Todo!
   sendPushToAll(input: SendPushToAllInput!): Boolean!
@@ -233,11 +233,6 @@ input ArticleSeoInput {
   title: String
 }
 
-type AuthTokens {
-  accessToken: String!
-  refreshToken: String!
-}
-
 type BucketList {
   completeDate: DateTime!
   createdAt: DateTime!
@@ -294,15 +289,6 @@ type Category {
 type CategoryList {
   itemList: [Category!]!
   totalCount: Int!
-}
-
-input CheckRefreshTokenInput {
-  refreshToken: String!
-}
-
-type CheckTokenResult {
-  authTokens: AuthTokens!
-  userInfo: UserInfo!
 }
 
 input CompleteAccountExpirationInput {
@@ -559,16 +545,14 @@ input LoginByShareCodeInput {
 
 input LoginBySocialInput {
   email: String
-  imageUrl: String!
+  imageUrl: String
   loginType: SocialLoginType!
   name: String
-  socialId: String!
-}
-
-type LoginResult {
-  accessToken: String!
-  refreshToken: String!
-  user: UserInfo!
+  """
+  provider가 발급한 토큰. GOOGLE = id_token, KAKAO_TALK / FACEBOOK = access token.
+  서버가 provider에 되물어 검증하며, 여기서 확인된 식별자만 socialId로 쓴다.
+  """
+  token: String!
 }
 
 type MainInfo {

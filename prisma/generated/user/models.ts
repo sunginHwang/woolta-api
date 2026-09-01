@@ -10,4 +10,5 @@
  */
 export type * from './models/User'
 export type * from './models/UserShareCode'
+export type * from './models/UserRefreshToken'
 export type * from './commonInputTypes'

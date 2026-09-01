@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  UserShareCode: 'UserShareCode'
+  UserShareCode: 'UserShareCode',
+  UserRefreshToken: 'UserRefreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -97,6 +98,20 @@ export const UserShareCodeScalarFieldEnum = {
 export type UserShareCodeScalarFieldEnum = (typeof UserShareCodeScalarFieldEnum)[keyof typeof UserShareCodeScalarFieldEnum]
 
 
+export const UserRefreshTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  familyId: 'familyId',
+  tokenHash: 'tokenHash',
+  loginType: 'loginType',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserRefreshTokenScalarFieldEnum = (typeof UserRefreshTokenScalarFieldEnum)[keyof typeof UserRefreshTokenScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -122,4 +137,21 @@ export const UserShareCodeOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserShareCodeOrderByRelevanceFieldEnum = (typeof UserShareCodeOrderByRelevanceFieldEnum)[keyof typeof UserShareCodeOrderByRelevanceFieldEnum]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserRefreshTokenOrderByRelevanceFieldEnum = {
+  familyId: 'familyId',
+  tokenHash: 'tokenHash',
+  loginType: 'loginType'
+} as const
+
+export type UserRefreshTokenOrderByRelevanceFieldEnum = (typeof UserRefreshTokenOrderByRelevanceFieldEnum)[keyof typeof UserRefreshTokenOrderByRelevanceFieldEnum]
 

@@ -22,49 +22,36 @@ type UserInfo {
   updatedAt: DateTime!
 }
 
-type AuthTokens {
-  accessToken: String!
-  refreshToken: String!
-}
-
-type LoginResult {
-  user: UserInfo!
-  accessToken: String!
-  refreshToken: String!
-}
-
-type CheckTokenResult {
-  userInfo: UserInfo!
-  authTokens: AuthTokens!
-}
-
 input LoginBySocialInput {
+  loginType: SocialLoginType!
+  """
+  provider가 발급한 토큰. GOOGLE = id_token, KAKAO_TALK / FACEBOOK = access token.
+  서버가 provider에 되물어 검증하며, 여기서 확인된 식별자만 socialId로 쓴다.
+  """
+  token: String!
+  # 아래는 표시용 프로필 보조값 — 신원 판단에는 사용하지 않는다.
   name: String
   email: String
-  imageUrl: String!
-  loginType: SocialLoginType!
-  socialId: String!
+  imageUrl: String
 }
 
 input LoginByShareCodeInput {
   shareCode: String!
 }
 
-input CheckRefreshTokenInput {
-  refreshToken: String!
-}
-
 extend type Query {
   me: UserInfo!
   checkAccess: Int!
-  checkToken: CheckTokenResult!
   getShareCode: String!
 }
 
 extend type Mutation {
-  loginBySocial(input: LoginBySocialInput!): LoginResult!
-  loginByShareCode(input: LoginByShareCodeInput!): LoginResult!
+  loginBySocial(input: LoginBySocialInput!): UserInfo!
+  loginByShareCode(input: LoginByShareCodeInput!): UserInfo!
   logout: Boolean!
-  checkRefreshToken(input: CheckRefreshTokenInput!): AuthTokens!
+  """
+  refresh 쿠키로 세션 갱신(회전). 토큰 값은 인자로도 응답으로도 오가지 않고 쿠키로만 처리된다.
+  """
+  refreshSession: Boolean!
   upsertShareCode: String!
 }

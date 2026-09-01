@@ -1,8 +1,8 @@
 import type { MutationResolvers } from './../../../../generates/types.generated';
-import { setAuthCookie } from '../../../../../../shared/auth';
+import { startAuthSession } from '../../../../../../shared/auth';
 import { UnauthenticatedError } from '../../../../../../shared/errors';
 import { getShareCodeInfoByShareCode } from '../../../../services/ShareCodeService';
-import { getUserById, getUserWithToken } from '../../../../services/UserService';
+import { getUserById, toUserInfo } from '../../../../services/UserService';
 
 // 원본 POST /user/share-code-login: 공유코드로 읽기전용(share) 로그인
 export const loginByShareCode: NonNullable<MutationResolvers['loginByShareCode']> = async (_parent, _arg, _ctx) => {
@@ -19,8 +19,7 @@ export const loginByShareCode: NonNullable<MutationResolvers['loginByShareCode']
     throw new UnauthenticatedError(`share-code: ${shareCode} is not exist share-code user-info`);
   }
 
-  const userRes = getUserWithToken(userInfo, 'share');
-  setAuthCookie(_ctx.res, userRes.accessToken, userRes.refreshToken);
+  await startAuthSession(_ctx.res, userInfo.id, 'share');
 
-  return userRes;
+  return toUserInfo(userInfo, 'share');
 };

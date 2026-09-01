@@ -45,26 +45,29 @@ src/
 
 **user 도메인이 발급하고, 모든 도메인이 `shared/auth`로 소비한다.**
 
-- 토큰: JWT HS512, payload `{ userId, loginType }`. 레거시 woolbankApi 발급분과 완전 호환(동일 시크릿/알고리즘). access 7일 / refresh 60일.
-- 쿠키: `w.access` / `w.refresh`, `domain: .woolta.com`, httpOnly + secure + sameSite none, 만료 1년 — FE 전체(blog·bank)가 쿠키만으로 인증.
+> 이 구조가 표준 로그인 패턴과 어긋나는 지점과 그 표준형은 `AUTH-REVIEW.md` 참고.
+
+- 토큰: JWT HS512, payload `{ userId, loginType }`(refresh만 `jti` 추가). 레거시 woolbankApi 발급분과 호환(동일 시크릿/알고리즘). **access 15분 / refresh 60일**.
+- 쿠키: `w.access` / `w.refresh`, `domain: .woolta.com`(`AUTH_COOKIE_DOMAIN`), httpOnly + secure + **sameSite lax**(`AUTH_COOKIE_SAMESITE`), 만료 1년 — FE 전체가 쿠키만으로 인증. **토큰 값은 GraphQL 요청·응답에 절대 싣지 않는다.**
 - `loginType`(=authType): `user`(정상 로그인) | `share`(공유코드 읽기전용 로그인).
+- 소셜 로그인은 provider 토큰을 **서버가 provider에 되물어 검증**한 뒤(`services/SocialAuthService.ts`) 확인된 식별자만 `socialId`로 쓴다. 클라이언트가 보낸 socialId는 신뢰하지 않는다.
+- refresh는 `user_refresh_token` 테이블에 sha256 해시로 저장되고 **1회용(회전)** 이다. 폐기된 토큰이 재등장하면 탈취로 보고 해당 로그인 패밀리 전체를 끊는다.
 
 요청 처리 플로우:
 
 ```
 요청 → Apollo context: buildAuthContext(req, res)
          ├─ w.access 검증 성공 → ctx.auth = { userId, authType }
-         ├─ 만료 + w.refresh 유효 → 토큰 재발급 + Set-Cookie 후 인증 처리 (무중단 갱신)
+         ├─ 만료 + w.refresh 유효 → 저장소에서 1회용 소비 → 새 토큰쌍 + Set-Cookie (무중단 갱신)
+         │    └─ 이미 폐기된 refresh 재사용 → 패밀리 전체 폐기 + 쿠키 삭제 → null
          └─ 실패 → ctx.auth = null
 리졸버 → requireAuth(ctx)      : 미인증 시 UNAUTHENTICATED "인증 토큰 정보가 존재하지 않습니다."
        → requireRealUser(ctx)  : share 로그인 거부, FORBIDDEN "권한이 없습니다."
 ```
 
-user 도메인 API: `loginBySocial`(미가입 시 자동 회원가입 — password는 `scrypt(socialId, salt=id)`), `loginByShareCode`, `logout`, `refreshTokenCheck`, `upsertShareCode` / `me`, `accessCheck`, `checkToken`, `shareCode`.
+user 도메인 API — Mutation: `loginBySocial`(provider 토큰 검증 + 미가입 시 자동 회원가입), `loginByShareCode`, `logout`(서버 측 refresh 전량 폐기), `refreshSession`(쿠키 기반 갱신), `upsertShareCode` / Query: `me`, `checkAccess`, `getShareCode`. 로그인 뮤테이션은 `UserInfo!`를 반환하고 세션은 쿠키로만 성립한다.
 
-**인증 적용 규칙(woolBank)**: 조회·생성은 `requireAuth`, 파괴적/데이터 소유 변경(가계부 CUD, 카테고리 삭제, 정기지출 CD, 투두 전체)은 `requireRealUser`. 모든 쿼리는 `ctx.auth.userId`로 스코프 — **userId 하드코딩 금지**.
-
-**인증 적용 규칙(todo/memo/article)**: share 로그인은 woolBank 조회 공유 전용이므로 대시보드 개인 데이터는 **전 리졸버 `requireRealUser`**. 타 유저 리소스는 존재 노출 방지를 위해 NOT_FOUND 처리.
+**인증 적용 규칙 — 기본은 거부 쪽**: **모든 Mutation은 `requireRealUser`**, 읽기 전용 Query만 `requireAuth`. (예전 규칙은 반대였고, 가드 누락 시 share 세션이 곧바로 쓰기 권한을 얻는 fail-open이었다 — `AUTH-REVIEW.md` §8) 모든 쿼리는 `ctx.auth.userId`로 스코프 — **userId 하드코딩 금지**. 타 유저 리소스는 존재 노출 방지를 위해 NOT_FOUND 처리.
 
 ## 3. Codegen 워크플로우 (핵심 개발 사이클)
 
@@ -147,6 +150,13 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 | `DASHBOARD_DATABASE_URL` | todo + memo + article DB (필수) | — |
 | `PORT` | 서버 포트 | 4000 |
 | `AUTH_SECRET_TOKEN_KEY` | JWT 시크릿 | 'test' |
+| `GOOGLE_CLIENT_ID` | 구글 id_token의 `aud` 검증값 (구글 로그인 시 필수) | — |
+| `KAKAO_APP_ID` | 카카오 토큰의 `app_id` 검증값 (카카오 로그인 시 필수) | — |
+| `FACEBOOK_APP_ID` / `FACEBOOK_APP_SECRET` | 페북 debug_token 호출용 앱 토큰 (페북 로그인 시 필수) | — |
+| `AUTH_COOKIE_DOMAIN` / `AUTH_COOKIE_SAMESITE` | 인증 쿠키 도메인 / SameSite | .woolta.com · lax |
+| `CORS_ORIGINS` | 쉼표 구분 허용 오리진. 미설정 시 CORS 미들웨어 미적용(동일 오리진 전제) | — |
+| `AUTH_REFRESH_STORE_STRICT` | `1`이면 저장소에 없는 refresh 거부. 레거시 Koa 정리 후 켠다 | off |
+| `AUTH_REFRESH_REUSE_GRACE_MS` | refresh 회전 유예창(ms) — 동시 요청 레이스 오탐 방지 | 10000 |
 | `ENABLE_WOOLBANK_CRON` | 정기지출 cron 활성화 | off |
 | `BLOG_UPLOAD_PATH` / `BLOG_AUTHOR_USER_NO` | blog 업로드 경로 / 임시 작성자 | /home/blog/post/upload/ · 1 |
 | `WOOLBANK_UPLOAD_PATH` / `WOOLBANK_UPLOAD_URL` | bank 업로드 경로 / URL prefix | ./uploads · https://banketlist-api.woolta.com |
@@ -155,7 +165,7 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 
 1. `npm run codegenAll && npx tsc --noEmit` — 타입 클린 (잔존 에러 0 — 레거시 잔재 파일은 2026-08에 정리 완료)
 2. 더미 DB URL로 부팅 → 스키마/배선 검증 (`{ __typename }`)
-3. 인증 플로우: `createAuthToken`으로 토큰 생성 → 쿠키로 `accessCheck`, 만료토큰+refresh 재발급, share 토큰의 `requireRealUser` 거부 확인
+3. 인증 플로우: `issueAuthTokens`(또는 동일 시크릿으로 직접 서명)로 토큰 생성 → 쿠키로 `checkAccess`, 만료토큰+refresh 회전, 같은 refresh 재사용 시 세션 종료, share 토큰의 `requireRealUser` 거부 확인
 4. 실 DB 읽기 전용 쿼리로 데이터 검증 (쓰기 뮤테이션은 테스트 DB에서)
 
 ## 10. 이관 이력 및 남은 작업

@@ -398,7 +398,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  UserShareCode: 'UserShareCode'
+  UserShareCode: 'UserShareCode',
+  UserRefreshToken: 'UserRefreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userShareCode"
+    modelProps: "user" | "userShareCode" | "userRefreshToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -550,6 +551,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserRefreshToken: {
+      payload: Prisma.$UserRefreshTokenPayload<ExtArgs>
+      fields: Prisma.UserRefreshTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserRefreshTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserRefreshTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.UserRefreshTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserRefreshTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        findMany: {
+          args: Prisma.UserRefreshTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>[]
+        }
+        create: {
+          args: Prisma.UserRefreshTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        createMany: {
+          args: Prisma.UserRefreshTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserRefreshTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        update: {
+          args: Prisma.UserRefreshTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserRefreshTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserRefreshTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserRefreshTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserRefreshTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.UserRefreshTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserRefreshToken>
+        }
+        groupBy: {
+          args: Prisma.UserRefreshTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserRefreshTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserRefreshTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserRefreshTokenCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -615,6 +682,20 @@ export const UserShareCodeScalarFieldEnum = {
 export type UserShareCodeScalarFieldEnum = (typeof UserShareCodeScalarFieldEnum)[keyof typeof UserShareCodeScalarFieldEnum]
 
 
+export const UserRefreshTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  familyId: 'familyId',
+  tokenHash: 'tokenHash',
+  loginType: 'loginType',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserRefreshTokenScalarFieldEnum = (typeof UserRefreshTokenScalarFieldEnum)[keyof typeof UserRefreshTokenScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -640,6 +721,23 @@ export const UserShareCodeOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserShareCodeOrderByRelevanceFieldEnum = (typeof UserShareCodeOrderByRelevanceFieldEnum)[keyof typeof UserShareCodeOrderByRelevanceFieldEnum]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const UserRefreshTokenOrderByRelevanceFieldEnum = {
+  familyId: 'familyId',
+  tokenHash: 'tokenHash',
+  loginType: 'loginType'
+} as const
+
+export type UserRefreshTokenOrderByRelevanceFieldEnum = (typeof UserRefreshTokenOrderByRelevanceFieldEnum)[keyof typeof UserRefreshTokenOrderByRelevanceFieldEnum]
 
 
 
@@ -828,6 +926,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   userShareCode?: Prisma.UserShareCodeOmit
+  userRefreshToken?: Prisma.UserRefreshTokenOmit
 }
 
 /* Types for Logging */

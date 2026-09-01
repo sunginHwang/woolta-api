@@ -31,3 +31,21 @@ model UserShareCode {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 }
+
+// refresh 토큰 저장소 — 무효화(로그아웃/탈취 대응)와 회전·재사용 감지를 위해 필요.
+// 평문 토큰은 저장하지 않고 sha256 해시만 보관한다. DDL: scripts/userRefreshTokenDdl.sql
+model UserRefreshToken {
+  @@map("user_refresh_token")
+
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  familyId  String    @map("family_id")
+  tokenHash String    @unique @map("token_hash")
+  loginType String    @map("login_type")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([familyId])
+}

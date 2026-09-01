@@ -46,7 +46,13 @@ Keep domains separate — never import across `src/apps/*` boundaries, and alway
 
 ### Shared auth (`src/shared/auth/`)
 
-Cookie-based JWT shared across `.woolta.com` (cookies `w.access`/`w.refresh`, HS512, payload `{userId, loginType}` — compatible with tokens issued by the legacy `woolbankApi`). `buildAuthContext(req, res)` verifies the access cookie and transparently re-issues from the refresh cookie on expiry; Apollo context functions inject it as `ctx.auth`. Resolvers call `requireAuth(ctx)` / `requireRealUser(ctx)` (the latter rejects share-code logins). The user domain issues tokens (`loginBySocial`, `loginByShareCode`, `checkToken`, `refreshTokenCheck`); woolBank consumes them. Secret comes from `AUTH_SECRET_TOKEN_KEY` (default 'test').
+Cookie-based JWT shared across `.woolta.com` (cookies `w.access`/`w.refresh`, HS512, payload `{userId, loginType}` plus `jti` on refresh — compatible with tokens issued by the legacy `woolbankApi`). access lives **15 minutes**, refresh 60 days. `buildAuthContext(req, res)` verifies the access cookie and transparently rotates from the refresh cookie on expiry; Apollo context functions inject it as `ctx.auth`. Resolvers call `requireAuth(ctx)` / `requireRealUser(ctx)` (the latter rejects share-code logins) — **every Mutation uses `requireRealUser`; only read-only Queries use `requireAuth`** (deny-by-default, see `docs/AUTH-REVIEW.md` §8). The user domain issues sessions (`loginBySocial`, `loginByShareCode`, `refreshSession`, `logout`); woolBank consumes them. **Tokens never appear in GraphQL inputs or responses — cookies only.**
+
+Two things that are easy to break:
+- **Social login verifies the provider token server-side** (`src/apps/user/services/SocialAuthService.ts`) and takes `socialId` only from that result — never from client input. Needs `GOOGLE_CLIENT_ID` / `KAKAO_APP_ID` / `FACEBOOK_APP_ID`+`FACEBOOK_APP_SECRET`; missing env fails the login closed.
+- **Refresh tokens are single-use** and stored (sha256) in `user_refresh_token` (DDL: `scripts/userRefreshTokenDdl.sql` — run manually, never `prisma db push` on the shared woolBank DB). `shared/auth` stays Prisma-free: `app.ts` injects `prismaRefreshTokenStore` via `setRefreshTokenStore`. Replaying a revoked refresh revokes the whole login family. Set `AUTH_REFRESH_STORE_STRICT=1` to reject refresh tokens absent from the store, once the legacy Koa server is gone.
+
+Secret comes from `AUTH_SECRET_TOKEN_KEY` (default 'test'). Cookie `sameSite` defaults to `lax`; set `CORS_ORIGINS` (and `AUTH_COOKIE_SAMESITE=none`) only if the FE is genuinely cross-origin.
 
 ### Codegen-driven resolver layout
 

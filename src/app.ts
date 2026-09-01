@@ -19,15 +19,26 @@ import { resolvers as ArticleResolvers } from './apps/article/generates/resolver
 import cookieParser from 'cookie-parser';
 import blogFileUploadRouter from './apps/blog/routes/fileUpload';
 import woolBankFileUploadRouter from './apps/woolBank/routes/fileUpload';
-import { buildAuthContext } from './shared/auth';
+import { buildAuthContext, setRefreshTokenStore } from './shared/auth';
+import { prismaRefreshTokenStore } from './apps/user/services/RefreshTokenService';
+import { buildCorsMiddleware } from './shared/cors';
 import { formatError } from './shared/apollo';
 import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
 
 async function startServer() {
+    // refresh 토큰 저장소 주입 — shared/auth가 Prisma를 직접 알지 않도록 부팅 시점에 연결한다.
+    setRefreshTokenStore(prismaRefreshTokenStore);
+
     const app: express.Application = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
+
+    // 크로스 오리진이 필요한 배포에서만 CORS_ORIGINS를 설정한다(미설정 시 동일 오리진 전제).
+    const corsMiddleware = buildCorsMiddleware();
+    if (corsMiddleware) {
+        app.use(corsMiddleware);
+    }
     const blogServer = new ApolloServer<any>({
         formatError,
         typeDefs: BlogTypeDefs,
