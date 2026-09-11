@@ -159,6 +159,31 @@ input CreateAccountBookInput {
   type: AccountBookCategoryType!
 }
 
+input CreateAccountBookItemInput {
+  amount: Int!
+  categoryId: Int!
+  isDisabledBudget: Boolean
+  memo: String
+  registerDateTime: DateTime!
+  title: String!
+  type: AccountBookCategoryType!
+}
+
+"""
+카드 내역서 벌크 등록. 항목은 단건 생성과 같은 입력을 쓴다.
+정기지출/할부(scheduledPayment*)는 받지 않는다 — 내역서 한 줄은 이미 승인된 개별 거래이고,
+벌크로 정기지출을 만들면 같은 지출이 매달 자동 생성돼 중복이 된다.
+"""
+input CreateAccountBookListInput {
+  itemList: [CreateAccountBookItemInput!]!
+}
+
+type CreateAccountBookListResult {
+  """실제로 저장된 건수"""
+  createdCount: Int!
+  itemList: [AccountBook!]!
+}
+
 input CreateAccountInput {
   amount: Int!
   endDate: DateTime!
@@ -264,6 +289,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): Account!
   createAccountBook(input: CreateAccountBookInput!): AccountBook!
   createAccountBookCategory(input: CreateAccountBookCategoryInput!): AccountBookCategory!
+  createAccountBookList(input: CreateAccountBookListInput!): CreateAccountBookListResult!
   createBucketList(input: CreateBucketListInput!): BucketList!
   createBucketListTodo(input: CreateBucketListTodoInput!): BucketListTodo!
   createDeposit(input: CreateDepositInput!): Deposit!

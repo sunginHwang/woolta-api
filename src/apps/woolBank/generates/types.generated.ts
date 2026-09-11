@@ -186,6 +186,32 @@ export type CreateAccountBookInput = {
   type: AccountBookCategoryType;
 };
 
+export type CreateAccountBookItemInput = {
+  amount: Scalars['Int']['input'];
+  categoryId: Scalars['Int']['input'];
+  isDisabledBudget?: InputMaybe<Scalars['Boolean']['input']>;
+  memo?: InputMaybe<Scalars['String']['input']>;
+  registerDateTime: Scalars['DateTime']['input'];
+  title: Scalars['String']['input'];
+  type: AccountBookCategoryType;
+};
+
+/**
+ * 카드 내역서 벌크 등록. 항목은 단건 생성과 같은 입력을 쓴다.
+ * 정기지출/할부(scheduledPayment*)는 받지 않는다 — 내역서 한 줄은 이미 승인된 개별 거래이고,
+ * 벌크로 정기지출을 만들면 같은 지출이 매달 자동 생성돼 중복이 된다.
+ */
+export type CreateAccountBookListInput = {
+  itemList: Array<CreateAccountBookItemInput>;
+};
+
+export type CreateAccountBookListResult = {
+  __typename?: 'CreateAccountBookListResult';
+  /** 실제로 저장된 건수 */
+  createdCount: Scalars['Int']['output'];
+  itemList: Array<AccountBook>;
+};
+
 export type CreateAccountInput = {
   amount: Scalars['Int']['input'];
   endDate: Scalars['DateTime']['input'];
@@ -293,6 +319,7 @@ export type Mutation = {
   createAccount: Account;
   createAccountBook: AccountBook;
   createAccountBookCategory: AccountBookCategory;
+  createAccountBookList: CreateAccountBookListResult;
   createBucketList: BucketList;
   createBucketListTodo: BucketListTodo;
   createDeposit: Deposit;
@@ -331,6 +358,11 @@ export type MutationcreateAccountBookArgs = {
 
 export type MutationcreateAccountBookCategoryArgs = {
   input: CreateAccountBookCategoryInput;
+};
+
+
+export type MutationcreateAccountBookListArgs = {
+  input: CreateAccountBookListInput;
 };
 
 
@@ -677,6 +709,9 @@ export type ResolversTypes = {
   CompleteBucketListInput: CompleteBucketListInput;
   CreateAccountBookCategoryInput: CreateAccountBookCategoryInput;
   CreateAccountBookInput: CreateAccountBookInput;
+  CreateAccountBookItemInput: CreateAccountBookItemInput;
+  CreateAccountBookListInput: CreateAccountBookListInput;
+  CreateAccountBookListResult: ResolverTypeWrapper<Omit<CreateAccountBookListResult, 'itemList'> & { itemList: Array<ResolversTypes['AccountBook']> }>;
   CreateAccountInput: CreateAccountInput;
   CreateBucketListInput: CreateBucketListInput;
   CreateBucketListTodoInput: CreateBucketListTodoInput;
@@ -733,6 +768,9 @@ export type ResolversParentTypes = {
   CompleteBucketListInput: CompleteBucketListInput;
   CreateAccountBookCategoryInput: CreateAccountBookCategoryInput;
   CreateAccountBookInput: CreateAccountBookInput;
+  CreateAccountBookItemInput: CreateAccountBookItemInput;
+  CreateAccountBookListInput: CreateAccountBookListInput;
+  CreateAccountBookListResult: Omit<CreateAccountBookListResult, 'itemList'> & { itemList: Array<ResolversParentTypes['AccountBook']> };
   CreateAccountInput: CreateAccountInput;
   CreateBucketListInput: CreateBucketListInput;
   CreateBucketListTodoInput: CreateBucketListTodoInput;
@@ -889,6 +927,11 @@ export type BucketListTodoResolvers<ContextType = any, ParentType extends Resolv
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type CreateAccountBookListResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateAccountBookListResult'] = ResolversParentTypes['CreateAccountBookListResult']> = {
+  createdCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  itemList?: Resolver<Array<ResolversTypes['AccountBook']>, ParentType, ContextType>;
+};
+
 export type CustomRegularExpenditureResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomRegularExpenditure'] = ResolversParentTypes['CustomRegularExpenditure']> = {
   accountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType>;
   accountBookCategoryId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -932,6 +975,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, RequireFields<MutationcreateAccountArgs, 'input'>>;
   createAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationcreateAccountBookArgs, 'input'>>;
   createAccountBookCategory?: Resolver<ResolversTypes['AccountBookCategory'], ParentType, ContextType, RequireFields<MutationcreateAccountBookCategoryArgs, 'input'>>;
+  createAccountBookList?: Resolver<ResolversTypes['CreateAccountBookListResult'], ParentType, ContextType, RequireFields<MutationcreateAccountBookListArgs, 'input'>>;
   createBucketList?: Resolver<ResolversTypes['BucketList'], ParentType, ContextType, RequireFields<MutationcreateBucketListArgs, 'input'>>;
   createBucketListTodo?: Resolver<ResolversTypes['BucketListTodo'], ParentType, ContextType, RequireFields<MutationcreateBucketListTodoArgs, 'input'>>;
   createDeposit?: Resolver<ResolversTypes['Deposit'], ParentType, ContextType, RequireFields<MutationcreateDepositArgs, 'input'>>;
@@ -1060,6 +1104,7 @@ export type Resolvers<ContextType = any> = {
   BucketListSummary?: BucketListSummaryResolvers<ContextType>;
   BucketListSummaryList?: BucketListSummaryListResolvers<ContextType>;
   BucketListTodo?: BucketListTodoResolvers<ContextType>;
+  CreateAccountBookListResult?: CreateAccountBookListResultResolvers<ContextType>;
   CustomRegularExpenditure?: CustomRegularExpenditureResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Deposit?: DepositResolvers<ContextType>;
