@@ -52,11 +52,13 @@ src/
 - `loginType`(=authType): `user`(정상 로그인) | `share`(공유코드 읽기전용 로그인).
 - 소셜 로그인은 provider 토큰을 **서버가 provider에 되물어 검증**한 뒤(`services/SocialAuthService.ts`) 확인된 식별자만 `socialId`로 쓴다. 클라이언트가 보낸 socialId는 신뢰하지 않는다.
 - refresh는 `user_refresh_token` 테이블에 sha256 해시로 저장되고 **1회용(회전)** 이다. 폐기된 토큰이 재등장하면 탈취로 보고 해당 로그인 패밀리 전체를 끊는다.
+- **봇 서버 간 인증**: `Authorization: Bearer <WOOLTA_BOT_TOKEN>` + `x-woolta-user-id` 헤더로 aiho 같은 봇이 허용목록(`WOOLTA_BOT_USER_IDS`) 안의 userId를 대행한다(`shared/auth/botAuth.ts`). Bearer 헤더가 붙은 요청은 실패해도 쿠키 인증으로 넘어가지 않는다(fail-closed). 상세는 `AUTH-REVIEW.md` §9.
 
 요청 처리 플로우:
 
 ```
 요청 → Apollo context: buildAuthContext(req, res)
+         ├─ Authorization: Bearer 존재 → 봇 토큰 + 허용목록 검사 (성공/실패 무관하게 여기서 종료)
          ├─ w.access 검증 성공 → ctx.auth = { userId, authType }
          ├─ 만료 + w.refresh 유효 → 저장소에서 1회용 소비 → 새 토큰쌍 + Set-Cookie (무중단 갱신)
          │    └─ 이미 폐기된 refresh 재사용 → 패밀리 전체 폐기 + 쿠키 삭제 → null
@@ -157,8 +159,12 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 | `CORS_ORIGINS` | 쉼표 구분 허용 오리진. 미설정 시 CORS 미들웨어 미적용(동일 오리진 전제) | — |
 | `AUTH_REFRESH_STORE_STRICT` | `1`이면 저장소에 없는 refresh 거부. 레거시 Koa 정리 후 켠다 | off |
 | `AUTH_REFRESH_REUSE_GRACE_MS` | refresh 회전 유예창(ms) — 동시 요청 레이스 오탐 방지 | 10000 |
+| `WOOLTA_BOT_TOKEN` | 봇 서버 간 인증 토큰. 32자 이상이어야 하며 미설정 시 봇 인증 비활성 | (없음) |
+| `WOOLTA_BOT_USER_IDS` | 봇이 대행할 수 있는 userId 허용목록(쉼표 구분). 미설정 시 봇 인증 전부 거부 | (없음) |
+| `WOOLTA_BOT_ALLOWED_PATHS` | 봇 토큰으로 호출할 수 있는 경로 허용목록(쉼표 구분). 토큰 유출 시 피해 범위를 한정한다 | `/calendar/graphql` |
 | `ENABLE_WOOLBANK_CRON` | 정기지출 cron 활성화 | off |
 | `BLOG_UPLOAD_PATH` / `BLOG_AUTHOR_USER_NO` | blog 업로드 경로 / 임시 작성자 | /home/blog/post/upload/ · 1 |
+| `BLOG_ADMIN_USER_IDS` | blog 쓰기 허용 woolBank userId 목록(쉼표 구분). 미설정 시 쓰기 차단 | (없음) |
 | `WOOLBANK_UPLOAD_PATH` / `WOOLBANK_UPLOAD_URL` | bank 업로드 경로 / URL prefix | ./uploads · https://banketlist-api.woolta.com |
 
 ## 9. 검증 방법 (테스트 프레임워크 없음)
@@ -167,6 +173,27 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 2. 더미 DB URL로 부팅 → 스키마/배선 검증 (`{ __typename }`)
 3. 인증 플로우: `issueAuthTokens`(또는 동일 시크릿으로 직접 서명)로 토큰 생성 → 쿠키로 `checkAccess`, 만료토큰+refresh 회전, 같은 refresh 재사용 시 세션 종료, share 토큰의 `requireRealUser` 거부 확인
 4. 실 DB 읽기 전용 쿼리로 데이터 검증 (쓰기 뮤테이션은 테스트 DB에서)
+5. 봇 토큰 인증: `WOOLTA_BOT_TOKEN`·`WOOLTA_BOT_USER_IDS`를 셸에 export 하고 서버를 띄운 뒤 아래 4가지를 확인한다.
+
+   ```bash
+   Q='{"query":"{ checkAccess }"}'
+
+   # 정상 — data.checkAccess 가 대행 userId 로 응답
+   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+     -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -H 'x-woolta-user-id: 13' -d "$Q"
+
+   # 토큰 불일치 → UNAUTHENTICATED
+   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+     -H 'authorization: Bearer wrong-token' -H 'x-woolta-user-id: 13' -d "$Q"
+
+   # 허용목록 밖 userId → UNAUTHENTICATED
+   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+     -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -H 'x-woolta-user-id: 999' -d "$Q"
+
+   # 대행 헤더 누락 → UNAUTHENTICATED (쿠키로 폴스루하지 않는다)
+   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+     -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -d "$Q"
+   ```
 
 ## 10. 이관 이력 및 남은 작업
 

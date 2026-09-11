@@ -17,7 +17,7 @@ npx prisma generate --schema=prisma/schema<Domain>.prisma  # regenerate one doma
 - No tests and no lint script. Formatting is Prettier (`.prettierrc`; generated code is excluded via `.prettierignore`).
 - Databases are MySQL, configured via `BLOG_DATABASE_URL`, `WOOLBANK_DATABASE_URL`, and `DASHBOARD_DATABASE_URL`. Nothing loads `.env` files — the env vars must already be set in the shell.
 - **Prisma 7 specifics**: schemas use the `prisma-client` generator (emits TypeScript into `prisma/generated/<domain>`); import everything from the `<output>/client` entrypoint. Datasource blocks have **no `url`** — the connection string is passed at runtime via `new PrismaClient({ adapter: new PrismaMariaDb(process.env.<DOMAIN>_DATABASE_URL!) })` in each domain's `utils/prismaClient.ts`.
-- Blog domain extras: `BLOG_AUTHOR_USER_NO` (temporary author identity until the external auth service is wired in, see `src/apps/blog/middlewares/currentUser.ts`) and `BLOG_UPLOAD_PATH` (image upload dir, defaults to `/home/blog/post/upload/`).
+- Blog domain extras: `BLOG_AUTHOR_USER_NO` (temporary author identity until the external auth service is wired in, see `src/apps/blog/middlewares/currentUser.ts`), `BLOG_ADMIN_USER_IDS` (comma-separated woolBank userIds allowed to write — **write mutations fail closed when unset**, see `src/apps/blog/middlewares/requireBlogAdmin.ts`) and `BLOG_UPLOAD_PATH` (image upload dir, defaults to `/home/blog/post/upload/`).
 
 ## Architecture
 
@@ -46,11 +46,13 @@ Keep domains separate — never import across `src/apps/*` boundaries, and alway
 
 ### Shared auth (`src/shared/auth/`)
 
-Cookie-based JWT shared across `.woolta.com` (cookies `w.access`/`w.refresh`, HS512, payload `{userId, loginType}` plus `jti` on refresh — compatible with tokens issued by the legacy `woolbankApi`). access lives **15 minutes**, refresh 60 days. `buildAuthContext(req, res)` verifies the access cookie and transparently rotates from the refresh cookie on expiry; Apollo context functions inject it as `ctx.auth`. Resolvers call `requireAuth(ctx)` / `requireRealUser(ctx)` (the latter rejects share-code logins) — **every Mutation uses `requireRealUser`; only read-only Queries use `requireAuth`** (deny-by-default, see `docs/AUTH-REVIEW.md` §8). The user domain issues sessions (`loginBySocial`, `loginByShareCode`, `refreshSession`, `logout`); woolBank consumes them. **Tokens never appear in GraphQL inputs or responses — cookies only.**
+Cookie-based JWT shared across `.woolta.com` (cookies `w.access`/`w.refresh`, HS512, payload `{userId, loginType}` plus `jti` on refresh — compatible with tokens issued by the legacy `woolbankApi`). access lives **15 minutes**, refresh 60 days. `buildAuthContext(req, res)` verifies the access cookie and transparently rotates from the refresh cookie on expiry; Apollo context functions inject it as `ctx.auth`. Resolvers call `requireAuth(ctx)` / `requireRealUser(ctx)` (the latter rejects share-code logins) — **every Mutation uses `requireRealUser`; only read-only Queries use `requireAuth`** (deny-by-default, see `docs/AUTH-REVIEW.md` §8). The blog domain is the deliberate exception: reads and the anonymous push subscribe/unsubscribe stay public, while `createPost`/`updatePost`/`deletePost`/`sendPushToAll` go through `requireBlogAdmin` (`requireRealUser` + a `BLOG_ADMIN_USER_IDS` allowlist, since the blog DB `user.no` and woolBank DB `user.id` tables are not linked). The user domain issues sessions (`loginBySocial`, `loginByShareCode`, `refreshSession`, `logout`); woolBank consumes them. **Tokens never appear in GraphQL inputs or responses — cookies only.**
 
 Two things that are easy to break:
 - **Social login verifies the provider token server-side** (`src/apps/user/services/SocialAuthService.ts`) and takes `socialId` only from that result — never from client input. Needs `GOOGLE_CLIENT_ID` / `KAKAO_APP_ID` / `FACEBOOK_APP_ID`+`FACEBOOK_APP_SECRET`; missing env fails the login closed.
 - **Refresh tokens are single-use** and stored (sha256) in `user_refresh_token` (DDL: `scripts/userRefreshTokenDdl.sql` — run manually, never `prisma db push` on the shared woolBank DB). `shared/auth` stays Prisma-free: `app.ts` injects `prismaRefreshTokenStore` via `setRefreshTokenStore`. Replaying a revoked refresh revokes the whole login family. Set `AUTH_REFRESH_STORE_STRICT=1` to reject refresh tokens absent from the store, once the legacy Koa server is gone.
+
+Bot servers (aiho) authenticate server-to-server instead: `Authorization: Bearer $WOOLTA_BOT_TOKEN` + `x-woolta-user-id` impersonates a userId from the `WOOLTA_BOT_USER_IDS` allowlist (`shared/auth/botAuth.ts`) — **unset allowlist rejects every bot request, and a request carrying a Bearer header never falls through to the cookie path** (see `docs/AUTH-REVIEW.md` §9).
 
 Secret comes from `AUTH_SECRET_TOKEN_KEY` (default 'test'). Cookie `sameSite` defaults to `lax`; set `CORS_ORIGINS` (and `AUTH_COOKIE_SAMESITE=none`) only if the FE is genuinely cross-origin.
 
@@ -62,7 +64,9 @@ Codegen uses `@eddeee888/gcg-typescript-resolver-files` (configs: `codegenBlog.t
 - `schema/resolvers/Query/<field>.ts`, `schema/resolvers/Mutation/<field>.ts`, and `schema/resolvers/<Type>.ts` — one file per resolver, each exporting a resolver typed as `NonNullable<QueryResolvers['<field>']>` etc.
 - `generates/` — generated `typeDefs.generated.ts`, `resolvers.generated.ts` (auto-wires the resolver files), `types.generated.ts`. Never edit these by hand.
 
-**Workflow for schema changes**: edit the `.graphql` file → run the domain's codegen script → it scaffolds missing resolver files and rewires `resolvers.generated.ts` → implement the resolver body. Resolver files import types from `./../../../generates/types.generated` and instantiate their own `PrismaClient` at module scope.
+**Workflow for schema changes**: edit the `.graphql` file → run the domain's codegen script → it scaffolds missing resolver files and rewires `resolvers.generated.ts` → implement the resolver body.
+
+**Custom scalar trap**: when a domain's SDL declares a scalar, codegen scaffolds `schema/resolvers/<Scalar>.ts` with **empty** `serialize`/`parseValue`/`parseLiteral` bodies, and prefers that file over the `graphql-scalars` resolver it would otherwise wire. An unimplemented stub silently breaks the scalar in both directions (inputs rejected as `Expected type "DateTime"`, outputs failing with `serialize(...) returned: undefined`). woolBank shipped in that state until 2026-09-04. Either implement the stub or delete it so codegen falls back to `graphql-scalars` — after any codegen run, check that no `/* Implement logic` placeholder remains under `src/apps/*/schema/resolvers/`. Resolver files import types from `./../../../generates/types.generated` and instantiate their own `PrismaClient` at module scope.
 
 ### Blog domain
 
