@@ -179,6 +179,44 @@ refresh를 `httpOnly` 쿠키에 넣은 목적은 JS가 읽지 못하게 하는 �
 
 ---
 
+## 9. 봇 토큰 인증 (2026-09)
+
+### 목적
+
+aiho 카카오톡 봇이 가족 구성원을 대신해 woolta API를 호출해야 한다. 봇은 브라우저가 아니라 서버이므로 쿠키 세션을 들고 있을 수 없고, 사람마다 소셜 로그인을 대신 수행할 수도 없다. 그래서 **서버 간 공유 토큰 + 대행 대상 userId 헤더** 조합을 별도 인증 경로로 열었다.
+
+- 요청 형식: `Authorization: Bearer <WOOLTA_BOT_TOKEN>` + `x-woolta-user-id: <userId>`
+- 구현: `src/shared/auth/botAuth.ts`의 `resolveBotAuth`, `buildAuthContext` 최상단에서 호출
+- 성공 시 `{ userId, authType: 'user' }`를 그대로 내려주므로 기존 `requireAuth` / `requireRealUser` 가드가 변경 없이 동작한다.
+
+### 위협 모델
+
+토큰 하나가 허용목록 전원을 대행하므로 **토큰이 유출되면 `WOOLTA_BOT_USER_IDS`에 오른 유저 전원의 계정을 그대로 쓸 수 있다.** 사람의 로그인 자격증명이 아니라 서버 간 신뢰를 표현하는 값이라, 유출 시 개별 유저 비밀번호 변경 같은 대응 수단이 없고 토큰 회전만이 유일한 차단책이다. 따라서 허용목록은 실제로 봇이 대행해야 하는 최소 인원으로 유지한다.
+
+### 완화
+
+- **허용목록 fail-closed** — `WOOLTA_BOT_USER_IDS` 미설정이면 목록이 비어 모든 봇 인증이 거부된다. 설정 누락이 전체 허용이 되지 않는다.
+- **경로 스코프** — 토큰이 맞아도 `WOOLTA_BOT_ALLOWED_PATHS`(기본 `/calendar/graphql`) 밖의 도메인(가계부·블로그 등)은 대행하지 않는다. 봇이 쓰는 도메인이 늘면 이 목록에 명시적으로 추가한다.
+- **상수 시간 비교** — 토큰은 양쪽 sha256 다이제스트를 `crypto.timingSafeEqual`로 비교한다. 길이 차이로도 정보가 새지 않는다.
+- **짧은 토큰 거부** — 32자 미만이면 봇 인증을 아예 켜지 않고 기동 시 경고를 남긴다.
+- **쿠키 경로 무영향** — Bearer 헤더가 없는 요청은 기존 access/refresh 쿠키 플로우를 그대로 탄다. 봇 경로는 완전히 별도 분기다.
+- **Bearer 존재 시 쿠키 폴스루 금지** — Bearer 헤더가 붙은 요청은 봇 인증에 실패해도 쿠키 검증으로 내려가지 않고 즉시 미인증으로 끝난다. 실패한 봇 요청이 우연히 같이 실린 쿠키로 승격되는 경로를 막는다.
+- **토큰 미로그** — 실패 로그에는 요청 IP와 요청된 userId만 남기고 토큰 값은 어떤 경우에도 출력하지 않는다.
+
+### 회전 절차
+
+1. 새 토큰 생성: `openssl rand -hex 32`
+2. **woolta-api와 봇 서버 양쪽 env를 동시에 교체**한 뒤 두 서버를 재기동한다. 토큰은 단일 값이라 무중단 교체 창이 없으므로, 짧은 실패 구간을 감수하거나 트래픽이 적은 시간대에 수행한다.
+3. 교체 후 §검증(`ARCHITECTURE.md` §9)의 curl 4종으로 정상/불일치/허용목록 밖/헤더 누락을 확인한다.
+
+### 남은 과제
+
+- **도메인·오퍼레이션 스코프** — 현재 봇은 대행 유저의 모든 도메인·모든 뮤테이션에 접근한다. 실제로 필요한 범위(예: calendar 읽기·쓰기)로 좁히려면 `AuthInfo`에 스코프를 싣고 가드에서 검사해야 한다.
+- **감사 로그** — 성공한 대행 요청은 현재 아무 기록도 남기지 않는다. 누가 언제 누구를 대행했는지 추적하려면 별도 감사 테이블이 필요하다.
+- **토큰 다중화** — 봇이 늘어나면 단일 공유 토큰으로는 회전·폐기 단위를 분리할 수 없다. 봇별 토큰 + 봇별 허용목록 구조가 다음 단계다.
+
+---
+
 ## 적용 결과 (2026-09-02)
 
 | 항목                               | 상태    | 주요 변경 파일                                                                                                                                                    |
@@ -242,7 +280,11 @@ refresh를 `httpOnly` 쿠키에 넣은 목적은 JS가 읽지 못하게 하는 �
 - **§7 완결** — 레거시 `woolbankApi` 정리 후 `user.password` 컬럼 nullable 전환.
 - **§3 strict 전환** — 레거시 서버 종료 후 `AUTH_REFRESH_STORE_STRICT=1`. 그 전까지는 저장소에 없는 refresh를 흡수하므로 재사용 감지가 이 서버 발급분에만 적용된다.
 - **refresh 레코드 정리** — 만료 행이 계속 쌓인다. DDL 하단의 DELETE를 크론에 걸거나 이벤트 스케줄러로 처리.
-- **blog 도메인 (이번 범위 밖, 별건)** — `createPost` / `updatePost` / `deletePost` / `sendPushToAll` 등 blog의 Mutation 6개는 **가드가 전혀 없다.** blog는 Apollo context에 `auth`조차 주입하지 않고 작성자를 `middlewares/currentUser.ts`에서 스텁으로 만든다(`BLOG_AUTHOR_USER_NO`). 쿠키는 이미 `.woolta.com`으로 공유되므로 blog context에도 `buildAuthContext`를 붙이고 `requireRealUser`를 거는 것만으로 닫을 수 있다.
+- **blog 도메인** — **적용 완료.** blog context에 `buildAuthContext`를 주입하고, 쓰기 4개(`createPost` / `updatePost` / `deletePost` / `sendPushToAll`)에 `requireBlogAdmin`(`middlewares/requireBlogAdmin.ts`)을 걸었다. 읽기와 익명 푸시 구독(`subscribeWebPush` / `unsubscribeWebPush`)은 의도적으로 공개다.
+
+  `requireRealUser`만으로는 "로그인한 woolta 유저 아무나"가 되므로 `BLOG_ADMIN_USER_IDS` 허용목록을 함께 검사한다. 미설정 시 `FORBIDDEN`(`myExtension: BLOG_ADMIN_NOT_CONFIGURED`)으로 **닫힌다** — 설정 누락이 전체 공개가 되지 않도록.
+
+  근본 원인은 **두 유저 테이블이 연결되지 않은 것**이다: blog DB(`user.no`, `userId`, `isAdmin`)와 woolBank DB(`user.id`, `socialId`)는 별개 DB의 별개 테이블이고, 인증 쿠키의 `userId`는 후자다. 그래서 작성자 신원은 여전히 `BLOG_AUTHOR_USER_NO` 스텁이 담당한다. blog user 테이블에 woolBank userId 매핑 열을 추가하고 `isAdmin`을 권한 기준으로 삼으면 허용목록과 스텁을 동시에 걷어낼 수 있다.
 
 ---
 

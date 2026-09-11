@@ -7,5 +7,7 @@ export { buildAuthContext, rotateFromRefreshToken } from './context';
 export { startAuthSession, endAuthSession } from './session';
 export type { AuthInfo, AuthedContext } from './context';
 export { requireAuth, requireRealUser } from './guards';
+export { resolveBotAuth } from './botAuth';
+export type { BotAuthResult } from './botAuth';
 export { setRefreshTokenStore, getRefreshTokenStore } from './refreshStore';
 export type { RefreshTokenStore, RefreshTokenRecord, ConsumeResult } from './refreshStore';

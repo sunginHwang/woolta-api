@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { resolveBotAuth } from './botAuth';
 import { AuthType, authConfig } from './config';
 import { clearAuthCookie, setAuthCookie } from './cookie';
 import { getRefreshTokenStore } from './refreshStore';
@@ -21,6 +22,13 @@ export interface AuthedContext {
 // woolbankApi middleware/isAuthenticated 플로우 이관 + refresh 회전:
 // access 쿠키 검증 → 만료 시 refresh 쿠키를 1회용으로 소비하고 새 토큰쌍 재발급 → 인증 정보 반환. 실패 시 null.
 export const buildAuthContext = async (req: express.Request, res: express.Response): Promise<AuthInfo | null> => {
+  // 봇 경로 우선. Bearer 헤더가 붙어 있으면 성공이든 실패든 여기서 끝내고 쿠키로 폴스루하지 않는다(fail-closed).
+  const bot = resolveBotAuth(req);
+
+  if (bot.matched) {
+    return bot.auth;
+  }
+
   const accessToken = req.cookies?.[ACCESS_TOKEN_NAME];
   const refreshToken = req.cookies?.[REFRESH_TOKEN_NAME];
 

@@ -1,9 +1,11 @@
 import type { MutationResolvers } from './../../../../generates/types.generated';
 import { getCurrentUser } from '../../../../middlewares/currentUser';
+import { requireBlogAdmin } from '../../../../middlewares/requireBlogAdmin';
 import { createBoardPost } from '../../../../services/PostService';
 import { allSendPush } from '../../../../services/WebPushService';
 
 export const createPost: NonNullable<MutationResolvers['createPost']> = async (_parent, _arg, _ctx) => {
+  requireBlogAdmin(_ctx);
   const { categoryNo, title, contents } = _arg.input;
   const user = await getCurrentUser(_ctx.req);
 
