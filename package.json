@@ -12,14 +12,15 @@
     "dev": "tsx watch src/app.ts",
     "generate": "graphql-codegen",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "codegenAll": "npm run codegenWoolBank && npm run codegenBlog && npm run codegenUser && npm run codegenTodo && npm run codegenMemo && npm run codegenArticle && npm run mergeSchema",
+    "codegenAll": "npm run codegenWoolBank && npm run codegenBlog && npm run codegenUser && npm run codegenTodo && npm run codegenMemo && npm run codegenArticle && npm run codegenCalendar && npm run mergeSchema",
     "mergeSchema": "tsx scripts/mergeSchema.ts",
     "codegenBlog": "graphql-codegen --config codegenBlog.ts",
     "codegenWoolBank": "graphql-codegen --config codegenWoolBank.ts",
     "codegenUser": "graphql-codegen --config codegenUser.ts",
     "codegenTodo": "graphql-codegen --config codegenTodo.ts",
     "codegenMemo": "graphql-codegen --config codegenMemo.ts",
-    "codegenArticle": "graphql-codegen --config codegenArticle.ts"
+    "codegenArticle": "graphql-codegen --config codegenArticle.ts",
+    "codegenCalendar": "graphql-codegen --config codegenCalendar.ts"
   },
   "keywords": [],
   "author": "",

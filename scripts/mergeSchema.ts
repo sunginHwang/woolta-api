@@ -1,5 +1,5 @@
 /**
- * 여섯 도메인의 generates/schema.generated.graphqls를 하나의 SDL로 병합한다.
+ * 일곱 도메인의 generates/schema.generated.graphqls를 하나의 SDL로 병합한다.
  * FE codegen 전용 산출물이며 런타임에는 사용되지 않는다.
  *
  * 병합 규칙:
@@ -25,7 +25,7 @@ import {
 } from 'graphql';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DOMAINS = ['blog', 'woolBank', 'user', 'todo', 'memo', 'article'] as const;
+const DOMAINS = ['blog', 'woolBank', 'user', 'todo', 'memo', 'article', 'calendar'] as const;
 const OUTPUT = join(ROOT, 'schema.generated.graphqls');
 
 type RootName = 'Query' | 'Mutation';

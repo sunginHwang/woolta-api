@@ -1,0 +1,44 @@
+// calendar 도메인 스키마 — dashboard DB (테이블 DDL: scripts/dashboardDdl.sql)
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/calendar"
+}
+
+datasource calendar {
+  provider = "mysql"
+}
+
+model CalendarEvent {
+  @@map("calendar_event")
+
+  id          String   @id @default(uuid()) @calendar.Char(36)
+  userId      Int      @map("user_id")
+  title       String
+  description String?  @calendar.Text
+  startAt     DateTime @map("start_at")
+  // exclusive — 종일 일정 8/1 하루는 endAt = 8/2 00:00 (FullCalendar 종일 end 규약과 동일)
+  endAt       DateTime @map("end_at")
+  isAllDay    Boolean  @default(false) @map("is_all_day")
+  color       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, startAt])
+}
+
+// 양방향·읽기 전용 공유. 수락된 1행이 두 사람 모두의 열람 권한을 뜻한다.
+model CalendarShare {
+  @@map("calendar_share")
+
+  id          Int       @id @default(autoincrement())
+  requesterId Int       @map("requester_id")
+  addresseeId Int       @map("addressee_id")
+  status      String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  respondedAt DateTime? @map("responded_at")
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId, status])
+  @@index([requesterId, status])
+}

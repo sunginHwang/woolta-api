@@ -16,6 +16,8 @@ import { typeDefs as MemoTypeDefs } from './apps/memo/generates/typeDefs.generat
 import { resolvers as MemoResolvers } from './apps/memo/generates/resolvers.generated'
 import { typeDefs as ArticleTypeDefs } from './apps/article/generates/typeDefs.generated'
 import { resolvers as ArticleResolvers } from './apps/article/generates/resolvers.generated'
+import { typeDefs as CalendarTypeDefs } from './apps/calendar/generates/typeDefs.generated'
+import { resolvers as CalendarResolvers } from './apps/calendar/generates/resolvers.generated'
 import cookieParser from 'cookie-parser';
 import blogFileUploadRouter from './apps/blog/routes/fileUpload';
 import woolBankFileUploadRouter from './apps/woolBank/routes/fileUpload';
@@ -70,6 +72,11 @@ async function startServer() {
         typeDefs: ArticleTypeDefs,
         resolvers: ArticleResolvers,
     });
+    const calendarServer = new ApolloServer<any>({
+        formatError,
+        typeDefs: CalendarTypeDefs,
+        resolvers: CalendarResolvers,
+    });
 
     await blogServer.start();
     await woolBankServer.start();
@@ -77,13 +84,14 @@ async function startServer() {
     await todoServer.start();
     await memoServer.start();
     await articleServer.start();
+    await calendarServer.start();
 
     app.use(
         '/blog/graphql',
         express.json(),
         expressMiddleware(blogServer, {
             context: async ({ req, res }) => {
-                return { req, res }
+                return { req, res, auth: await buildAuthContext(req, res) }
             },
         }),
     );
@@ -144,6 +152,16 @@ async function startServer() {
         }),
     );
 
+    app.use(
+        '/calendar/graphql',
+        express.json(),
+        expressMiddleware(calendarServer, {
+            context: async ({ req, res }) => {
+                return { req, res, auth: await buildAuthContext(req, res) }
+            },
+        }),
+    );
+
     // 매일 자정 정기지출 자동 등록 (원본 woolbankApi cron).
     // 기존 Koa 서버와 중복 실행 방지를 위해 env로 명시 활성화 — Koa 서버 내릴 때 ENABLE_WOOLBANK_CRON=1 로 켠다.
     if (process.env.ENABLE_WOOLBANK_CRON === '1') {
@@ -163,6 +181,7 @@ async function startServer() {
         console.log(`Todo GraphQL endpoint: http://localhost:${PORT}/todo/graphql`);
         console.log(`Memo GraphQL endpoint: http://localhost:${PORT}/memo/graphql`);
         console.log(`Article GraphQL endpoint: http://localhost:${PORT}/article/graphql`);
+        console.log(`Calendar GraphQL endpoint: http://localhost:${PORT}/calendar/graphql`);
     });
 }
 

@@ -85,3 +85,44 @@ CREATE TABLE article_curation (
   UNIQUE KEY uq_curation (user_id, week_key, article_id),
   KEY idx_curation_article (article_id)
 ) ENGINE=InnoDB;
+
+-- ─────────────────────────────────────────────────────────────
+-- 캘린더 (woolta 대시보드 4번째 앱)
+-- ─────────────────────────────────────────────────────────────
+
+-- 일정은 UTC DATETIME 으로 저장하고 표시 시간대 변환은 클라이언트가 한다.
+-- 종일 일정도 start_at/end_at 을 쓰며(is_all_day=1), end_at 은 exclusive 로 둔다
+-- (FullCalendar 의 종일 이벤트 end 규약과 동일 — 8/1 하루 종일이면 end_at = 8/2 00:00).
+CREATE TABLE calendar_event (
+  id          CHAR(36)     NOT NULL,
+  user_id     INT          NOT NULL,   -- 일정 소유자 (woolBank user.id, 크로스 DB라 FK 없음)
+  title       VARCHAR(255) NOT NULL,
+  description TEXT         NULL,
+  start_at    DATETIME(6)  NOT NULL,
+  end_at      DATETIME(6)  NOT NULL,   -- exclusive
+  is_all_day  TINYINT      NOT NULL DEFAULT 0,
+  color       VARCHAR(20)  NULL,       -- UI 색상 토큰 키 (null = 기본색)
+  created_at  DATETIME(6)  NOT NULL,
+  updated_at  DATETIME(6)  NOT NULL,
+  PRIMARY KEY (id),
+  -- 범위 조회가 항상 (소유자, 기간) 이라 복합 인덱스로 커버한다
+  KEY idx_calendar_event_user_start (user_id, start_at)
+) ENGINE=InnoDB;
+
+-- 캘린더 공유는 양방향·읽기 전용이다. 수락된 1행이 두 사람 모두의 열람 권한을 뜻하므로
+-- (requester, addressee) 를 방향 없는 쌍으로 취급한다 — 조회 시 양쪽 컬럼을 모두 본다.
+-- 역방향 중복 초대는 애플리케이션에서 막는다(DB 유니크 키로는 표현 불가).
+CREATE TABLE calendar_share (
+  id           INT          NOT NULL AUTO_INCREMENT,
+  requester_id INT          NOT NULL,   -- 초대를 보낸 사람
+  addressee_id INT          NOT NULL,   -- 초대를 받은 사람 (수락/거절 권한자)
+  status       VARCHAR(10)  NOT NULL,   -- PENDING / ACCEPTED / DECLINED
+  created_at   DATETIME(6)  NOT NULL,
+  updated_at   DATETIME(6)  NOT NULL,
+  responded_at DATETIME(6)  NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_calendar_share_pair (requester_id, addressee_id),
+  -- 로그인 시 "받은 대기 초대" 배지 조회용
+  KEY idx_calendar_share_addressee (addressee_id, status),
+  KEY idx_calendar_share_requester (requester_id, status)
+) ENGINE=InnoDB;

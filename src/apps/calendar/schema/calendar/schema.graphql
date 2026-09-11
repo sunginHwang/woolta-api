@@ -1,0 +1,156 @@
+type Query
+type Mutation
+scalar DateTime
+
+"""
+일정. startAt/endAt 은 UTC 로 오가고 표시 시간대 변환은 클라이언트가 한다.
+endAt 은 exclusive — 종일 일정 8/1 하루는 endAt = 8/2 00:00 (FullCalendar 종일 end 규약과 동일).
+"""
+type CalendarEvent {
+  id: String!
+  title: String!
+  description: String
+  startAt: DateTime!
+  endAt: DateTime!
+  isAllDay: Boolean!
+  """UI 색상 토큰 키. null 이면 기본색"""
+  color: String
+  """소유자 — 공유받은 일정은 내 일정과 구분해 표시해야 한다"""
+  owner: CalendarUser!
+  """내가 소유한 일정인지. false 면 읽기 전용(공유는 읽기 전용이다)"""
+  isMine: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CalendarEventList {
+  totalCount: Int!
+  itemList: [CalendarEvent!]!
+}
+
+"""공유 상대/소유자 표시에 필요한 최소 사용자 정보"""
+type CalendarUser {
+  id: Int!
+  name: String!
+  email: String!
+  profileImg: String!
+}
+
+enum CalendarShareStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+"""
+공유 관계 1행. 양방향이라 수락되면 두 사람이 서로의 일정을 본다(읽기 전용).
+counterpart 는 항상 '나' 의 반대편이고, isOutgoing 으로 내가 보낸 초대인지 구분한다.
+"""
+type CalendarShare {
+  id: Int!
+  status: CalendarShareStatus!
+  """내가 보낸 초대인지 여부. false 면 내가 받은 초대(= 내가 수락/거절 권한자)"""
+  isOutgoing: Boolean!
+  counterpart: CalendarUser!
+  createdAt: DateTime!
+  respondedAt: DateTime
+}
+
+type CalendarShareList {
+  totalCount: Int!
+  itemList: [CalendarShare!]!
+}
+
+input CalendarEventRangeInput {
+  """조회 시작 (inclusive)"""
+  startAt: DateTime!
+  """조회 끝 (exclusive)"""
+  endAt: DateTime!
+}
+
+input CreateCalendarEventInput {
+  title: String!
+  description: String
+  startAt: DateTime!
+  endAt: DateTime!
+  isAllDay: Boolean
+  color: String
+}
+
+input UpdateCalendarEventInput {
+  id: String!
+  title: String
+  description: String
+  startAt: DateTime
+  endAt: DateTime
+  isAllDay: Boolean
+  color: String
+}
+
+input DeleteCalendarEventInput {
+  id: String!
+}
+
+input RequestCalendarShareInput {
+  """초대할 상대의 가입 이메일"""
+  email: String!
+}
+
+input RespondCalendarShareInput {
+  id: Int!
+  isAccepted: Boolean!
+}
+
+"""
+공유 해제/취소. 대기 중 초대는 보낸 사람이 취소하고,
+수락된 공유는 양쪽 누구나 해제할 수 있다.
+"""
+input CancelCalendarShareInput {
+  id: Int!
+}
+
+enum RequestCalendarShareResultCode {
+  """초대를 새로 보냈다"""
+  REQUESTED
+  """상대가 이미 나를 초대해 둬서 즉시 수락 처리했다"""
+  ACCEPTED_MUTUAL
+  """이미 공유 중이다"""
+  ALREADY_SHARED
+  """내가 보낸 초대가 이미 대기 중이다"""
+  ALREADY_PENDING
+  """가입되지 않은 이메일이다"""
+  USER_NOT_FOUND
+  """자기 자신은 초대할 수 없다"""
+  SELF
+}
+
+"""
+초대 결과. 실패도 에러가 아닌 코드로 돌려준다 — 화면이 상황별 안내를 띄워야 하고,
+'이미 공유 중' 같은 건 예외 상황이 아니기 때문이다.
+"""
+type RequestCalendarShareResult {
+  code: RequestCalendarShareResultCode!
+  """성사된 경우에만 채워진다"""
+  share: CalendarShare
+}
+
+extend type Query {
+  """
+  기간과 겹치는 일정 — 내 일정 + 공유 수락된 상대의 일정.
+  겹침 판정은 startAt < range.endAt AND endAt > range.startAt.
+  """
+  calendarEventList(input: CalendarEventRangeInput!): CalendarEventList!
+  """공유 현황 — 수락된 관계 + 내가 보낸 대기 중 초대"""
+  calendarShareList: CalendarShareList!
+  """내가 받은 대기 중 초대. 로그인 직후 알림 배지에 쓴다"""
+  pendingCalendarShareList: CalendarShareList!
+}
+
+extend type Mutation {
+  createCalendarEvent(input: CreateCalendarEventInput!): CalendarEvent!
+  updateCalendarEvent(input: UpdateCalendarEventInput!): CalendarEvent!
+  deleteCalendarEvent(input: DeleteCalendarEventInput!): Boolean!
+  requestCalendarShare(input: RequestCalendarShareInput!): RequestCalendarShareResult!
+  respondCalendarShare(input: RespondCalendarShareInput!): CalendarShare!
+  cancelCalendarShare(input: CancelCalendarShareInput!): Boolean!
+}
