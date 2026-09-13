@@ -14,7 +14,9 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model PostFile
- * 
+ * 업로드 이력. 레거시 이름은 post_file 이지만 blog 전용이 아니다 —
+ * 모든 앱의 업로드를 appType 으로 구분해 함께 적재한다(image 도메인).
+ * 레거시 Spring(jar)이 같은 테이블에 쓰고 있어 새 컬럼은 DEFAULT 를 갖는다.
  */
 export type PostFileModel = runtime.Types.Result.DefaultSelection<Prisma.$PostFilePayload>
 
@@ -44,6 +46,8 @@ export type PostFileMinAggregateOutputType = {
   fileExt: string | null
   fullPath: string | null
   size: number | null
+  appType: string | null
+  mimeType: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +60,8 @@ export type PostFileMaxAggregateOutputType = {
   fileExt: string | null
   fullPath: string | null
   size: number | null
+  appType: string | null
+  mimeType: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +74,8 @@ export type PostFileCountAggregateOutputType = {
   fileExt: number
   fullPath: number
   size: number
+  appType: number
+  mimeType: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,6 +100,8 @@ export type PostFileMinAggregateInputType = {
   fileExt?: true
   fullPath?: true
   size?: true
+  appType?: true
+  mimeType?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,6 +114,8 @@ export type PostFileMaxAggregateInputType = {
   fileExt?: true
   fullPath?: true
   size?: true
+  appType?: true
+  mimeType?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -116,6 +128,8 @@ export type PostFileCountAggregateInputType = {
   fileExt?: true
   fullPath?: true
   size?: true
+  appType?: true
+  mimeType?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -215,6 +229,8 @@ export type PostFileGroupByOutputType = {
   fileExt: string
   fullPath: string
   size: number
+  appType: string
+  mimeType: string | null
   createdAt: Date
   updatedAt: Date
   _count: PostFileCountAggregateOutputType | null
@@ -250,6 +266,8 @@ export type PostFileWhereInput = {
   fileExt?: Prisma.StringFilter<"PostFile"> | string
   fullPath?: Prisma.StringFilter<"PostFile"> | string
   size?: Prisma.IntFilter<"PostFile"> | number
+  appType?: Prisma.StringFilter<"PostFile"> | string
+  mimeType?: Prisma.StringNullableFilter<"PostFile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
 }
@@ -262,6 +280,8 @@ export type PostFileOrderByWithRelationInput = {
   fileExt?: Prisma.SortOrder
   fullPath?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  appType?: Prisma.SortOrder
+  mimeType?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _relevance?: Prisma.PostFileOrderByRelevanceInput
@@ -278,6 +298,8 @@ export type PostFileWhereUniqueInput = Prisma.AtLeast<{
   fileExt?: Prisma.StringFilter<"PostFile"> | string
   fullPath?: Prisma.StringFilter<"PostFile"> | string
   size?: Prisma.IntFilter<"PostFile"> | number
+  appType?: Prisma.StringFilter<"PostFile"> | string
+  mimeType?: Prisma.StringNullableFilter<"PostFile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
 }, "id">
@@ -290,6 +312,8 @@ export type PostFileOrderByWithAggregationInput = {
   fileExt?: Prisma.SortOrder
   fullPath?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  appType?: Prisma.SortOrder
+  mimeType?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PostFileCountOrderByAggregateInput
@@ -310,6 +334,8 @@ export type PostFileScalarWhereWithAggregatesInput = {
   fileExt?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
   fullPath?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
   size?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
+  appType?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
+  mimeType?: Prisma.StringNullableWithAggregatesFilter<"PostFile"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PostFile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PostFile"> | Date | string
 }
@@ -321,6 +347,8 @@ export type PostFileCreateInput = {
   fileExt: string
   fullPath: string
   size: number
+  appType?: string
+  mimeType?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -333,6 +361,8 @@ export type PostFileUncheckedCreateInput = {
   fileExt: string
   fullPath: string
   size: number
+  appType?: string
+  mimeType?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -344,6 +374,8 @@ export type PostFileUpdateInput = {
   fileExt?: Prisma.StringFieldUpdateOperationsInput | string
   fullPath?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
+  appType?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -356,6 +388,8 @@ export type PostFileUncheckedUpdateInput = {
   fileExt?: Prisma.StringFieldUpdateOperationsInput | string
   fullPath?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
+  appType?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -368,6 +402,8 @@ export type PostFileCreateManyInput = {
   fileExt: string
   fullPath: string
   size: number
+  appType?: string
+  mimeType?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -379,6 +415,8 @@ export type PostFileUpdateManyMutationInput = {
   fileExt?: Prisma.StringFieldUpdateOperationsInput | string
   fullPath?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
+  appType?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -391,6 +429,8 @@ export type PostFileUncheckedUpdateManyInput = {
   fileExt?: Prisma.StringFieldUpdateOperationsInput | string
   fullPath?: Prisma.StringFieldUpdateOperationsInput | string
   size?: Prisma.IntFieldUpdateOperationsInput | number
+  appType?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -409,6 +449,8 @@ export type PostFileCountOrderByAggregateInput = {
   fileExt?: Prisma.SortOrder
   fullPath?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  appType?: Prisma.SortOrder
+  mimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -426,6 +468,8 @@ export type PostFileMaxOrderByAggregateInput = {
   fileExt?: Prisma.SortOrder
   fullPath?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  appType?: Prisma.SortOrder
+  mimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -438,6 +482,8 @@ export type PostFileMinOrderByAggregateInput = {
   fileExt?: Prisma.SortOrder
   fullPath?: Prisma.SortOrder
   size?: Prisma.SortOrder
+  appType?: Prisma.SortOrder
+  mimeType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -457,6 +503,8 @@ export type PostFileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   fileExt?: boolean
   fullPath?: boolean
   size?: boolean
+  appType?: boolean
+  mimeType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["postFile"]>
@@ -471,11 +519,13 @@ export type PostFileSelectScalar = {
   fileExt?: boolean
   fullPath?: boolean
   size?: boolean
+  appType?: boolean
+  mimeType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PostFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "originFileName" | "fileName" | "fileDir" | "fileExt" | "fullPath" | "size" | "createdAt" | "updatedAt", ExtArgs["result"]["postFile"]>
+export type PostFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "originFileName" | "fileName" | "fileDir" | "fileExt" | "fullPath" | "size" | "appType" | "mimeType" | "createdAt" | "updatedAt", ExtArgs["result"]["postFile"]>
 
 export type $PostFilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PostFile"
@@ -488,6 +538,11 @@ export type $PostFilePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     fileExt: string
     fullPath: string
     size: number
+    /**
+     * 업로드한 앱. 기존 744건은 blog 에디터에서만 올라왔으므로 기본값이 blog 다.
+     */
+    appType: string
+    mimeType: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["postFile"]>
@@ -866,6 +921,8 @@ export interface PostFileFieldRefs {
   readonly fileExt: Prisma.FieldRef<"PostFile", 'String'>
   readonly fullPath: Prisma.FieldRef<"PostFile", 'String'>
   readonly size: Prisma.FieldRef<"PostFile", 'Int'>
+  readonly appType: Prisma.FieldRef<"PostFile", 'String'>
+  readonly mimeType: Prisma.FieldRef<"PostFile", 'String'>
   readonly createdAt: Prisma.FieldRef<"PostFile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PostFile", 'DateTime'>
 }

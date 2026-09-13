@@ -34,7 +34,9 @@ export type Board = Prisma.BoardModel
 export type BoardCategory = Prisma.BoardCategoryModel
 /**
  * Model PostFile
- * 
+ * 업로드 이력. 레거시 이름은 post_file 이지만 blog 전용이 아니다 —
+ * 모든 앱의 업로드를 appType 으로 구분해 함께 적재한다(image 도메인).
+ * 레거시 Spring(jar)이 같은 테이블에 쓰고 있어 새 컬럼은 DEFAULT 를 갖는다.
  */
 export type PostFile = Prisma.PostFileModel
 /**

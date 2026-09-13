@@ -904,6 +904,8 @@ export const PostFileScalarFieldEnum = {
   fileExt: 'fileExt',
   fullPath: 'fullPath',
   size: 'size',
+  appType: 'appType',
+  mimeType: 'mimeType',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -981,7 +983,9 @@ export const PostFileOrderByRelevanceFieldEnum = {
   fileName: 'fileName',
   fileDir: 'fileDir',
   fileExt: 'fileExt',
-  fullPath: 'fullPath'
+  fullPath: 'fullPath',
+  appType: 'appType',
+  mimeType: 'mimeType'
 } as const
 
 export type PostFileOrderByRelevanceFieldEnum = (typeof PostFileOrderByRelevanceFieldEnum)[keyof typeof PostFileOrderByRelevanceFieldEnum]

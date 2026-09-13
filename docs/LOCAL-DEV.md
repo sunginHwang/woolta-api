@@ -97,7 +97,18 @@ export BLOG_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/test"
 export WOOLBANK_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/woolBank"
 export DASHBOARD_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/dashboard"
 export AUTH_SECRET_TOKEN_KEY="test"
+
+# 이미지 업로드 — 로컬은 아무 디렉터리나 쓰면 된다.
+# 운영은 nginx(image.woolta.com)가 읽는 디렉터리와 **같은 경로**여야 한다:
+#   IMAGE_UPLOAD_PATH=/home/blog/post/upload/
+#   IMAGE_PUBLIC_URL=https://image.woolta.com
+export IMAGE_UPLOAD_PATH="/tmp/woolta-uploads"
+export IMAGE_PUBLIC_URL="http://localhost:4000/local-uploads"
 ```
+
+> **업로드는 woolta-api, 조회는 nginx** 다. woolta-api 는 파일을 쓰기만 하고
+> `image.woolta.com` 이 같은 디렉터리를 직접 읽어 내려준다. 그래서 업로드 서버는
+> nginx 와 디스크를 공유해야 한다 — 다른 서버에 띄우면 새 이미지가 조회되지 않는다.
 
 DB 이름 매핑 (운영 MySQL `woolta.com:3306`):
 

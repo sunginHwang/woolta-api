@@ -53,8 +53,12 @@ model BoardCategory {
   boards       Board[]
 }
 
+/// 업로드 이력. 레거시 이름은 post_file 이지만 blog 전용이 아니다 —
+/// 모든 앱의 업로드를 appType 으로 구분해 함께 적재한다(image 도메인).
+/// 레거시 Spring(jar)이 같은 테이블에 쓰고 있어 새 컬럼은 DEFAULT 를 갖는다.
 model PostFile {
   @@map("post_file")
+  @@index([appType, createdAt], map: "idx_post_file_app_type_created_at")
 
   id             Int      @id @default(autoincrement())
   originFileName String   @map("origin_file_name")
@@ -63,6 +67,9 @@ model PostFile {
   fileExt        String   @map("file_ext")
   fullPath       String   @map("full_path")
   size           Int
+  /// 업로드한 앱. 기존 744건은 blog 에디터에서만 올라왔으므로 기본값이 blog 다.
+  appType        String   @default("blog") @map("app_type")
+  mimeType       String?  @map("mime_type")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 }

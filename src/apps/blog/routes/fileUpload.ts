@@ -1,64 +1,27 @@
-import crypto from 'crypto';
-import fs from 'fs/promises';
-import path from 'path';
 import express from 'express';
 import multer from 'multer';
-import { prismaBlog } from '../utils/prismaClient';
+import { uploadImage } from '../../image/services/ImageService';
 
-// 원본 ImageUtil 포팅. 업로드 경로는 원본 하드코딩(/home/blog/post/upload/) 대신 환경변수로 오버라이드 가능.
-const uploadPath = process.env.BLOG_UPLOAD_PATH ?? '/home/blog/post/upload/';
-const url = '';
-const allowImageExt = /^(png|jpg|bmp|gif|jpeg)$/;
-
+/**
+ * 레거시 blog 업로드 경로.
+ *
+ * 업로드 로직은 image 도메인이 단일 소스다 — 여기서는 위임만 한다.
+ * 배포 시점 차이로 구버전 번들이 이 경로를 계속 부를 수 있어 당분간 남겨둔다.
+ * FE 가 모두 /image/upload 로 옮겨가면 제거한다.
+ *
+ * 주의: 레거시 응답 모양(`data.originFileName`)을 유지한다 — 호출부가 그 필드로 URL 을 조립한다.
+ */
 const upload = multer({ storage: multer.memoryStorage() });
-
-class ImageUploadException extends Error {}
-
-const uploadImage = async (file: Express.Multer.File | undefined) => {
-  if (!file) {
-    throw new ImageUploadException('[IMAGE_UTIL] file not exist');
-  }
-
-  const fileName = file.originalname;
-  const ext = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-  const uploadFileName = `${crypto.randomBytes(8).toString('hex')}.${ext}`;
-
-  if (!allowImageExt.test(ext)) {
-    throw new ImageUploadException(`[IMAGE_UTIL] ${fileName} ext : ${ext} is not image format`);
-  }
-
-  if (fileName.includes('..')) {
-    throw new ImageUploadException(`[IMAGE_UTIL] invalid file path imageName: ${fileName}`);
-  }
-
-  await fs.mkdir(uploadPath, { recursive: true });
-  await fs.writeFile(path.join(uploadPath, uploadFileName), file.buffer);
-
-  // 원본 UploadFileResponse 필드 그대로: originFileName=생성된 파일명, fileName=클라이언트 원본 파일명
-  const image = {
-    originFileName: uploadFileName,
-    fileName,
-    fileDir: uploadPath,
-    fileExt: ext,
-    fullPath: url + uploadPath + uploadFileName,
-    size: file.size,
-  };
-
-  await prismaBlog.postFile.create({ data: image });
-
-  return image;
-};
+const router = express.Router();
 
 const toErrorResponse = (e: unknown) => ({
   code: 'UNKNOWN_ERROR',
   message: e instanceof Error ? e.message : 'unknown error',
 });
 
-const router = express.Router();
-
 router.post('/image', upload.single('imageFile'), async (req, res) => {
   try {
-    const data = await uploadImage(req.file);
+    const data = await uploadImage(req.file, { appType: 'blog' });
     res.json({ code: 'SUCCESS', message: 'success upload Image', data });
   } catch (e) {
     console.log(e);
@@ -72,7 +35,7 @@ router.post('/images', upload.array('imageFiles'), async (req, res) => {
     const data = [];
 
     for (const file of files) {
-      data.push(await uploadImage(file));
+      data.push(await uploadImage(file, { appType: 'blog' }));
     }
 
     res.json({ code: 'SUCCESS', message: 'success upload Images', data });

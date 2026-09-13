@@ -22,6 +22,8 @@ import { resolvers as CalendarResolvers } from './apps/calendar/generates/resolv
 import cookieParser from 'cookie-parser';
 import blogFileUploadRouter from './apps/blog/routes/fileUpload';
 import woolBankFileUploadRouter from './apps/woolBank/routes/fileUpload';
+import imageUploadRouter from './apps/image/routes/upload';
+import { requireLogin } from './apps/image/middlewares/requireLogin';
 import { buildAuthContext, setRefreshTokenStore } from './shared/auth';
 import { prismaRefreshTokenStore } from './apps/user/services/RefreshTokenService';
 import { buildCorsMiddleware } from './shared/cors';
@@ -97,7 +99,11 @@ async function startServer() {
         }),
     );
 
-    app.use('/blog/file/upload', blogFileUploadRouter);
+    // 이미지·동영상 업로드 — 모든 앱이 공유한다. 조회는 nginx(image.woolta.com)가 맡는다.
+    app.use('/image', imageUploadRouter);
+
+    // 레거시 경로에도 같은 게이트를 건다 — 무인증 업로드 뒷문을 남기지 않는다
+    app.use('/blog/file/upload', requireLogin, blogFileUploadRouter);
 
     app.use(
         '/woolBank/graphql',
@@ -109,7 +115,7 @@ async function startServer() {
         }),
     );
 
-    app.use('/woolBank/file/upload', woolBankFileUploadRouter);
+    app.use('/woolBank/file/upload', requireLogin, woolBankFileUploadRouter);
     app.use('/uploads', express.static(process.env.WOOLBANK_UPLOAD_PATH ?? path.join(process.cwd(), 'uploads')));
 
     app.use(
