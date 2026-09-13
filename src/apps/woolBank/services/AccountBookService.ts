@@ -1,5 +1,7 @@
 import { endOfDay, endOfMonth, startOfDay, startOfMonth } from 'date-fns';
-import * as _ from 'lodash';
+// lodash 는 CJS 라 ESM 네임스페이스 import 로는 chain 이 안 잡힌다 (namespace.chain === undefined).
+// 기본 import 로 받아야 체이닝 API 를 쓸 수 있다.
+import _ from 'lodash';
 import { ForbiddenError, ValidationError } from '../../../shared/errors';
 import { DbAccountBookCategoryType, DbScheduledPaymentType } from '../utils/enums';
 import { prismaWoolBank } from '../utils/prismaClient';
