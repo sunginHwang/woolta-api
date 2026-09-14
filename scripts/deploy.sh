@@ -38,6 +38,16 @@ if [[ ! -w "$IMAGE_UPLOAD_PATH" ]]; then
   exit 1
 fi
 
+# reset --hard 는 미커밋 변경을 되돌릴 수 없게 지운다.
+# 서버에서 급히 고친 내용이 있으면 여기서 멈추는 편이 낫다.
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "==> 커밋되지 않은 변경이 있다:" >&2
+  git status --short >&2
+  echo "    git reset --hard 로 지워진다. 커밋하거나 stash 한 뒤 다시 실행할 것." >&2
+  echo "    의도한 것이라면: DEPLOY_FORCE=1 ./scripts/deploy.sh" >&2
+  [[ "${DEPLOY_FORCE:-}" == "1" ]] || exit 1
+fi
+
 echo "==> 코드 갱신 ($BRANCH)"
 git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"

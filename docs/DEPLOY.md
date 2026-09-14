@@ -9,11 +9,22 @@
 
 ```bash
 ssh <user>@woolta.com
-cd /home/woolta-api && ./scripts/deploy.sh
+cd /home/woolta-api && npm run deploy
 ```
 
 `git pull` → `npm ci` → prisma 생성 → 타입체크 → `pm2 reload` → 헬스체크.
 타입체크를 통과해야 reload 한다.
+
+| 명령 | 하는 일 |
+|---|---|
+| `npm run deploy` | 위 전체 |
+| `npm run pm2:start` | 기동 + `pm2 save` |
+| `npm run pm2:reload` | 무중단 재시작 (**코드 갱신·타입체크 안 함**) |
+| `npm run pm2:stop` / `pm2:delete` | 정지 / 목록 제거 |
+| `npm run pm2:list` / `pm2:logs` | 상태 / 최근 100줄 |
+
+배포 스크립트는 `git reset --hard` 를 쓴다. **커밋되지 않은 변경이 있으면 중단**한다 —
+서버에서 급히 고친 내용이 지워지기 때문이다. 의도했다면 `DEPLOY_FORCE=1 npm run deploy`.
 
 ---
 
