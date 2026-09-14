@@ -64,7 +64,7 @@ pm2 save
 
 echo "==> 헬스체크"
 sleep 3
-PORT="${PORT:-4100}"
+PORT="${PORT:-4500}"
 for i in $(seq 1 10); do
   if curl -sf -o /dev/null -X POST "http://127.0.0.1:${PORT}/blog/graphql" \
       -H 'Content-Type: application/json' \
