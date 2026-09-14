@@ -38,11 +38,11 @@ pm2 start ecosystem.config.cjs && pm2 save && pm2 startup
 
 ---
 
-## 포트 4100
+## 포트 4500
 
-레거시 Koa `woolbankApi` 가 **4000** 을 쓰고 있어 피했다. 코드 기본값은 4000 이지만(`app.ts`) pm2 와 `api.env` 가 4100 을 준다.
+레거시 Koa `woolbankApi` 가 **4000** 을 쓰고 있어 피했다. 코드 기본값도 4500 이며(`app.ts`) pm2 와 `api.env` 가 같은 값을 준다.
 
-Koa 를 내린 뒤에도 4100 을 유지한다 — 바꾸면 nginx 와 FE 의 `NEXT_PUBLIC_GRAPHQL_API` 를 함께 고쳐야 한다.
+Koa 를 내린 뒤에도 4500 을 유지한다 — 바꾸면 nginx 와 FE 의 `NEXT_PUBLIC_GRAPHQL_API` 를 함께 고쳐야 한다.
 
 ---
 

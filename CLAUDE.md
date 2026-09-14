@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev              # dev server (tsx watch, entry: src/app.ts, port 4000)
+npm run dev              # dev server (tsx watch, entry: src/app.ts, port 4500)
 npm run codegenAll       # graphql-codegen for all domains + merged FE schema (mergeSchema)
 npm run codegen<Domain>  # codegen for one domain: Blog / WoolBank / User / Todo / Memo / Article
 npm run mergeSchema      # merge all domain SDLs into schema.generated.graphqls (repo root, for FE codegen)

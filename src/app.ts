@@ -182,7 +182,7 @@ async function startServer() {
     // }
 
 // Start the Express server
-    const PORT = process.env.PORT || 4000;
+    const PORT = process.env.PORT || 4500;
     app.listen(PORT, () => {
         console.log(`Server is running at http://localhost:${PORT}`);
         console.log(`Blog GraphQL endpoint: http://localhost:${PORT}/blog/graphql`);

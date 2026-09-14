@@ -4,8 +4,8 @@
  * 환경변수는 여기 두지 않는다. DB 비밀번호가 레포에 들어가면 안 되므로
  * 서버의 `/etc/woolta/api.env` 를 읽는다(deploy.sh 가 주입한다).
  *
- * 포트 4100 인 이유: 레거시 Koa woolbankApi 가 4000 을 쓰고 있다.
- * Koa 를 내린 뒤에도 4100 을 유지한다 — 바꾸면 nginx 와 FE env 를 같이 고쳐야 한다.
+ * 포트 4500 인 이유: 레거시 Koa woolbankApi 가 4000 을 쓰고 있다.
+ * Koa 를 내린 뒤에도 4500 을 유지한다 — 바꾸면 nginx 와 FE env 를 같이 고쳐야 한다.
  */
 module.exports = {
   apps: [
@@ -21,7 +21,7 @@ module.exports = {
       watch: false,
       env: {
         NODE_ENV: 'production',
-        PORT: 4100,
+        PORT: 4500,
       },
       // 부팅 실패를 무한 재시작으로 덮지 않는다
       min_uptime: 10_000,

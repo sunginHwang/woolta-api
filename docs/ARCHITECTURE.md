@@ -150,7 +150,7 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
 | `BLOG_DATABASE_URL` | blog DB (필수) | — |
 | `WOOLBANK_DATABASE_URL` | woolBank + user DB (필수) | — |
 | `DASHBOARD_DATABASE_URL` | todo + memo + article DB (필수) | — |
-| `PORT` | 서버 포트 | 4000 |
+| `PORT` | 서버 포트 | 4500 |
 | `AUTH_SECRET_TOKEN_KEY` | JWT 시크릿 | 'test' |
 | `GOOGLE_CLIENT_ID` | 구글 id_token의 `aud` 검증값 (구글 로그인 시 필수) | — |
 | `KAKAO_APP_ID` | 카카오 토큰의 `app_id` 검증값 (카카오 로그인 시 필수) | — |
@@ -179,19 +179,19 @@ multipart 파일 업로드는 Express REST로 분리하고, GraphQL 뮤테이션
    Q='{"query":"{ checkAccess }"}'
 
    # 정상 — data.checkAccess 가 대행 userId 로 응답
-   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+   curl -s localhost:4500/user/graphql -H 'content-type: application/json' \
      -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -H 'x-woolta-user-id: 13' -d "$Q"
 
    # 토큰 불일치 → UNAUTHENTICATED
-   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+   curl -s localhost:4500/user/graphql -H 'content-type: application/json' \
      -H 'authorization: Bearer wrong-token' -H 'x-woolta-user-id: 13' -d "$Q"
 
    # 허용목록 밖 userId → UNAUTHENTICATED
-   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+   curl -s localhost:4500/user/graphql -H 'content-type: application/json' \
      -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -H 'x-woolta-user-id: 999' -d "$Q"
 
    # 대행 헤더 누락 → UNAUTHENTICATED (쿠키로 폴스루하지 않는다)
-   curl -s localhost:4000/user/graphql -H 'content-type: application/json' \
+   curl -s localhost:4500/user/graphql -H 'content-type: application/json' \
      -H "authorization: Bearer $WOOLTA_BOT_TOKEN" -d "$Q"
    ```
 

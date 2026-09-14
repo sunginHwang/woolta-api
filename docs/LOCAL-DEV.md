@@ -30,11 +30,11 @@ HTTPS는 FE의 4433에서 종료되고, API 구간은 서버↔서버 통신이�
   └─ https://local.woolta.com:4433          local-ssl-proxy (HTTPS 종료)
        └─ http://localhost:4300             Next dev (apps/woolta)
             ├─ /api/gql/*  → rewrite
-            │    └─ http://localhost:4000   woolta-api (GraphQL)
+            │    └─ http://localhost:4500   woolta-api (GraphQL)
             │         └─ MySQL (woolta.com:3306)
             ├─ /api/blog/* → rewrite
             │    └─ https://api-blog.woolta.com   레거시 Spring blog REST (운영)
-            └─ SSR fetch → http://localhost:4000 직접 호출
+            └─ SSR fetch → http://localhost:4500 직접 호출
 ```
 
 fetcher는 `libs/common/src/lib/utils/graphqlFetch.ts` 의 `getGraphqlHost()` 에서 갈린다 — 브라우저는
@@ -80,7 +80,7 @@ mkcert -cert-file cert/local.woolta.com+2.pem \
 **4) FE env 파일** — `apps/woolta/.env.local` (커밋 대상, 비밀정보 없음):
 
 ```
-NEXT_PUBLIC_GRAPHQL_API=http://localhost:4000
+NEXT_PUBLIC_GRAPHQL_API=http://localhost:4500
 NEXT_PUBLIC_GRAPHQL_API_BROWSER=/api/gql
 ```
 
@@ -92,7 +92,7 @@ NEXT_PUBLIC_GRAPHQL_API_BROWSER=/api/gql
 아래를 `~/.woolta-api.env` 같은 **레포 밖** 파일에 두고 `source` 한다 (비밀번호가 커밋되면 안 됨):
 
 ```bash
-export PORT=4000
+export PORT=4500
 export BLOG_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/test"
 export WOOLBANK_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/woolBank"
 export DASHBOARD_DATABASE_URL="mysql://root:<PASSWORD>@woolta.com:3306/dashboard"
@@ -103,7 +103,7 @@ export AUTH_SECRET_TOKEN_KEY="test"
 #   IMAGE_UPLOAD_PATH=/home/blog/post/upload/
 #   IMAGE_PUBLIC_URL=https://image.woolta.com
 export IMAGE_UPLOAD_PATH="/tmp/woolta-uploads"
-export IMAGE_PUBLIC_URL="http://localhost:4000/local-uploads"
+export IMAGE_PUBLIC_URL="http://localhost:4500/local-uploads"
 ```
 
 > **업로드는 woolta-api, 조회는 nginx** 다. woolta-api 는 파일을 쓰기만 하고
@@ -166,9 +166,9 @@ curl -s -X POST https://local.woolta.com:4433/api/gql/woolBank/graphql \
 
 ## 6. 함정
 
-**포트 4000이 레거시 woolbankApi와 겹친다.** 레거시는 4000 하드코딩(`woolbankApi/src/index.ts:37`,
-`process.env.PORT` 무시)이라 둘을 동시에 띄울 수 없다. 필요하면 woolta-api를 `PORT=4100` 으로 옮기고
-`.env.local` 의 `NEXT_PUBLIC_GRAPHQL_API` 도 같이 바꾼다.
+**woolta-api 는 4500 을 쓴다.** 레거시 woolbankApi 가 4000 을 하드코딩(`woolbankApi/src/index.ts:37`,
+`process.env.PORT` 무시)해 두어 겹치지 않도록 기본값 자체를 옮겼다. 포트를 다시 바꾸려면
+`.env.local` 의 `NEXT_PUBLIC_GRAPHQL_API` 와 배포측 nginx 도 함께 고쳐야 한다.
 
 **`NEXT_PUBLIC_*` 는 컴파일 시 인라인된다.** `.env.local` 을 만들거나 고친 뒤에는 Next dev 서버를
 **재시작**해야 한다. 부팅 로그의 `- Environments: .env.local, .env` 줄로 반영 여부를 확인한다.
