@@ -57,6 +57,27 @@ Koa 를 내린 뒤에도 4500 을 유지한다 — 바꾸면 nginx 와 FE 의 `N
 
 ---
 
+## 정기지출 배치 — 켜져 있는지 확인할 것
+
+매일 자정(`0 0 0 * * *`) `scheduleRegularExpenditure` 가 `regular_expenditure` 를 훑어
+그날이 결제일인 건을 `account_book` 에 자동 등록한다.
+
+`ENABLE_WOOLBANK_CRON=1` 일 때만 돈다. 레거시 Koa(`woolbankApiServer`)도 같은 배치를
+갖고 있어서, 둘이 동시에 뜨면 **같은 지출이 두 번 등록된다**. 그래서 명시 활성화다.
+
+주의: 꺼져 있어도 API 는 멀쩡히 뜬다. 지출이 조용히 안 들어올 뿐이다
+(실제로 2026-09-06 이후 한 달 가까이 비었다). 부팅 로그를 확인한다.
+
+```bash
+pm2 logs woolta-api --lines 50 --nostream | grep -i cron
+#  enabled  → 정상
+#  DISABLED → ENABLE_WOOLBANK_CRON 을 확인할 것
+```
+
+누락분은 자동으로 메워지지 않는다. 배치가 멈췄던 기간이 있으면 수동 보정이 필요하다.
+
+---
+
 ## 이미지 업로드 — 디스크를 공유해야 한다
 
 ```
