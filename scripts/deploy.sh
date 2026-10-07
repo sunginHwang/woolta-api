@@ -16,6 +16,26 @@ BRANCH="${DEPLOY_BRANCH:-main}"
 
 cd "$(dirname "$0")/.."
 
+echo "==> node 버전 확인"
+# 이 레포는 .nvmrc=24 / engines ">=24" 를 선언한다. 그런데 서버의 nvm 기본 별칭이
+# 더 낮은 버전을 가리키고 있으면 비로그인 셸에서 그게 잡힌다.
+#
+# 낮은 node 로 npm ci 를 돌리면 Prisma 7 이 preinstall 에서 거부하는데, 그 시점엔
+# node_modules 가 이미 지워져 있어 **돌던 서버까지 같이 내려간다**(실제로 겪었다).
+# 그래서 설치 전에 막는다.
+if [[ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ]]; then
+  # shellcheck disable=SC1091
+  . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" > /dev/null
+  nvm use > /dev/null 2>&1 || true   # .nvmrc 를 따른다. 없으면 현재 버전 유지
+fi
+
+node_major=$(node -p 'process.versions.node.split(".")[0]')
+if [[ "$node_major" -lt 24 ]]; then
+  echo "    node $(node -v) 로는 설치가 실패한다. 이 레포는 node 24 이상이 필요하다(.nvmrc)." >&2
+  echo "    nvm install 24 && nvm alias default 24 로 맞춘 뒤 다시 실행할 것." >&2
+  exit 1
+fi
+
 echo "==> 환경변수 확인"
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "    $ENV_FILE 이 없다. deploy/api.env.example 을 참고해 만들 것." >&2
@@ -61,7 +81,13 @@ for schema in prisma/schema*.prisma; do
 done
 
 echo "==> 타입체크"
-npx tsc --noEmit
+# npx 는 로컬에 없으면 레지스트리에서 같은 이름의 **다른 패키지**(tsc@2.0.4)를 받아
+# 성공한 척 끝낸다 — 안전장치가 통째로 비어 있었다. 반드시 로컬 바이너리를 쓴다.
+if [[ ! -x node_modules/.bin/tsc ]]; then
+  echo "    node_modules/.bin/tsc 가 없다. 설치가 끝나지 않았다." >&2
+  exit 1
+fi
+node_modules/.bin/tsc --noEmit
 
 echo "==> pm2 반영"
 if pm2 describe "$APP_NAME" > /dev/null 2>&1; then
