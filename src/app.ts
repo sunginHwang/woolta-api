@@ -1,7 +1,6 @@
 import express from "express";
 import path from 'path';
-// 정기지출 크론을 잠시 꺼두는 동안 함께 주석 처리한다 (아래 cron.schedule 블록 참고)
-// import cron from 'node-cron';
+import cron from 'node-cron';
 import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServer } from '@apollo/server';
 import { typeDefs as WoolBankTypeDefs } from './apps/woolBank/generates/typeDefs.generated'
@@ -28,7 +27,7 @@ import { buildAuthContext, setRefreshTokenStore } from './shared/auth';
 import { prismaRefreshTokenStore } from './apps/user/services/RefreshTokenService';
 import { buildCorsMiddleware } from './shared/cors';
 import { formatError } from './shared/apollo';
-// import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
+import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
 
 async function startServer() {
     // refresh 토큰 저장소 주입 — shared/auth가 Prisma를 직접 알지 않도록 부팅 시점에 연결한다.
@@ -170,16 +169,17 @@ async function startServer() {
     );
 
     // 매일 자정 정기지출 자동 등록 (원본 woolbankApi cron).
-    // 기존 Koa 서버와 중복 실행 방지를 위해 env로 명시 활성화 — Koa 서버 내릴 때 ENABLE_WOOLBANK_CRON=1 로 켠다.
-    //
-    // 배포 중 중복 실행을 막기 위해 잠시 꺼둔다. Koa 서버를 내린 뒤 아래 블록과
-    // 상단의 cron / scheduleRegularExpenditure import 를 함께 되살린다.
-    // if (process.env.ENABLE_WOOLBANK_CRON === '1') {
-    //     cron.schedule('0 0 0 * * *', async () => {
-    //         await scheduleRegularExpenditure();
-    //     });
-    //     console.log('woolBank regular expenditure cron enabled');
-    // }
+    // 레거시 Koa(woolbankApiServer)와 동시에 돌면 같은 날 지출이 두 번 등록되므로,
+    // Koa 를 내린 뒤 ENABLE_WOOLBANK_CRON=1 로 명시 활성화한다.
+    if (process.env.ENABLE_WOOLBANK_CRON === '1') {
+        cron.schedule('0 0 0 * * *', async () => {
+            await scheduleRegularExpenditure();
+        });
+        console.log('woolBank regular expenditure cron enabled');
+    } else {
+        // 꺼져 있는 걸 모르고 지나가면 지출이 조용히 누락된다(실제로 한 달 비었다).
+        console.warn('woolBank regular expenditure cron DISABLED (ENABLE_WOOLBANK_CRON != 1)');
+    }
 
 // Start the Express server
     const PORT = process.env.PORT || 4500;
