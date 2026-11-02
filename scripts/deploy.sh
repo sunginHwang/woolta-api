@@ -5,7 +5,7 @@
 #   ssh <user>@woolta.com
 #   cd /home/woolta-api && ./scripts/deploy.sh
 #
-# 하는 일: git pull → 의존성 설치 → prisma 클라이언트 생성 → 타입체크 → pm2 reload
+# 하는 일: git pull → 의존성 설치(npm install, 변경분만) → prisma 클라이언트 생성 → 타입체크 → pm2 reload
 # 타입체크를 통과해야 reload 한다. 깨진 코드를 올리면 롤백이 더 비싸다.
 
 set -euo pipefail
@@ -73,7 +73,10 @@ git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
 echo "==> 의존성 설치"
-npm ci
+# npm ci 는 node_modules 를 통째로 지우고 다시 깐다. 2GB 서버에서는 메모리가 모자라 스왑을 타며
+# 10분 넘게 걸리고, 그동안 node_modules/.bin/tsx 가 사라져 API 를 재시작할 수 없는 창이 생긴다.
+# 바뀐 패키지만 설치하고 캐시를 우선 쓴다. lockfile 은 그대로 따른다.
+npm install --prefer-offline --no-audit --no-fund
 
 echo "==> Prisma 클라이언트 생성"
 for schema in prisma/schema*.prisma; do

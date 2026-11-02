@@ -12,7 +12,7 @@ ssh <user>@woolta.com
 cd /home/woolta-api && npm run deploy
 ```
 
-`git pull` → `npm ci` → prisma 생성 → 타입체크 → `pm2 reload` → 헬스체크.
+`git pull` → `npm install`(변경분만, 캐시 우선) → prisma 생성 → 타입체크 → `pm2 reload` → 헬스체크.
 타입체크를 통과해야 reload 한다.
 
 | 명령 | 하는 일 |
