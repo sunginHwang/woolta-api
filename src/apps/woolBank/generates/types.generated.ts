@@ -440,6 +440,10 @@ export type Query = {
   accountList: AccountList;
   bucketList?: Maybe<BucketList>;
   bucketListSummaryList: BucketListSummaryList;
+  /**
+   * 카테고리별 통계. onlyUseStatistic 이 true 면 통계 제외 카테고리(useStatistic=false)를 목록에서 빼고,
+   * 비중(percentage)도 남은 항목의 합계를 분모로 계산한다. 기본값 false 는 전체 기준이다.
+   */
   getAccountBookStatisticList: StatisticList;
   getAccountLastUpdatedDate: Scalars['DateTime']['output'];
   getBucketListItemLastUpdatedDate: Scalars['DateTime']['output'];
@@ -481,6 +485,7 @@ export type QuerybucketListSummaryListArgs = {
 
 export type QuerygetAccountBookStatisticListArgs = {
   endDate: Scalars['DateTime']['input'];
+  onlyUseStatistic?: InputMaybe<Scalars['Boolean']['input']>;
   startDate: Scalars['DateTime']['input'];
   type: AccountBookCategoryType;
 };
@@ -1000,7 +1005,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   accountList?: Resolver<ResolversTypes['AccountList'], ParentType, ContextType, Partial<QueryaccountListArgs>>;
   bucketList?: Resolver<Maybe<ResolversTypes['BucketList']>, ParentType, ContextType, RequireFields<QuerybucketListArgs, 'id'>>;
   bucketListSummaryList?: Resolver<ResolversTypes['BucketListSummaryList'], ParentType, ContextType, Partial<QuerybucketListSummaryListArgs>>;
-  getAccountBookStatisticList?: Resolver<ResolversTypes['StatisticList'], ParentType, ContextType, RequireFields<QuerygetAccountBookStatisticListArgs, 'endDate' | 'startDate' | 'type'>>;
+  getAccountBookStatisticList?: Resolver<ResolversTypes['StatisticList'], ParentType, ContextType, RequireFields<QuerygetAccountBookStatisticListArgs, 'endDate' | 'onlyUseStatistic' | 'startDate' | 'type'>>;
   getAccountLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   getBucketListItemLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<QuerygetBucketListItemLastUpdatedDateArgs, 'id'>>;
   getBucketListLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;

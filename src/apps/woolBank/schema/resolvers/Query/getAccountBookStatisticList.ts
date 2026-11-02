@@ -14,6 +14,7 @@ export const getAccountBookStatisticList: NonNullable<QueryResolvers['getAccount
     type: gqlToDbAccountBookCategoryType(_arg.type),
     startDate: _arg.startDate,
     endDate: _arg.endDate,
+    onlyUseStatistic: _arg.onlyUseStatistic ?? false,
   });
 
   return { totalCount: itemList.length, itemList };

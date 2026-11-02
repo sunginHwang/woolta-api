@@ -50,10 +50,13 @@ export const getAccountBookStatisticList = async (
     type,
     startDate,
     endDate,
+    onlyUseStatistic = false,
   }: {
     type: DbAccountBookCategoryType;
     startDate: Date | string;
     endDate: Date | string;
+    /** true 면 useStatistic=false 카테고리를 제외하고, 비중의 분모도 남은 항목 합계로 잡는다 */
+    onlyUseStatistic?: boolean;
   },
 ) => {
   const accountBookList = await prismaWoolBank.accountBook.findMany({
@@ -65,6 +68,8 @@ export const getAccountBookStatisticList = async (
         gte: startOfDay(new Date(startDate)),
         lte: endOfDay(new Date(endDate)),
       },
+      // 화면에서 제외하는 카테고리는 분모에서도 빼야 비중이 보이는 항목끼리 100% 가 된다
+      ...(onlyUseStatistic ? { accountBookCategory: { useStatistic: true } } : {}),
     },
   });
 
