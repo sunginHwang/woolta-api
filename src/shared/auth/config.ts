@@ -31,7 +31,7 @@ export const authConfig = {
   REFRESH_TOKEN_NAME: 'w.refresh',
   SECRET_TOKEN_KEY: process.env.AUTH_SECRET_TOKEN_KEY ?? 'test',
   // access는 짧게, 재발급은 buildAuthContext가 refresh 쿠키로 자동 처리한다.
-  ACCESS_TOKEN_EXPIRE: '15m',
+  ACCESS_TOKEN_EXPIRE: '3h',
   ACCESS_REFRESH_EXPIRE: '60d',
   COOKIE_DOMAIN: process.env.AUTH_COOKIE_DOMAIN ?? '.woolta.com',
   // 동일 오리진(리버스 프록시) 구성이면 lax로 CSRF가 대부분 닫힌다.
