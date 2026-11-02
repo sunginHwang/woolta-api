@@ -407,7 +407,9 @@ export const ModelName = {
   AccountBookCategoryImage: 'AccountBookCategoryImage',
   BucketList: 'BucketList',
   RegularExpenditure: 'RegularExpenditure',
-  Todo: 'Todo'
+  Todo: 'Todo',
+  UserPushSubscription: 'UserPushSubscription',
+  UserPushSetting: 'UserPushSetting'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -423,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userShareCode" | "savingType" | "account" | "accountBook" | "accountBookCategory" | "deposit" | "accountBookCategoryImage" | "bucketList" | "regularExpenditure" | "todo"
+    modelProps: "user" | "userShareCode" | "savingType" | "account" | "accountBook" | "accountBookCategory" | "deposit" | "accountBookCategoryImage" | "bucketList" | "regularExpenditure" | "todo" | "userPushSubscription" | "userPushSetting"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1155,138 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserPushSubscription: {
+      payload: Prisma.$UserPushSubscriptionPayload<ExtArgs>
+      fields: Prisma.UserPushSubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserPushSubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserPushSubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.UserPushSubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserPushSubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.UserPushSubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.UserPushSubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.UserPushSubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserPushSubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        update: {
+          args: Prisma.UserPushSubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserPushSubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserPushSubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserPushSubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.UserPushSubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserPushSubscription>
+        }
+        groupBy: {
+          args: Prisma.UserPushSubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPushSubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserPushSubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPushSubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserPushSetting: {
+      payload: Prisma.$UserPushSettingPayload<ExtArgs>
+      fields: Prisma.UserPushSettingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserPushSettingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserPushSettingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        findFirst: {
+          args: Prisma.UserPushSettingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserPushSettingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        findMany: {
+          args: Prisma.UserPushSettingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>[]
+        }
+        create: {
+          args: Prisma.UserPushSettingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        createMany: {
+          args: Prisma.UserPushSettingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UserPushSettingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        update: {
+          args: Prisma.UserPushSettingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserPushSettingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserPushSettingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UserPushSettingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPushSettingPayload>
+        }
+        aggregate: {
+          args: Prisma.UserPushSettingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserPushSetting>
+        }
+        groupBy: {
+          args: Prisma.UserPushSettingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPushSettingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserPushSettingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPushSettingCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1357,6 +1491,33 @@ export const TodoScalarFieldEnum = {
 export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
+export const UserPushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  endpointHash: 'endpointHash',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  expirationTime: 'expirationTime',
+  userAgent: 'userAgent',
+  lastSentAt: 'lastSentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPushSubscriptionScalarFieldEnum = (typeof UserPushSubscriptionScalarFieldEnum)[keyof typeof UserPushSubscriptionScalarFieldEnum]
+
+
+export const UserPushSettingScalarFieldEnum = {
+  userId: 'userId',
+  regularExpenditure: 'regularExpenditure',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPushSettingScalarFieldEnum = (typeof UserPushSettingScalarFieldEnum)[keyof typeof UserPushSettingScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1453,6 +1614,17 @@ export const TodoOrderByRelevanceFieldEnum = {
 } as const
 
 export type TodoOrderByRelevanceFieldEnum = (typeof TodoOrderByRelevanceFieldEnum)[keyof typeof TodoOrderByRelevanceFieldEnum]
+
+
+export const UserPushSubscriptionOrderByRelevanceFieldEnum = {
+  endpoint: 'endpoint',
+  endpointHash: 'endpointHash',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent'
+} as const
+
+export type UserPushSubscriptionOrderByRelevanceFieldEnum = (typeof UserPushSubscriptionOrderByRelevanceFieldEnum)[keyof typeof UserPushSubscriptionOrderByRelevanceFieldEnum]
 
 
 
@@ -1664,6 +1836,8 @@ export type GlobalOmitConfig = {
   bucketList?: Prisma.BucketListOmit
   regularExpenditure?: Prisma.RegularExpenditureOmit
   todo?: Prisma.TodoOmit
+  userPushSubscription?: Prisma.UserPushSubscriptionOmit
+  userPushSetting?: Prisma.UserPushSettingOmit
 }
 
 /* Types for Logging */

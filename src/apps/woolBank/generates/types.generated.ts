@@ -330,9 +330,20 @@ export type Mutation = {
   deleteBucketList: Scalars['Boolean']['output'];
   deleteBucketListTodo: Scalars['Boolean']['output'];
   deleteRegularExpenditure: Scalars['Boolean']['output'];
+  /** 테스트 알림. endpoint 를 주면 그 기기로만, 없으면 이 계정의 모든 기기로 보낸다. 공유코드 세션도 허용. */
+  sendWoolBankTestPush: Scalars['Boolean']['output'];
+  /**
+   * 현재 기기의 Web Push 구독을 등록한다. endpoint 기준 upsert 라 재구독(pushsubscriptionchange)도 같은 뮤테이션을 쓴다.
+   * 공유코드 세션도 허용 — 세션의 userId 가 원 계정이라, 원 계정 알림을 공유코드로 들어온 기기도 함께 받는다.
+   */
+  subscribeWoolBankPush: Scalars['Boolean']['output'];
+  /** 공유코드 세션도 허용 (자기 기기 구독만 지운다) */
+  unsubscribeWoolBankPush: Scalars['Boolean']['output'];
   updateAccountBook: AccountBook;
   updateBucketList: BucketList;
   updateBucketListTodoComplete: BucketListTodo;
+  /** 알림 종류 설정은 계정 단위라 원 계정 로그인만 바꿀 수 있다 */
+  updateWoolBankPushSetting: WoolBankPushSetting;
 };
 
 
@@ -416,6 +427,21 @@ export type MutationdeleteRegularExpenditureArgs = {
 };
 
 
+export type MutationsendWoolBankTestPushArgs = {
+  input?: InputMaybe<SendWoolBankTestPushInput>;
+};
+
+
+export type MutationsubscribeWoolBankPushArgs = {
+  input: SubscribeWoolBankPushInput;
+};
+
+
+export type MutationunsubscribeWoolBankPushArgs = {
+  input: UnsubscribeWoolBankPushInput;
+};
+
+
 export type MutationupdateAccountBookArgs = {
   input: UpdateAccountBookInput;
 };
@@ -428,6 +454,11 @@ export type MutationupdateBucketListArgs = {
 
 export type MutationupdateBucketListTodoCompleteArgs = {
   input: UpdateBucketListTodoCompleteInput;
+};
+
+
+export type MutationupdateWoolBankPushSettingArgs = {
+  input: UpdateWoolBankPushSettingInput;
 };
 
 export type Query = {
@@ -448,6 +479,8 @@ export type Query = {
   getAccountLastUpdatedDate: Scalars['DateTime']['output'];
   getBucketListItemLastUpdatedDate: Scalars['DateTime']['output'];
   getBucketListLastUpdatedDate: Scalars['DateTime']['output'];
+  /** 푸시 상태. endpoint 를 주면 그 기기가 이 유저 구독으로 등록돼 있는지(isSubscribed)도 함께 준다. */
+  getWoolBankPushStatus: WoolBankPushStatus;
   mainInfo: MainInfo;
   regularExpenditureGroupList: RegularExpenditureGroupList;
 };
@@ -496,6 +529,11 @@ export type QuerygetBucketListItemLastUpdatedDateArgs = {
 };
 
 
+export type QuerygetWoolBankPushStatusArgs = {
+  endpoint?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryregularExpenditureGroupListArgs = {
   limitCount?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -541,6 +579,11 @@ export type ScheduledPaymentType =
   | 'INSTALLMENT'
   | 'REPEAT';
 
+export type SendWoolBankTestPushInput = {
+  /** 이 기기(구독)로만 보낸다 */
+  endpoint?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Statistic = {
   __typename?: 'Statistic';
   amount: Scalars['Int']['output'];
@@ -562,6 +605,19 @@ export type StatisticList = {
   __typename?: 'StatisticList';
   itemList: Array<Statistic>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type SubscribeWoolBankPushInput = {
+  auth: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  /** PushSubscription.expirationTime — 대부분 null */
+  expirationTime?: InputMaybe<Scalars['DateTime']['input']>;
+  p256dh: Scalars['String']['input'];
+  userAgent?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UnsubscribeWoolBankPushInput = {
+  endpoint: Scalars['String']['input'];
 };
 
 export type UpdateAccountBookInput = {
@@ -589,6 +645,10 @@ export type UpdateBucketListTodoCompleteInput = {
   todoId: Scalars['ID']['input'];
 };
 
+export type UpdateWoolBankPushSettingInput = {
+  regularExpenditure: Scalars['Boolean']['input'];
+};
+
 export type UserShareCode = {
   __typename?: 'UserShareCode';
   createdAt: Scalars['DateTime']['output'];
@@ -596,6 +656,21 @@ export type UserShareCode = {
   shareCode: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   userId: Scalars['Int']['output'];
+};
+
+export type WoolBankPushSetting = {
+  __typename?: 'WoolBankPushSetting';
+  /** 정기지출 결제 전날 알림 */
+  regularExpenditure: Scalars['Boolean']['output'];
+};
+
+export type WoolBankPushStatus = {
+  __typename?: 'WoolBankPushStatus';
+  /** 질의한 endpoint 가 이 유저의 구독으로 등록돼 있는지. endpoint 를 안 주면 false. */
+  isSubscribed: Scalars['Boolean']['output'];
+  setting: WoolBankPushSetting;
+  /** 이 유저가 등록한 기기(구독) 수 */
+  subscriptionCount: Scalars['Int']['output'];
 };
 
 export type WoolBankUser = {
@@ -739,13 +814,19 @@ export type ResolversTypes = {
   RegularExpenditureGroupList: ResolverTypeWrapper<Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversTypes['RegularExpenditureGroup']> }>;
   SavingType: ResolverTypeWrapper<SavingType>;
   ScheduledPaymentType: ResolverTypeWrapper<'REPEAT' | 'INSTALLMENT'>;
+  SendWoolBankTestPushInput: SendWoolBankTestPushInput;
   Statistic: ResolverTypeWrapper<Statistic>;
   StatisticItem: ResolverTypeWrapper<StatisticItem>;
   StatisticList: ResolverTypeWrapper<StatisticList>;
+  SubscribeWoolBankPushInput: SubscribeWoolBankPushInput;
+  UnsubscribeWoolBankPushInput: UnsubscribeWoolBankPushInput;
   UpdateAccountBookInput: UpdateAccountBookInput;
   UpdateBucketListInput: UpdateBucketListInput;
   UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
+  UpdateWoolBankPushSettingInput: UpdateWoolBankPushSettingInput;
   UserShareCode: ResolverTypeWrapper<UserShareCode>;
+  WoolBankPushSetting: ResolverTypeWrapper<WoolBankPushSetting>;
+  WoolBankPushStatus: ResolverTypeWrapper<WoolBankPushStatus>;
   WoolBankUser: ResolverTypeWrapper<Omit<WoolBankUser, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversTypes['AccountBookCategory']>, accountBooks: Array<ResolversTypes['AccountBook']>, bucketLists: Array<ResolversTypes['BucketList']>, regularExpenditures: Array<ResolversTypes['RegularExpenditure']>, todos: Array<ResolversTypes['BucketListTodo']> }>;
 };
 
@@ -797,13 +878,19 @@ export type ResolversParentTypes = {
   RegularExpenditureGroup: Omit<RegularExpenditureGroup, 'list'> & { list: Array<ResolversParentTypes['CustomRegularExpenditure']> };
   RegularExpenditureGroupList: Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversParentTypes['RegularExpenditureGroup']> };
   SavingType: SavingType;
+  SendWoolBankTestPushInput: SendWoolBankTestPushInput;
   Statistic: Statistic;
   StatisticItem: StatisticItem;
   StatisticList: StatisticList;
+  SubscribeWoolBankPushInput: SubscribeWoolBankPushInput;
+  UnsubscribeWoolBankPushInput: UnsubscribeWoolBankPushInput;
   UpdateAccountBookInput: UpdateAccountBookInput;
   UpdateBucketListInput: UpdateBucketListInput;
   UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
+  UpdateWoolBankPushSettingInput: UpdateWoolBankPushSettingInput;
   UserShareCode: UserShareCode;
+  WoolBankPushSetting: WoolBankPushSetting;
+  WoolBankPushStatus: WoolBankPushStatus;
   WoolBankUser: Omit<WoolBankUser, 'accountBookCategories' | 'accountBooks' | 'bucketLists' | 'regularExpenditures' | 'todos'> & { accountBookCategories: Array<ResolversParentTypes['AccountBookCategory']>, accountBooks: Array<ResolversParentTypes['AccountBook']>, bucketLists: Array<ResolversParentTypes['BucketList']>, regularExpenditures: Array<ResolversParentTypes['RegularExpenditure']>, todos: Array<ResolversParentTypes['BucketListTodo']> };
 };
 
@@ -991,9 +1078,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteBucketList?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBucketListArgs, 'input'>>;
   deleteBucketListTodo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteBucketListTodoArgs, 'input'>>;
   deleteRegularExpenditure?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteRegularExpenditureArgs, 'input'>>;
+  sendWoolBankTestPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationsendWoolBankTestPushArgs>>;
+  subscribeWoolBankPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsubscribeWoolBankPushArgs, 'input'>>;
+  unsubscribeWoolBankPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationunsubscribeWoolBankPushArgs, 'input'>>;
   updateAccountBook?: Resolver<ResolversTypes['AccountBook'], ParentType, ContextType, RequireFields<MutationupdateAccountBookArgs, 'input'>>;
   updateBucketList?: Resolver<ResolversTypes['BucketList'], ParentType, ContextType, RequireFields<MutationupdateBucketListArgs, 'input'>>;
   updateBucketListTodoComplete?: Resolver<ResolversTypes['BucketListTodo'], ParentType, ContextType, RequireFields<MutationupdateBucketListTodoCompleteArgs, 'input'>>;
+  updateWoolBankPushSetting?: Resolver<ResolversTypes['WoolBankPushSetting'], ParentType, ContextType, RequireFields<MutationupdateWoolBankPushSettingArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -1009,6 +1100,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAccountLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   getBucketListItemLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<QuerygetBucketListItemLastUpdatedDateArgs, 'id'>>;
   getBucketListLastUpdatedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  getWoolBankPushStatus?: Resolver<ResolversTypes['WoolBankPushStatus'], ParentType, ContextType, Partial<QuerygetWoolBankPushStatusArgs>>;
   mainInfo?: Resolver<ResolversTypes['MainInfo'], ParentType, ContextType>;
   regularExpenditureGroupList?: Resolver<ResolversTypes['RegularExpenditureGroupList'], ParentType, ContextType, Partial<QueryregularExpenditureGroupListArgs>>;
 };
@@ -1076,6 +1168,16 @@ export type UserShareCodeResolvers<ContextType = any, ParentType extends Resolve
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
 };
 
+export type WoolBankPushSettingResolvers<ContextType = any, ParentType extends ResolversParentTypes['WoolBankPushSetting'] = ResolversParentTypes['WoolBankPushSetting']> = {
+  regularExpenditure?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+};
+
+export type WoolBankPushStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['WoolBankPushStatus'] = ResolversParentTypes['WoolBankPushStatus']> = {
+  isSubscribed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  setting?: Resolver<ResolversTypes['WoolBankPushSetting'], ParentType, ContextType>;
+  subscriptionCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type WoolBankUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['WoolBankUser'] = ResolversParentTypes['WoolBankUser']> = {
   accountBookCategories?: Resolver<Array<ResolversTypes['AccountBookCategory']>, ParentType, ContextType>;
   accountBookCategoryImages?: Resolver<Array<ResolversTypes['AccountBookCategoryImage']>, ParentType, ContextType>;
@@ -1125,6 +1227,8 @@ export type Resolvers<ContextType = any> = {
   StatisticItem?: StatisticItemResolvers<ContextType>;
   StatisticList?: StatisticListResolvers<ContextType>;
   UserShareCode?: UserShareCodeResolvers<ContextType>;
+  WoolBankPushSetting?: WoolBankPushSettingResolvers<ContextType>;
+  WoolBankPushStatus?: WoolBankPushStatusResolvers<ContextType>;
   WoolBankUser?: WoolBankUserResolvers<ContextType>;
 };
 

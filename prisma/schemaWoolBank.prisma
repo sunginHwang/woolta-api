@@ -29,6 +29,8 @@ model User {
   accountBookCategories AccountBookCategory[]
   accountBookCategoryImages AccountBookCategoryImage[]
   regularExpenditures RegularExpenditure[]
+  pushSubscriptions UserPushSubscription[]
+  pushSetting UserPushSetting?
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 }
@@ -200,4 +202,33 @@ model Todo {
   updatedAt     DateTime @updatedAt @map("updated_at")
 }
 
+// Web Push 구독 — 기기 1대 = 1행. DDL: scripts/woolbankPushDdl.sql
+model UserPushSubscription {
+  @@map("user_push_subscription")
 
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  user           User      @relation(fields: [userId], references: [id])
+  endpoint       String    @woolbank.Text
+  endpointHash   String    @unique @map("endpoint_hash") @woolbank.Char(64)
+  p256dh         String
+  auth           String
+  expirationTime DateTime? @map("expiration_time")
+  userAgent      String?   @map("user_agent")
+  lastSentAt     DateTime? @map("last_sent_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+}
+
+// 알림 종류별 on/off. 행이 없으면 기본값(모두 ON).
+model UserPushSetting {
+  @@map("user_push_setting")
+
+  userId             Int      @id @map("user_id")
+  user               User     @relation(fields: [userId], references: [id])
+  regularExpenditure Boolean  @default(true) @map("regular_expenditure")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+}

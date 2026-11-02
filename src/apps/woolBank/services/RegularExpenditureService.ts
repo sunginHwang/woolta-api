@@ -1,8 +1,9 @@
-import { getDate, isLastDayOfMonth, setDate } from 'date-fns';
+import { addDays, getDate, isLastDayOfMonth, setDate } from 'date-fns';
 import lodash from 'lodash';
 const { range } = lodash;
 import { ForbiddenError, NotFoundError } from '../../../shared/errors';
 import { prismaWoolBank } from '../utils/prismaClient';
+import { buildDeclarativePayload, getSetting, sendToUser, WOOLBANK_APP_URL } from './PushService';
 
 export const getRegularExpenditureListByUserId = async (userId: number, limit: number = 100) => {
   return prismaWoolBank.regularExpenditure.findMany({
@@ -151,5 +152,74 @@ export const scheduleRegularExpenditure = async () => {
     });
   } catch (e) {
     console.log(e);
+  }
+};
+
+/**
+ * 내일 결제되는 정기지출의 regularDate 목록.
+ * scheduleRegularExpenditure 와 같은 말일 보정 — 내일이 말일이면서 31일이 아니면 내일~31일을 모두 포함한다
+ * (30일에 등록한 정기지출도 2월엔 28일에 빠져나가므로 알림도 그날 전에 가야 한다).
+ */
+export const getUpcomingRegularDates = (now: Date): number[] => {
+  const tomorrow = addDays(now, 1);
+  const tomorrowDate = getDate(tomorrow);
+
+  return isLastDayOfMonth(tomorrow) && tomorrowDate !== 31 ? range(tomorrowDate, 32) : [tomorrowDate];
+};
+
+const formatAmount = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
+
+const buildUpcomingBody = (items: { title: string; amount: number }[]) => {
+  const total = items.reduce((sum, item) => sum + item.amount, 0);
+  const [first] = items;
+  const head = items.length === 1 ? first.title : `${first.title} 외 ${items.length - 1}건`;
+
+  return `${head} · ${formatAmount(total)}`;
+};
+
+// 매일 09:00 — 내일 결제 예정인 정기지출을 유저별로 묶어 푸시 1건씩 보낸다. 알림을 보낸 유저 수를 돌려준다.
+export const notifyUpcomingRegularExpenditure = async (now: Date = new Date()): Promise<number> => {
+  try {
+    const regularExpenditureList = await prismaWoolBank.regularExpenditure.findMany({
+      where: { regularDate: { in: getUpcomingRegularDates(now) } },
+      orderBy: [{ userId: 'asc' }, { amount: 'desc' }],
+      select: { userId: true, title: true, amount: true },
+    });
+
+    const byUser = new Map<number, { title: string; amount: number }[]>();
+
+    for (const { userId, title, amount } of regularExpenditureList) {
+      byUser.set(userId, [...(byUser.get(userId) ?? []), { title, amount }]);
+    }
+
+    let notifiedUserCount = 0;
+
+    for (const [userId, items] of byUser) {
+      const setting = await getSetting(userId);
+
+      if (!setting.regularExpenditure) {
+        continue;
+      }
+
+      const sent = await sendToUser(
+        userId,
+        buildDeclarativePayload({
+          title: '내일 정기지출 결제 예정',
+          body: buildUpcomingBody(items),
+          navigate: `${WOOLBANK_APP_URL}/regular-extenditure`,
+          tag: 'regular-expenditure',
+        }),
+        { topic: 'regular-expenditure', ttl: 60 * 60 * 12 },
+      );
+
+      if (sent > 0) {
+        notifiedUserCount += 1;
+      }
+    }
+
+    return notifiedUserCount;
+  } catch (e) {
+    console.log(e);
+    return 0;
   }
 };

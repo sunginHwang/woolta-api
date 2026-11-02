@@ -27,7 +27,10 @@ import { buildAuthContext, setRefreshTokenStore } from './shared/auth';
 import { prismaRefreshTokenStore } from './apps/user/services/RefreshTokenService';
 import { buildCorsMiddleware } from './shared/cors';
 import { formatError } from './shared/apollo';
-import { scheduleRegularExpenditure } from './apps/woolBank/services/RegularExpenditureService';
+import {
+    notifyUpcomingRegularExpenditure,
+    scheduleRegularExpenditure,
+} from './apps/woolBank/services/RegularExpenditureService';
 
 async function startServer() {
     // refresh 토큰 저장소 주입 — shared/auth가 Prisma를 직접 알지 않도록 부팅 시점에 연결한다.
@@ -176,6 +179,13 @@ async function startServer() {
             await scheduleRegularExpenditure();
         });
         console.log('woolBank regular expenditure cron enabled');
+
+        // 매일 09:00 내일 결제 예정 정기지출 푸시 알림 (Web Push, PushService).
+        cron.schedule('0 0 9 * * *', async () => {
+            const notified = await notifyUpcomingRegularExpenditure();
+            console.log(`woolBank upcoming regular expenditure push sent to ${notified} user(s)`);
+        });
+        console.log('woolBank regular expenditure push cron enabled (09:00)');
     } else {
         // 꺼져 있는 걸 모르고 지나가면 지출이 조용히 누락된다(실제로 한 달 비었다).
         console.warn('woolBank regular expenditure cron DISABLED (ENABLE_WOOLBANK_CRON != 1)');

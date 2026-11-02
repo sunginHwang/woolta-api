@@ -256,6 +256,8 @@ export type UserWhereInput = {
   accountBookCategories?: Prisma.AccountBookCategoryListRelationFilter
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageListRelationFilter
   regularExpenditures?: Prisma.RegularExpenditureListRelationFilter
+  pushSubscriptions?: Prisma.UserPushSubscriptionListRelationFilter
+  pushSetting?: Prisma.XOR<Prisma.UserPushSettingNullableScalarRelationFilter, Prisma.UserPushSettingWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -276,6 +278,8 @@ export type UserOrderByWithRelationInput = {
   accountBookCategories?: Prisma.AccountBookCategoryOrderByRelationAggregateInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageOrderByRelationAggregateInput
   regularExpenditures?: Prisma.RegularExpenditureOrderByRelationAggregateInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionOrderByRelationAggregateInput
+  pushSetting?: Prisma.UserPushSettingOrderByWithRelationInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
@@ -300,6 +304,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   accountBookCategories?: Prisma.AccountBookCategoryListRelationFilter
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageListRelationFilter
   regularExpenditures?: Prisma.RegularExpenditureListRelationFilter
+  pushSubscriptions?: Prisma.UserPushSubscriptionListRelationFilter
+  pushSetting?: Prisma.XOR<Prisma.UserPushSettingNullableScalarRelationFilter, Prisma.UserPushSettingWhereInput> | null
 }, "id">
 
 export type UserOrderByWithAggregationInput = {
@@ -351,6 +357,8 @@ export type UserCreateInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -371,6 +379,8 @@ export type UserUncheckedCreateInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -390,6 +400,8 @@ export type UserUpdateInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -410,6 +422,8 @@ export type UserUncheckedUpdateInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -630,6 +644,34 @@ export type UserUpdateOneRequiredWithoutTodosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTodosInput, Prisma.UserUpdateWithoutTodosInput>, Prisma.UserUncheckedUpdateWithoutTodosInput>
 }
 
+export type UserCreateNestedOneWithoutPushSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPushSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput
+  upsert?: Prisma.UserUpsertWithoutPushSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPushSubscriptionsInput, Prisma.UserUpdateWithoutPushSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+}
+
+export type UserCreateNestedOneWithoutPushSettingInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSettingInput, Prisma.UserUncheckedCreateWithoutPushSettingInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSettingInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPushSettingNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSettingInput, Prisma.UserUncheckedCreateWithoutPushSettingInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSettingInput
+  upsert?: Prisma.UserUpsertWithoutPushSettingInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPushSettingInput, Prisma.UserUpdateWithoutPushSettingInput>, Prisma.UserUncheckedUpdateWithoutPushSettingInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   name: string
   email: string
@@ -646,6 +688,8 @@ export type UserCreateWithoutAccountsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -665,6 +709,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -699,6 +745,8 @@ export type UserUpdateWithoutAccountsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -718,6 +766,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountBooksInput = {
@@ -736,6 +786,8 @@ export type UserCreateWithoutAccountBooksInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountBooksInput = {
@@ -755,6 +807,8 @@ export type UserUncheckedCreateWithoutAccountBooksInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountBooksInput = {
@@ -789,6 +843,8 @@ export type UserUpdateWithoutAccountBooksInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountBooksInput = {
@@ -808,6 +864,8 @@ export type UserUncheckedUpdateWithoutAccountBooksInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountBookCategoriesInput = {
@@ -826,6 +884,8 @@ export type UserCreateWithoutAccountBookCategoriesInput = {
   accountBooks?: Prisma.AccountBookCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountBookCategoriesInput = {
@@ -845,6 +905,8 @@ export type UserUncheckedCreateWithoutAccountBookCategoriesInput = {
   accountBooks?: Prisma.AccountBookUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountBookCategoriesInput = {
@@ -879,6 +941,8 @@ export type UserUpdateWithoutAccountBookCategoriesInput = {
   accountBooks?: Prisma.AccountBookUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountBookCategoriesInput = {
@@ -898,6 +962,8 @@ export type UserUncheckedUpdateWithoutAccountBookCategoriesInput = {
   accountBooks?: Prisma.AccountBookUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDepositsInput = {
@@ -916,6 +982,8 @@ export type UserCreateWithoutDepositsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDepositsInput = {
@@ -935,6 +1003,8 @@ export type UserUncheckedCreateWithoutDepositsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDepositsInput = {
@@ -969,6 +1039,8 @@ export type UserUpdateWithoutDepositsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDepositsInput = {
@@ -988,6 +1060,8 @@ export type UserUncheckedUpdateWithoutDepositsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountBookCategoryImagesInput = {
@@ -1006,6 +1080,8 @@ export type UserCreateWithoutAccountBookCategoryImagesInput = {
   accountBooks?: Prisma.AccountBookCreateNestedManyWithoutUserInput
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountBookCategoryImagesInput = {
@@ -1025,6 +1101,8 @@ export type UserUncheckedCreateWithoutAccountBookCategoryImagesInput = {
   accountBooks?: Prisma.AccountBookUncheckedCreateNestedManyWithoutUserInput
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountBookCategoryImagesInput = {
@@ -1059,6 +1137,8 @@ export type UserUpdateWithoutAccountBookCategoryImagesInput = {
   accountBooks?: Prisma.AccountBookUpdateManyWithoutUserNestedInput
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountBookCategoryImagesInput = {
@@ -1078,6 +1158,8 @@ export type UserUncheckedUpdateWithoutAccountBookCategoryImagesInput = {
   accountBooks?: Prisma.AccountBookUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBucketListsInput = {
@@ -1096,6 +1178,8 @@ export type UserCreateWithoutBucketListsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBucketListsInput = {
@@ -1115,6 +1199,8 @@ export type UserUncheckedCreateWithoutBucketListsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBucketListsInput = {
@@ -1149,6 +1235,8 @@ export type UserUpdateWithoutBucketListsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBucketListsInput = {
@@ -1168,6 +1256,8 @@ export type UserUncheckedUpdateWithoutBucketListsInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRegularExpendituresInput = {
@@ -1186,6 +1276,8 @@ export type UserCreateWithoutRegularExpendituresInput = {
   accountBooks?: Prisma.AccountBookCreateNestedManyWithoutUserInput
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRegularExpendituresInput = {
@@ -1205,6 +1297,8 @@ export type UserUncheckedCreateWithoutRegularExpendituresInput = {
   accountBooks?: Prisma.AccountBookUncheckedCreateNestedManyWithoutUserInput
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRegularExpendituresInput = {
@@ -1239,6 +1333,8 @@ export type UserUpdateWithoutRegularExpendituresInput = {
   accountBooks?: Prisma.AccountBookUpdateManyWithoutUserNestedInput
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRegularExpendituresInput = {
@@ -1258,6 +1354,8 @@ export type UserUncheckedUpdateWithoutRegularExpendituresInput = {
   accountBooks?: Prisma.AccountBookUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTodosInput = {
@@ -1276,6 +1374,8 @@ export type UserCreateWithoutTodosInput = {
   accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTodosInput = {
@@ -1295,6 +1395,8 @@ export type UserUncheckedCreateWithoutTodosInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTodosInput = {
@@ -1329,6 +1431,8 @@ export type UserUpdateWithoutTodosInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTodosInput = {
@@ -1348,6 +1452,204 @@ export type UserUncheckedUpdateWithoutTodosInput = {
   accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
   accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
   regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPushSubscriptionsInput = {
+  name: string
+  email: string
+  password: string
+  loginType: string
+  socialId: string
+  profileImg: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  bucketLists?: Prisma.BucketListCreateNestedManyWithoutUserInput
+  deposits?: Prisma.DepositCreateNestedManyWithoutUserInput
+  todos?: Prisma.TodoCreateNestedManyWithoutUserInput
+  accountBooks?: Prisma.AccountBookCreateNestedManyWithoutUserInput
+  accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
+  regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  loginType: string
+  socialId: string
+  profileImg: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  bucketLists?: Prisma.BucketListUncheckedCreateNestedManyWithoutUserInput
+  deposits?: Prisma.DepositUncheckedCreateNestedManyWithoutUserInput
+  todos?: Prisma.TodoUncheckedCreateNestedManyWithoutUserInput
+  accountBooks?: Prisma.AccountBookUncheckedCreateNestedManyWithoutUserInput
+  accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
+  regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSetting?: Prisma.UserPushSettingUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpsertWithoutPushSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPushSubscriptionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpdateWithoutPushSubscriptionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  loginType?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImg?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  bucketLists?: Prisma.BucketListUpdateManyWithoutUserNestedInput
+  deposits?: Prisma.DepositUpdateManyWithoutUserNestedInput
+  todos?: Prisma.TodoUpdateManyWithoutUserNestedInput
+  accountBooks?: Prisma.AccountBookUpdateManyWithoutUserNestedInput
+  accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
+  regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  loginType?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImg?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  bucketLists?: Prisma.BucketListUncheckedUpdateManyWithoutUserNestedInput
+  deposits?: Prisma.DepositUncheckedUpdateManyWithoutUserNestedInput
+  todos?: Prisma.TodoUncheckedUpdateManyWithoutUserNestedInput
+  accountBooks?: Prisma.AccountBookUncheckedUpdateManyWithoutUserNestedInput
+  accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
+  regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSetting?: Prisma.UserPushSettingUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPushSettingInput = {
+  name: string
+  email: string
+  password: string
+  loginType: string
+  socialId: string
+  profileImg: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  bucketLists?: Prisma.BucketListCreateNestedManyWithoutUserInput
+  deposits?: Prisma.DepositCreateNestedManyWithoutUserInput
+  todos?: Prisma.TodoCreateNestedManyWithoutUserInput
+  accountBooks?: Prisma.AccountBookCreateNestedManyWithoutUserInput
+  accountBookCategories?: Prisma.AccountBookCategoryCreateNestedManyWithoutUserInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageCreateNestedManyWithoutUserInput
+  regularExpenditures?: Prisma.RegularExpenditureCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPushSettingInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  loginType: string
+  socialId: string
+  profileImg: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  bucketLists?: Prisma.BucketListUncheckedCreateNestedManyWithoutUserInput
+  deposits?: Prisma.DepositUncheckedCreateNestedManyWithoutUserInput
+  todos?: Prisma.TodoUncheckedCreateNestedManyWithoutUserInput
+  accountBooks?: Prisma.AccountBookUncheckedCreateNestedManyWithoutUserInput
+  accountBookCategories?: Prisma.AccountBookCategoryUncheckedCreateNestedManyWithoutUserInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedCreateNestedManyWithoutUserInput
+  regularExpenditures?: Prisma.RegularExpenditureUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPushSettingInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSettingInput, Prisma.UserUncheckedCreateWithoutPushSettingInput>
+}
+
+export type UserUpsertWithoutPushSettingInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPushSettingInput, Prisma.UserUncheckedUpdateWithoutPushSettingInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSettingInput, Prisma.UserUncheckedCreateWithoutPushSettingInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPushSettingInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPushSettingInput, Prisma.UserUncheckedUpdateWithoutPushSettingInput>
+}
+
+export type UserUpdateWithoutPushSettingInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  loginType?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImg?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  bucketLists?: Prisma.BucketListUpdateManyWithoutUserNestedInput
+  deposits?: Prisma.DepositUpdateManyWithoutUserNestedInput
+  todos?: Prisma.TodoUpdateManyWithoutUserNestedInput
+  accountBooks?: Prisma.AccountBookUpdateManyWithoutUserNestedInput
+  accountBookCategories?: Prisma.AccountBookCategoryUpdateManyWithoutUserNestedInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUpdateManyWithoutUserNestedInput
+  regularExpenditures?: Prisma.RegularExpenditureUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPushSettingInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  loginType?: Prisma.StringFieldUpdateOperationsInput | string
+  socialId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImg?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  bucketLists?: Prisma.BucketListUncheckedUpdateManyWithoutUserNestedInput
+  deposits?: Prisma.DepositUncheckedUpdateManyWithoutUserNestedInput
+  todos?: Prisma.TodoUncheckedUpdateManyWithoutUserNestedInput
+  accountBooks?: Prisma.AccountBookUncheckedUpdateManyWithoutUserNestedInput
+  accountBookCategories?: Prisma.AccountBookCategoryUncheckedUpdateManyWithoutUserNestedInput
+  accountBookCategoryImages?: Prisma.AccountBookCategoryImageUncheckedUpdateManyWithoutUserNestedInput
+  regularExpenditures?: Prisma.RegularExpenditureUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.UserPushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1364,6 +1666,7 @@ export type UserCountOutputType = {
   accountBookCategories: number
   accountBookCategoryImages: number
   regularExpenditures: number
+  pushSubscriptions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1375,6 +1678,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   accountBookCategories?: boolean | UserCountOutputTypeCountAccountBookCategoriesArgs
   accountBookCategoryImages?: boolean | UserCountOutputTypeCountAccountBookCategoryImagesArgs
   regularExpenditures?: boolean | UserCountOutputTypeCountRegularExpendituresArgs
+  pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
 }
 
 /**
@@ -1443,6 +1747,13 @@ export type UserCountOutputTypeCountRegularExpendituresArgs<ExtArgs extends runt
   where?: Prisma.RegularExpenditureWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserPushSubscriptionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1462,6 +1773,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   accountBookCategories?: boolean | Prisma.User$accountBookCategoriesArgs<ExtArgs>
   accountBookCategoryImages?: boolean | Prisma.User$accountBookCategoryImagesArgs<ExtArgs>
   regularExpenditures?: boolean | Prisma.User$regularExpendituresArgs<ExtArgs>
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
+  pushSetting?: boolean | Prisma.User$pushSettingArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1489,6 +1802,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   accountBookCategories?: boolean | Prisma.User$accountBookCategoriesArgs<ExtArgs>
   accountBookCategoryImages?: boolean | Prisma.User$accountBookCategoryImagesArgs<ExtArgs>
   regularExpenditures?: boolean | Prisma.User$regularExpendituresArgs<ExtArgs>
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
+  pushSetting?: boolean | Prisma.User$pushSettingArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1503,6 +1818,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     accountBookCategories: Prisma.$AccountBookCategoryPayload<ExtArgs>[]
     accountBookCategoryImages: Prisma.$AccountBookCategoryImagePayload<ExtArgs>[]
     regularExpenditures: Prisma.$RegularExpenditurePayload<ExtArgs>[]
+    pushSubscriptions: Prisma.$UserPushSubscriptionPayload<ExtArgs>[]
+    pushSetting: Prisma.$UserPushSettingPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1862,6 +2179,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   accountBookCategories<T extends Prisma.User$accountBookCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountBookCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountBookCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accountBookCategoryImages<T extends Prisma.User$accountBookCategoryImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountBookCategoryImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountBookCategoryImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   regularExpenditures<T extends Prisma.User$regularExpendituresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$regularExpendituresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RegularExpenditurePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pushSetting<T extends Prisma.User$pushSettingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSettingArgs<ExtArgs>>): Prisma.Prisma__UserPushSettingClient<runtime.Types.Result.GetResult<Prisma.$UserPushSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2437,6 +2756,49 @@ export type User$regularExpendituresArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.RegularExpenditureScalarFieldEnum | Prisma.RegularExpenditureScalarFieldEnum[]
+}
+
+/**
+ * User.pushSubscriptions
+ */
+export type User$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPushSubscription
+   */
+  select?: Prisma.UserPushSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPushSubscription
+   */
+  omit?: Prisma.UserPushSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPushSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.UserPushSubscriptionWhereInput
+  orderBy?: Prisma.UserPushSubscriptionOrderByWithRelationInput | Prisma.UserPushSubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.UserPushSubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserPushSubscriptionScalarFieldEnum | Prisma.UserPushSubscriptionScalarFieldEnum[]
+}
+
+/**
+ * User.pushSetting
+ */
+export type User$pushSettingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPushSetting
+   */
+  select?: Prisma.UserPushSettingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPushSetting
+   */
+  omit?: Prisma.UserPushSettingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPushSettingInclude<ExtArgs> | null
+  where?: Prisma.UserPushSettingWhereInput
 }
 
 /**

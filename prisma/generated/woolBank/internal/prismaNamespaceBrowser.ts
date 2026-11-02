@@ -61,7 +61,9 @@ export const ModelName = {
   AccountBookCategoryImage: 'AccountBookCategoryImage',
   BucketList: 'BucketList',
   RegularExpenditure: 'RegularExpenditure',
-  Todo: 'Todo'
+  Todo: 'Todo',
+  UserPushSubscription: 'UserPushSubscription',
+  UserPushSetting: 'UserPushSetting'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -245,6 +247,33 @@ export const TodoScalarFieldEnum = {
 export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
+export const UserPushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  endpointHash: 'endpointHash',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  expirationTime: 'expirationTime',
+  userAgent: 'userAgent',
+  lastSentAt: 'lastSentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPushSubscriptionScalarFieldEnum = (typeof UserPushSubscriptionScalarFieldEnum)[keyof typeof UserPushSubscriptionScalarFieldEnum]
+
+
+export const UserPushSettingScalarFieldEnum = {
+  userId: 'userId',
+  regularExpenditure: 'regularExpenditure',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPushSettingScalarFieldEnum = (typeof UserPushSettingScalarFieldEnum)[keyof typeof UserPushSettingScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -341,4 +370,15 @@ export const TodoOrderByRelevanceFieldEnum = {
 } as const
 
 export type TodoOrderByRelevanceFieldEnum = (typeof TodoOrderByRelevanceFieldEnum)[keyof typeof TodoOrderByRelevanceFieldEnum]
+
+
+export const UserPushSubscriptionOrderByRelevanceFieldEnum = {
+  endpoint: 'endpoint',
+  endpointHash: 'endpointHash',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent'
+} as const
+
+export type UserPushSubscriptionOrderByRelevanceFieldEnum = (typeof UserPushSubscriptionOrderByRelevanceFieldEnum)[keyof typeof UserPushSubscriptionOrderByRelevanceFieldEnum]
 

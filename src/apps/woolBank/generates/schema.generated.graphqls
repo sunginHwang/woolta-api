@@ -300,9 +300,24 @@ type Mutation {
   deleteBucketList(input: DeleteBucketListInput!): Boolean!
   deleteBucketListTodo(input: DeleteBucketListTodoInput!): Boolean!
   deleteRegularExpenditure(input: DeleteRegularExpenditureInput!): Boolean!
+
+  """테스트 알림. endpoint 를 주면 그 기기로만, 없으면 이 계정의 모든 기기로 보낸다. 공유코드 세션도 허용."""
+  sendWoolBankTestPush(input: SendWoolBankTestPushInput): Boolean!
+
+  """
+  현재 기기의 Web Push 구독을 등록한다. endpoint 기준 upsert 라 재구독(pushsubscriptionchange)도 같은 뮤테이션을 쓴다.
+  공유코드 세션도 허용 — 세션의 userId 가 원 계정이라, 원 계정 알림을 공유코드로 들어온 기기도 함께 받는다.
+  """
+  subscribeWoolBankPush(input: SubscribeWoolBankPushInput!): Boolean!
+
+  """공유코드 세션도 허용 (자기 기기 구독만 지운다)"""
+  unsubscribeWoolBankPush(input: UnsubscribeWoolBankPushInput!): Boolean!
   updateAccountBook(input: UpdateAccountBookInput!): AccountBook!
   updateBucketList(input: UpdateBucketListInput!): BucketList!
   updateBucketListTodoComplete(input: UpdateBucketListTodoCompleteInput!): BucketListTodo!
+
+  """알림 종류 설정은 계정 단위라 원 계정 로그인만 바꿀 수 있다"""
+  updateWoolBankPushSetting(input: UpdateWoolBankPushSettingInput!): WoolBankPushSetting!
 }
 
 type Query {
@@ -323,6 +338,9 @@ type Query {
   getAccountLastUpdatedDate: DateTime!
   getBucketListItemLastUpdatedDate(id: ID!): DateTime!
   getBucketListLastUpdatedDate: DateTime!
+
+  """푸시 상태. endpoint 를 주면 그 기기가 이 유저 구독으로 등록돼 있는지(isSubscribed)도 함께 준다."""
+  getWoolBankPushStatus(endpoint: String): WoolBankPushStatus!
   mainInfo: MainInfo!
   regularExpenditureGroupList(limitCount: Int): RegularExpenditureGroupList!
 }
@@ -365,6 +383,11 @@ enum ScheduledPaymentType {
   REPEAT
 }
 
+input SendWoolBankTestPushInput {
+  """이 기기(구독)로만 보낸다"""
+  endpoint: String
+}
+
 type Statistic {
   amount: Int!
   categoryId: String!
@@ -383,6 +406,20 @@ type StatisticItem {
 type StatisticList {
   itemList: [Statistic!]!
   totalCount: Int!
+}
+
+input SubscribeWoolBankPushInput {
+  auth: String!
+  endpoint: String!
+
+  """PushSubscription.expirationTime — 대부분 null"""
+  expirationTime: DateTime
+  p256dh: String!
+  userAgent: String
+}
+
+input UnsubscribeWoolBankPushInput {
+  endpoint: String!
 }
 
 input UpdateAccountBookInput {
@@ -410,12 +447,30 @@ input UpdateBucketListTodoCompleteInput {
   todoId: ID!
 }
 
+input UpdateWoolBankPushSettingInput {
+  regularExpenditure: Boolean!
+}
+
 type UserShareCode {
   createdAt: DateTime!
   id: ID!
   shareCode: String!
   updatedAt: DateTime!
   userId: Int!
+}
+
+type WoolBankPushSetting {
+  """정기지출 결제 전날 알림"""
+  regularExpenditure: Boolean!
+}
+
+type WoolBankPushStatus {
+  """질의한 endpoint 가 이 유저의 구독으로 등록돼 있는지. endpoint 를 안 주면 false."""
+  isSubscribed: Boolean!
+  setting: WoolBankPushSetting!
+
+  """이 유저가 등록한 기기(구독) 수"""
+  subscriptionCount: Int!
 }
 
 type WoolBankUser {

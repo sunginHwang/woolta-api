@@ -96,3 +96,13 @@ export type RegularExpenditure = Prisma.RegularExpenditureModel
  * 
  */
 export type Todo = Prisma.TodoModel
+/**
+ * Model UserPushSubscription
+ * 
+ */
+export type UserPushSubscription = Prisma.UserPushSubscriptionModel
+/**
+ * Model UserPushSetting
+ * 
+ */
+export type UserPushSetting = Prisma.UserPushSettingModel

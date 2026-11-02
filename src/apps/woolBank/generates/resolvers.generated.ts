@@ -12,6 +12,7 @@ import    { getAccountBookStatisticList as Query_getAccountBookStatisticList } f
 import    { getAccountLastUpdatedDate as Query_getAccountLastUpdatedDate } from './../schema/resolvers/Query/getAccountLastUpdatedDate';
 import    { getBucketListItemLastUpdatedDate as Query_getBucketListItemLastUpdatedDate } from './../schema/resolvers/Query/getBucketListItemLastUpdatedDate';
 import    { getBucketListLastUpdatedDate as Query_getBucketListLastUpdatedDate } from './../schema/resolvers/Query/getBucketListLastUpdatedDate';
+import    { getWoolBankPushStatus as Query_getWoolBankPushStatus } from './../schema/resolvers/Query/getWoolBankPushStatus';
 import    { mainInfo as Query_mainInfo } from './../schema/resolvers/Query/mainInfo';
 import    { regularExpenditureGroupList as Query_regularExpenditureGroupList } from './../schema/resolvers/Query/regularExpenditureGroupList';
 import    { completeAccountExpiration as Mutation_completeAccountExpiration } from './../schema/resolvers/Mutation/completeAccountExpiration';
@@ -30,9 +31,13 @@ import    { deleteAccountBookCategory as Mutation_deleteAccountBookCategory } fr
 import    { deleteBucketList as Mutation_deleteBucketList } from './../schema/resolvers/Mutation/deleteBucketList';
 import    { deleteBucketListTodo as Mutation_deleteBucketListTodo } from './../schema/resolvers/Mutation/deleteBucketListTodo';
 import    { deleteRegularExpenditure as Mutation_deleteRegularExpenditure } from './../schema/resolvers/Mutation/deleteRegularExpenditure';
+import    { sendWoolBankTestPush as Mutation_sendWoolBankTestPush } from './../schema/resolvers/Mutation/sendWoolBankTestPush';
+import    { subscribeWoolBankPush as Mutation_subscribeWoolBankPush } from './../schema/resolvers/Mutation/subscribeWoolBankPush';
+import    { unsubscribeWoolBankPush as Mutation_unsubscribeWoolBankPush } from './../schema/resolvers/Mutation/unsubscribeWoolBankPush';
 import    { updateAccountBook as Mutation_updateAccountBook } from './../schema/resolvers/Mutation/updateAccountBook';
 import    { updateBucketList as Mutation_updateBucketList } from './../schema/resolvers/Mutation/updateBucketList';
 import    { updateBucketListTodoComplete as Mutation_updateBucketListTodoComplete } from './../schema/resolvers/Mutation/updateBucketListTodoComplete';
+import    { updateWoolBankPushSetting as Mutation_updateWoolBankPushSetting } from './../schema/resolvers/Mutation/updateWoolBankPushSetting';
 import    { Account } from './../schema/resolvers/Account';
 import    { AccountBook } from './../schema/resolvers/AccountBook';
 import    { AccountBookCategory } from './../schema/resolvers/AccountBookCategory';
@@ -57,11 +62,13 @@ import    { Statistic } from './../schema/resolvers/Statistic';
 import    { StatisticItem } from './../schema/resolvers/StatisticItem';
 import    { StatisticList } from './../schema/resolvers/StatisticList';
 import    { UserShareCode } from './../schema/resolvers/UserShareCode';
+import    { WoolBankPushSetting } from './../schema/resolvers/WoolBankPushSetting';
+import    { WoolBankPushStatus } from './../schema/resolvers/WoolBankPushStatus';
 import    { WoolBankUser } from './../schema/resolvers/WoolBankUser';
 import    { DateTimeResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
-      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryImageList: Query_accountBookCategoryImageList,accountBookCategoryList: Query_accountBookCategoryList,accountBookList: Query_accountBookList,accountList: Query_accountList,bucketList: Query_bucketList,bucketListSummaryList: Query_bucketListSummaryList,getAccountBookStatisticList: Query_getAccountBookStatisticList,getAccountLastUpdatedDate: Query_getAccountLastUpdatedDate,getBucketListItemLastUpdatedDate: Query_getBucketListItemLastUpdatedDate,getBucketListLastUpdatedDate: Query_getBucketListLastUpdatedDate,mainInfo: Query_mainInfo,regularExpenditureGroupList: Query_regularExpenditureGroupList },
-      Mutation: { completeAccountExpiration: Mutation_completeAccountExpiration,completeBucketList: Mutation_completeBucketList,createAccount: Mutation_createAccount,createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createAccountBookList: Mutation_createAccountBookList,createBucketList: Mutation_createBucketList,createBucketListTodo: Mutation_createBucketListTodo,createDeposit: Mutation_createDeposit,createRegularExpenditure: Mutation_createRegularExpenditure,deleteAccount: Mutation_deleteAccount,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteBucketList: Mutation_deleteBucketList,deleteBucketListTodo: Mutation_deleteBucketListTodo,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,updateAccountBook: Mutation_updateAccountBook,updateBucketList: Mutation_updateBucketList,updateBucketListTodoComplete: Mutation_updateBucketListTodoComplete },
+      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryImageList: Query_accountBookCategoryImageList,accountBookCategoryList: Query_accountBookCategoryList,accountBookList: Query_accountBookList,accountList: Query_accountList,bucketList: Query_bucketList,bucketListSummaryList: Query_bucketListSummaryList,getAccountBookStatisticList: Query_getAccountBookStatisticList,getAccountLastUpdatedDate: Query_getAccountLastUpdatedDate,getBucketListItemLastUpdatedDate: Query_getBucketListItemLastUpdatedDate,getBucketListLastUpdatedDate: Query_getBucketListLastUpdatedDate,getWoolBankPushStatus: Query_getWoolBankPushStatus,mainInfo: Query_mainInfo,regularExpenditureGroupList: Query_regularExpenditureGroupList },
+      Mutation: { completeAccountExpiration: Mutation_completeAccountExpiration,completeBucketList: Mutation_completeBucketList,createAccount: Mutation_createAccount,createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createAccountBookList: Mutation_createAccountBookList,createBucketList: Mutation_createBucketList,createBucketListTodo: Mutation_createBucketListTodo,createDeposit: Mutation_createDeposit,createRegularExpenditure: Mutation_createRegularExpenditure,deleteAccount: Mutation_deleteAccount,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteBucketList: Mutation_deleteBucketList,deleteBucketListTodo: Mutation_deleteBucketListTodo,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,sendWoolBankTestPush: Mutation_sendWoolBankTestPush,subscribeWoolBankPush: Mutation_subscribeWoolBankPush,unsubscribeWoolBankPush: Mutation_unsubscribeWoolBankPush,updateAccountBook: Mutation_updateAccountBook,updateBucketList: Mutation_updateBucketList,updateBucketListTodoComplete: Mutation_updateBucketListTodoComplete,updateWoolBankPushSetting: Mutation_updateWoolBankPushSetting },
       
       Account: Account,
 AccountBook: AccountBook,
@@ -87,6 +94,8 @@ Statistic: Statistic,
 StatisticItem: StatisticItem,
 StatisticList: StatisticList,
 UserShareCode: UserShareCode,
+WoolBankPushSetting: WoolBankPushSetting,
+WoolBankPushStatus: WoolBankPushStatus,
 WoolBankUser: WoolBankUser,
 DateTime: DateTimeResolver
     }
