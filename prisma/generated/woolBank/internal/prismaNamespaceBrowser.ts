@@ -63,7 +63,8 @@ export const ModelName = {
   RegularExpenditure: 'RegularExpenditure',
   Todo: 'Todo',
   UserPushSubscription: 'UserPushSubscription',
-  UserPushSetting: 'UserPushSetting'
+  UserPushSetting: 'UserPushSetting',
+  UserNotification: 'UserNotification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -274,6 +275,21 @@ export const UserPushSettingScalarFieldEnum = {
 export type UserPushSettingScalarFieldEnum = (typeof UserPushSettingScalarFieldEnum)[keyof typeof UserPushSettingScalarFieldEnum]
 
 
+export const UserNotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  title: 'title',
+  summary: 'summary',
+  content: 'content',
+  readAt: 'readAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserNotificationScalarFieldEnum = (typeof UserNotificationScalarFieldEnum)[keyof typeof UserNotificationScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -381,4 +397,14 @@ export const UserPushSubscriptionOrderByRelevanceFieldEnum = {
 } as const
 
 export type UserPushSubscriptionOrderByRelevanceFieldEnum = (typeof UserPushSubscriptionOrderByRelevanceFieldEnum)[keyof typeof UserPushSubscriptionOrderByRelevanceFieldEnum]
+
+
+export const UserNotificationOrderByRelevanceFieldEnum = {
+  kind: 'kind',
+  title: 'title',
+  summary: 'summary',
+  content: 'content'
+} as const
+
+export type UserNotificationOrderByRelevanceFieldEnum = (typeof UserNotificationOrderByRelevanceFieldEnum)[keyof typeof UserNotificationOrderByRelevanceFieldEnum]
 

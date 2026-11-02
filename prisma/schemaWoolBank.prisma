@@ -31,6 +31,7 @@ model User {
   regularExpenditures RegularExpenditure[]
   pushSubscriptions UserPushSubscription[]
   pushSetting UserPushSetting?
+  notifications UserNotification[]
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 }
@@ -231,4 +232,22 @@ model UserPushSetting {
   regularExpenditure Boolean  @default(true) @map("regular_expenditure")
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
+}
+
+// 알림함. 푸시로 보낸 알림의 상세 본문을 보관해 /notifications 에서 다시 볼 수 있게 한다.
+model UserNotification {
+  @@map("user_notification")
+
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  user      User      @relation(fields: [userId], references: [id])
+  kind      String    @woolbank.VarChar(40)
+  title     String    @woolbank.VarChar(100)
+  summary   String    @woolbank.VarChar(255)
+  content   String    @woolbank.Text
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId, id])
 }

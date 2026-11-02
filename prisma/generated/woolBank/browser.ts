@@ -82,3 +82,8 @@ export type UserPushSubscription = Prisma.UserPushSubscriptionModel
  * 
  */
 export type UserPushSetting = Prisma.UserPushSettingModel
+/**
+ * Model UserNotification
+ * 
+ */
+export type UserNotification = Prisma.UserNotificationModel

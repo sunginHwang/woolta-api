@@ -202,6 +202,8 @@ export interface SendOptions {
 }
 
 const DEFAULT_TTL_SECONDS = 60 * 60 * 24;
+/** 푸시 서비스 응답 대기 상한. 호출자(뮤테이션·aiho 봇, 8초 타임아웃)가 발송 지연에 묶이지 않게 한다. */
+const SEND_TIMEOUT_MS = 5_000;
 
 /** 유저의 모든 기기로 발송. 성공한 기기 수를 돌려준다. */
 export const sendToUser = async (
@@ -231,7 +233,13 @@ export const sendToUser = async (
         await webpush.sendNotification(
           { endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } },
           body,
-          { vapidDetails, TTL: options.ttl ?? DEFAULT_TTL_SECONDS, urgency: options.urgency, topic: options.topic },
+          {
+            vapidDetails,
+            TTL: options.ttl ?? DEFAULT_TTL_SECONDS,
+            urgency: options.urgency,
+            topic: options.topic,
+            timeout: SEND_TIMEOUT_MS,
+          },
         );
         sentCount += 1;
         await prismaWoolBank.userPushSubscription.update({

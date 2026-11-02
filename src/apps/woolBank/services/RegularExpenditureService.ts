@@ -3,7 +3,8 @@ import lodash from 'lodash';
 const { range } = lodash;
 import { ForbiddenError, NotFoundError } from '../../../shared/errors';
 import { prismaWoolBank } from '../utils/prismaClient';
-import { buildDeclarativePayload, getSetting, sendToUser, WOOLBANK_APP_URL } from './PushService';
+import { createAndPush } from './NotificationService';
+import { getSetting } from './PushService';
 
 export const getRegularExpenditureListByUserId = async (userId: number, limit: number = 100) => {
   return prismaWoolBank.regularExpenditure.findMany({
@@ -169,15 +170,25 @@ export const getUpcomingRegularDates = (now: Date): number[] => {
 
 const formatAmount = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
 
-const buildUpcomingBody = (items: { title: string; amount: number }[]) => {
-  const total = items.reduce((sum, item) => sum + item.amount, 0);
+const sumAmount = (items: { amount: number }[]) => items.reduce((sum, item) => sum + item.amount, 0);
+
+/** 푸시 본문 한 줄: "넷플릭스 외 2건 · 32,000원" */
+const buildUpcomingSummary = (items: { title: string; amount: number }[]) => {
   const [first] = items;
   const head = items.length === 1 ? first.title : `${first.title} 외 ${items.length - 1}건`;
 
-  return `${head} · ${formatAmount(total)}`;
+  return `${head} · ${formatAmount(sumAmount(items))}`;
 };
 
-// 매일 09:00 — 내일 결제 예정인 정기지출을 유저별로 묶어 푸시 1건씩 보낸다. 알림을 보낸 유저 수를 돌려준다.
+/** 알림 상세 본문: 항목별 한 줄 + 합계 */
+const buildUpcomingContent = (items: { title: string; amount: number }[]) =>
+  [
+    ...items.map((item) => `• ${item.title} · ${formatAmount(item.amount)}`),
+    '',
+    `합계 ${formatAmount(sumAmount(items))}`,
+  ].join('\n');
+
+// 매일 09:00 — 내일 결제 예정인 정기지출을 유저별로 묶어 알림함에 1건 저장하고 푸시한다. 알림을 남긴 유저 수를 돌려준다.
 export const notifyUpcomingRegularExpenditure = async (now: Date = new Date()): Promise<number> => {
   try {
     const regularExpenditureList = await prismaWoolBank.regularExpenditure.findMany({
@@ -201,19 +212,17 @@ export const notifyUpcomingRegularExpenditure = async (now: Date = new Date()): 
         continue;
       }
 
-      const sent = await sendToUser(
-        userId,
-        buildDeclarativePayload({
+      // 한 유저의 저장/발송 실패가 나머지 유저의 알림까지 막으면 안 된다.
+      try {
+        await createAndPush(userId, {
+          kind: 'REGULAR_EXPENDITURE',
           title: '내일 정기지출 결제 예정',
-          body: buildUpcomingBody(items),
-          navigate: `${WOOLBANK_APP_URL}/regular-extenditure`,
-          tag: 'regular-expenditure',
-        }),
-        { topic: 'regular-expenditure', ttl: 60 * 60 * 12 },
-      );
-
-      if (sent > 0) {
+          summary: buildUpcomingSummary(items),
+          content: buildUpcomingContent(items),
+        });
         notifiedUserCount += 1;
+      } catch (e) {
+        console.log(`regular expenditure notify fail userId:${userId}`, e);
       }
     }
 
