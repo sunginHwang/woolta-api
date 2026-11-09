@@ -107,6 +107,18 @@ enum AccountBookCategoryType {
   income
 }
 
+// 주간 예산 — 유저당 1행(반복 예산). 특정 주차가 아니라 "한 주에 얼마" 라는 단일 금액.
+// 공유 woolBank DB 라 테이블은 scripts/weeklyBudgetDdl.sql 로만 생성한다 (prisma db push 금지).
+model WeeklyBudget {
+  @@map("weekly_budget")
+
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique @map("user_id")
+  amount    Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
 model AccountBookCategory {
   @@map("account_book_category")
 

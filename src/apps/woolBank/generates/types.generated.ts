@@ -350,6 +350,8 @@ export type Mutation = {
   deleteRegularExpenditure: Scalars['Boolean']['output'];
   markAllWoolBankNotificationRead: Scalars['Boolean']['output'];
   markWoolBankNotificationRead: WoolBankNotification;
+  /** 주간 예산 생성·수정(upsert). 공유코드 세션은 불가(requireRealUser). */
+  saveWeeklyBudget: WeeklyBudget;
   /** 테스트 알림. endpoint 를 주면 그 기기로만, 없으면 이 계정의 모든 기기로 보낸다. 공유코드 세션도 허용. */
   sendWoolBankTestPush: Scalars['Boolean']['output'];
   /**
@@ -457,6 +459,11 @@ export type MutationmarkWoolBankNotificationReadArgs = {
 };
 
 
+export type MutationsaveWeeklyBudgetArgs = {
+  input: SaveWeeklyBudgetInput;
+};
+
+
 export type MutationsendWoolBankTestPushArgs = {
   input?: InputMaybe<SendWoolBankTestPushInput>;
 };
@@ -514,6 +521,13 @@ export type Query = {
   getWoolBankUnreadNotificationCount: Scalars['Int']['output'];
   mainInfo: MainInfo;
   regularExpenditureGroupList: RegularExpenditureGroupList;
+  /** 주간 예산 조회. 설정 안 되어 있으면 amount 0 으로 응답. */
+  weeklyBudget: WeeklyBudget;
+  /**
+   * 해당 주차(월~일)의 예산 사용 현황. dateTime 생략 시 이번 주.
+   * 주의: is_disabled_budget=true(적금·보험 등 정기지출)와 수입(income)은 사용액에서 제외한다.
+   */
+  weeklyBudgetUsage: WeeklyBudgetUsage;
   woolBankNotification?: Maybe<WoolBankNotification>;
   /** 최신순. limitCount 기본 50 */
   woolBankNotificationList: WoolBankNotificationList;
@@ -573,6 +587,11 @@ export type QueryregularExpenditureGroupListArgs = {
 };
 
 
+export type QueryweeklyBudgetUsageArgs = {
+  dateTime?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+
 export type QuerywoolBankNotificationArgs = {
   id: Scalars['ID']['input'];
 };
@@ -608,6 +627,11 @@ export type RegularExpenditureGroupList = {
   __typename?: 'RegularExpenditureGroupList';
   itemList: Array<RegularExpenditureGroup>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type SaveWeeklyBudgetInput = {
+  /** 한 주 예산 금액(원). 0 이상. */
+  amount: Scalars['Int']['input'];
 };
 
 export type SavingType = {
@@ -700,6 +724,28 @@ export type UserShareCode = {
   shareCode: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   userId: Scalars['Int']['output'];
+};
+
+export type WeeklyBudget = {
+  __typename?: 'WeeklyBudget';
+  /** 한 주 예산 금액(원). 미설정이면 0. */
+  amount: Scalars['Int']['output'];
+};
+
+export type WeeklyBudgetUsage = {
+  __typename?: 'WeeklyBudgetUsage';
+  /** 설정된 주간 예산(원). 미설정이면 0. */
+  budget: Scalars['Int']['output'];
+  /** 해당 주차 종료일(일요일 23:59:59.999). */
+  endDate: Scalars['DateTime']['output'];
+  /** 예산 대비 사용 비율(%). 예산 0 이면 0. 반올림 정수. */
+  percentage: Scalars['Int']['output'];
+  /** 남은 예산(원). budget - spent. 음수 가능(초과 지출). */
+  remaining: Scalars['Int']['output'];
+  /** 해당 주차 사용액(원). 수입·예산제외 항목 제외. */
+  spent: Scalars['Int']['output'];
+  /** 해당 주차 시작일(월요일 00:00). */
+  startDate: Scalars['DateTime']['output'];
 };
 
 export type WoolBankNotification = {
@@ -879,6 +925,7 @@ export type ResolversTypes = {
   RegularExpenditure: ResolverTypeWrapper<Omit<RegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversTypes['AccountBookCategory'] }>;
   RegularExpenditureGroup: ResolverTypeWrapper<Omit<RegularExpenditureGroup, 'list' | 'type'> & { list: Array<ResolversTypes['CustomRegularExpenditure']>, type: ResolversTypes['AccountBookCategoryType'] }>;
   RegularExpenditureGroupList: ResolverTypeWrapper<Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversTypes['RegularExpenditureGroup']> }>;
+  SaveWeeklyBudgetInput: SaveWeeklyBudgetInput;
   SavingType: ResolverTypeWrapper<SavingType>;
   ScheduledPaymentType: ResolverTypeWrapper<'REPEAT' | 'INSTALLMENT'>;
   SendWoolBankTestPushInput: SendWoolBankTestPushInput;
@@ -892,6 +939,8 @@ export type ResolversTypes = {
   UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
   UpdateWoolBankPushSettingInput: UpdateWoolBankPushSettingInput;
   UserShareCode: ResolverTypeWrapper<UserShareCode>;
+  WeeklyBudget: ResolverTypeWrapper<WeeklyBudget>;
+  WeeklyBudgetUsage: ResolverTypeWrapper<WeeklyBudgetUsage>;
   WoolBankNotification: ResolverTypeWrapper<WoolBankNotification>;
   WoolBankNotificationList: ResolverTypeWrapper<WoolBankNotificationList>;
   WoolBankPushSetting: ResolverTypeWrapper<WoolBankPushSetting>;
@@ -948,6 +997,7 @@ export type ResolversParentTypes = {
   RegularExpenditure: Omit<RegularExpenditure, 'accountBookCategory'> & { accountBookCategory: ResolversParentTypes['AccountBookCategory'] };
   RegularExpenditureGroup: Omit<RegularExpenditureGroup, 'list'> & { list: Array<ResolversParentTypes['CustomRegularExpenditure']> };
   RegularExpenditureGroupList: Omit<RegularExpenditureGroupList, 'itemList'> & { itemList: Array<ResolversParentTypes['RegularExpenditureGroup']> };
+  SaveWeeklyBudgetInput: SaveWeeklyBudgetInput;
   SavingType: SavingType;
   SendWoolBankTestPushInput: SendWoolBankTestPushInput;
   Statistic: Statistic;
@@ -960,6 +1010,8 @@ export type ResolversParentTypes = {
   UpdateBucketListTodoCompleteInput: UpdateBucketListTodoCompleteInput;
   UpdateWoolBankPushSettingInput: UpdateWoolBankPushSettingInput;
   UserShareCode: UserShareCode;
+  WeeklyBudget: WeeklyBudget;
+  WeeklyBudgetUsage: WeeklyBudgetUsage;
   WoolBankNotification: WoolBankNotification;
   WoolBankNotificationList: WoolBankNotificationList;
   WoolBankPushSetting: WoolBankPushSetting;
@@ -1154,6 +1206,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteRegularExpenditure?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationdeleteRegularExpenditureArgs, 'input'>>;
   markAllWoolBankNotificationRead?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   markWoolBankNotificationRead?: Resolver<ResolversTypes['WoolBankNotification'], ParentType, ContextType, RequireFields<MutationmarkWoolBankNotificationReadArgs, 'input'>>;
+  saveWeeklyBudget?: Resolver<ResolversTypes['WeeklyBudget'], ParentType, ContextType, RequireFields<MutationsaveWeeklyBudgetArgs, 'input'>>;
   sendWoolBankTestPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, Partial<MutationsendWoolBankTestPushArgs>>;
   subscribeWoolBankPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationsubscribeWoolBankPushArgs, 'input'>>;
   unsubscribeWoolBankPush?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationunsubscribeWoolBankPushArgs, 'input'>>;
@@ -1180,6 +1233,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getWoolBankUnreadNotificationCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   mainInfo?: Resolver<ResolversTypes['MainInfo'], ParentType, ContextType>;
   regularExpenditureGroupList?: Resolver<ResolversTypes['RegularExpenditureGroupList'], ParentType, ContextType, Partial<QueryregularExpenditureGroupListArgs>>;
+  weeklyBudget?: Resolver<ResolversTypes['WeeklyBudget'], ParentType, ContextType>;
+  weeklyBudgetUsage?: Resolver<ResolversTypes['WeeklyBudgetUsage'], ParentType, ContextType, Partial<QueryweeklyBudgetUsageArgs>>;
   woolBankNotification?: Resolver<Maybe<ResolversTypes['WoolBankNotification']>, ParentType, ContextType, RequireFields<QuerywoolBankNotificationArgs, 'id'>>;
   woolBankNotificationList?: Resolver<ResolversTypes['WoolBankNotificationList'], ParentType, ContextType, Partial<QuerywoolBankNotificationListArgs>>;
 };
@@ -1245,6 +1300,19 @@ export type UserShareCodeResolvers<ContextType = any, ParentType extends Resolve
   shareCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type WeeklyBudgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeeklyBudget'] = ResolversParentTypes['WeeklyBudget']> = {
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
+export type WeeklyBudgetUsageResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeeklyBudgetUsage'] = ResolversParentTypes['WeeklyBudgetUsage']> = {
+  budget?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  endDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  percentage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  remaining?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  spent?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
 export type WoolBankNotificationResolvers<ContextType = any, ParentType extends ResolversParentTypes['WoolBankNotification'] = ResolversParentTypes['WoolBankNotification']> = {
@@ -1321,6 +1389,8 @@ export type Resolvers<ContextType = any> = {
   StatisticItem?: StatisticItemResolvers<ContextType>;
   StatisticList?: StatisticListResolvers<ContextType>;
   UserShareCode?: UserShareCodeResolvers<ContextType>;
+  WeeklyBudget?: WeeklyBudgetResolvers<ContextType>;
+  WeeklyBudgetUsage?: WeeklyBudgetUsageResolvers<ContextType>;
   WoolBankNotification?: WoolBankNotificationResolvers<ContextType>;
   WoolBankNotificationList?: WoolBankNotificationListResolvers<ContextType>;
   WoolBankPushSetting?: WoolBankPushSettingResolvers<ContextType>;

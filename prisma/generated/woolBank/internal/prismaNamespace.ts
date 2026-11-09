@@ -402,6 +402,7 @@ export const ModelName = {
   SavingType: 'SavingType',
   Account: 'Account',
   AccountBook: 'AccountBook',
+  WeeklyBudget: 'WeeklyBudget',
   AccountBookCategory: 'AccountBookCategory',
   Deposit: 'Deposit',
   AccountBookCategoryImage: 'AccountBookCategoryImage',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "userShareCode" | "savingType" | "account" | "accountBook" | "accountBookCategory" | "deposit" | "accountBookCategoryImage" | "bucketList" | "regularExpenditure" | "todo" | "userPushSubscription" | "userPushSetting" | "userNotification"
+    modelProps: "user" | "userShareCode" | "savingType" | "account" | "accountBook" | "weeklyBudget" | "accountBookCategory" | "deposit" | "accountBookCategoryImage" | "bucketList" | "regularExpenditure" | "todo" | "userPushSubscription" | "userPushSetting" | "userNotification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -757,6 +758,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AccountBookCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AccountBookCountAggregateOutputType> | number
+        }
+      }
+    }
+    WeeklyBudget: {
+      payload: Prisma.$WeeklyBudgetPayload<ExtArgs>
+      fields: Prisma.WeeklyBudgetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WeeklyBudgetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WeeklyBudgetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        findFirst: {
+          args: Prisma.WeeklyBudgetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WeeklyBudgetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        findMany: {
+          args: Prisma.WeeklyBudgetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>[]
+        }
+        create: {
+          args: Prisma.WeeklyBudgetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        createMany: {
+          args: Prisma.WeeklyBudgetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.WeeklyBudgetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        update: {
+          args: Prisma.WeeklyBudgetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        deleteMany: {
+          args: Prisma.WeeklyBudgetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WeeklyBudgetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.WeeklyBudgetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WeeklyBudgetPayload>
+        }
+        aggregate: {
+          args: Prisma.WeeklyBudgetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWeeklyBudget>
+        }
+        groupBy: {
+          args: Prisma.WeeklyBudgetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WeeklyBudgetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WeeklyBudgetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WeeklyBudgetCountAggregateOutputType> | number
         }
       }
     }
@@ -1471,6 +1538,17 @@ export const AccountBookScalarFieldEnum = {
 export type AccountBookScalarFieldEnum = (typeof AccountBookScalarFieldEnum)[keyof typeof AccountBookScalarFieldEnum]
 
 
+export const WeeklyBudgetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WeeklyBudgetScalarFieldEnum = (typeof WeeklyBudgetScalarFieldEnum)[keyof typeof WeeklyBudgetScalarFieldEnum]
+
+
 export const AccountBookCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1922,6 +2000,7 @@ export type GlobalOmitConfig = {
   savingType?: Prisma.SavingTypeOmit
   account?: Prisma.AccountOmit
   accountBook?: Prisma.AccountBookOmit
+  weeklyBudget?: Prisma.WeeklyBudgetOmit
   accountBookCategory?: Prisma.AccountBookCategoryOmit
   deposit?: Prisma.DepositOmit
   accountBookCategoryImage?: Prisma.AccountBookCategoryImageOmit

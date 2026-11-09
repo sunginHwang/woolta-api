@@ -19,6 +19,26 @@ export const getAccountBookByIdAndUserId = async (id: number, userId: number) =>
   });
 };
 
+// 예산 집계용 — 기간 내 지출 합계. 수입(income)과 예산제외(is_disabled_budget=true, 적금·보험 등 정기지출)는 뺀다.
+// account_book 테이블은 이 서비스가 소유하므로 집계도 여기서 한다.
+export const getBudgetSpentAmount = async (
+  userId: number,
+  startDate: Date | string,
+  endDate: Date | string,
+): Promise<number> => {
+  const { _sum } = await prismaWoolBank.accountBook.aggregate({
+    _sum: { amount: true },
+    where: {
+      userId,
+      type: 'expenditure',
+      isDisabledBudget: false,
+      registerDateTime: { gte: new Date(startDate), lte: new Date(endDate) },
+    },
+  });
+
+  return _sum.amount ?? 0;
+};
+
 // 원본 GET /account-books — 조회 기준일이 속한 달 전체
 export const getAccountBookListByMonth = async (userId: number, dateTime: Date | string) => {
   const startDate = startOfMonth(new Date(dateTime));

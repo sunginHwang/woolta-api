@@ -16,6 +16,8 @@ import    { getWoolBankPushStatus as Query_getWoolBankPushStatus } from './../sc
 import    { getWoolBankUnreadNotificationCount as Query_getWoolBankUnreadNotificationCount } from './../schema/resolvers/Query/getWoolBankUnreadNotificationCount';
 import    { mainInfo as Query_mainInfo } from './../schema/resolvers/Query/mainInfo';
 import    { regularExpenditureGroupList as Query_regularExpenditureGroupList } from './../schema/resolvers/Query/regularExpenditureGroupList';
+import    { weeklyBudget as Query_weeklyBudget } from './../schema/resolvers/Query/weeklyBudget';
+import    { weeklyBudgetUsage as Query_weeklyBudgetUsage } from './../schema/resolvers/Query/weeklyBudgetUsage';
 import    { woolBankNotification as Query_woolBankNotification } from './../schema/resolvers/Query/woolBankNotification';
 import    { woolBankNotificationList as Query_woolBankNotificationList } from './../schema/resolvers/Query/woolBankNotificationList';
 import    { completeAccountExpiration as Mutation_completeAccountExpiration } from './../schema/resolvers/Mutation/completeAccountExpiration';
@@ -37,6 +39,7 @@ import    { deleteBucketListTodo as Mutation_deleteBucketListTodo } from './../s
 import    { deleteRegularExpenditure as Mutation_deleteRegularExpenditure } from './../schema/resolvers/Mutation/deleteRegularExpenditure';
 import    { markAllWoolBankNotificationRead as Mutation_markAllWoolBankNotificationRead } from './../schema/resolvers/Mutation/markAllWoolBankNotificationRead';
 import    { markWoolBankNotificationRead as Mutation_markWoolBankNotificationRead } from './../schema/resolvers/Mutation/markWoolBankNotificationRead';
+import    { saveWeeklyBudget as Mutation_saveWeeklyBudget } from './../schema/resolvers/Mutation/saveWeeklyBudget';
 import    { sendWoolBankTestPush as Mutation_sendWoolBankTestPush } from './../schema/resolvers/Mutation/sendWoolBankTestPush';
 import    { subscribeWoolBankPush as Mutation_subscribeWoolBankPush } from './../schema/resolvers/Mutation/subscribeWoolBankPush';
 import    { unsubscribeWoolBankPush as Mutation_unsubscribeWoolBankPush } from './../schema/resolvers/Mutation/unsubscribeWoolBankPush';
@@ -68,6 +71,8 @@ import    { Statistic } from './../schema/resolvers/Statistic';
 import    { StatisticItem } from './../schema/resolvers/StatisticItem';
 import    { StatisticList } from './../schema/resolvers/StatisticList';
 import    { UserShareCode } from './../schema/resolvers/UserShareCode';
+import    { WeeklyBudget } from './../schema/resolvers/WeeklyBudget';
+import    { WeeklyBudgetUsage } from './../schema/resolvers/WeeklyBudgetUsage';
 import    { WoolBankNotification } from './../schema/resolvers/WoolBankNotification';
 import    { WoolBankNotificationList } from './../schema/resolvers/WoolBankNotificationList';
 import    { WoolBankPushSetting } from './../schema/resolvers/WoolBankPushSetting';
@@ -75,8 +80,8 @@ import    { WoolBankPushStatus } from './../schema/resolvers/WoolBankPushStatus'
 import    { WoolBankUser } from './../schema/resolvers/WoolBankUser';
 import    { DateTimeResolver } from 'graphql-scalars';
     export const resolvers: Resolvers = {
-      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryImageList: Query_accountBookCategoryImageList,accountBookCategoryList: Query_accountBookCategoryList,accountBookList: Query_accountBookList,accountList: Query_accountList,bucketList: Query_bucketList,bucketListSummaryList: Query_bucketListSummaryList,getAccountBookStatisticList: Query_getAccountBookStatisticList,getAccountLastUpdatedDate: Query_getAccountLastUpdatedDate,getBucketListItemLastUpdatedDate: Query_getBucketListItemLastUpdatedDate,getBucketListLastUpdatedDate: Query_getBucketListLastUpdatedDate,getWoolBankPushStatus: Query_getWoolBankPushStatus,getWoolBankUnreadNotificationCount: Query_getWoolBankUnreadNotificationCount,mainInfo: Query_mainInfo,regularExpenditureGroupList: Query_regularExpenditureGroupList,woolBankNotification: Query_woolBankNotification,woolBankNotificationList: Query_woolBankNotificationList },
-      Mutation: { completeAccountExpiration: Mutation_completeAccountExpiration,completeBucketList: Mutation_completeBucketList,createAccount: Mutation_createAccount,createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createAccountBookList: Mutation_createAccountBookList,createBucketList: Mutation_createBucketList,createBucketListTodo: Mutation_createBucketListTodo,createDeposit: Mutation_createDeposit,createRegularExpenditure: Mutation_createRegularExpenditure,createWoolBankNotification: Mutation_createWoolBankNotification,deleteAccount: Mutation_deleteAccount,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteBucketList: Mutation_deleteBucketList,deleteBucketListTodo: Mutation_deleteBucketListTodo,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,markAllWoolBankNotificationRead: Mutation_markAllWoolBankNotificationRead,markWoolBankNotificationRead: Mutation_markWoolBankNotificationRead,sendWoolBankTestPush: Mutation_sendWoolBankTestPush,subscribeWoolBankPush: Mutation_subscribeWoolBankPush,unsubscribeWoolBankPush: Mutation_unsubscribeWoolBankPush,updateAccountBook: Mutation_updateAccountBook,updateBucketList: Mutation_updateBucketList,updateBucketListTodoComplete: Mutation_updateBucketListTodoComplete,updateWoolBankPushSetting: Mutation_updateWoolBankPushSetting },
+      Query: { account: Query_account,accountBook: Query_accountBook,accountBookCategoryImageList: Query_accountBookCategoryImageList,accountBookCategoryList: Query_accountBookCategoryList,accountBookList: Query_accountBookList,accountList: Query_accountList,bucketList: Query_bucketList,bucketListSummaryList: Query_bucketListSummaryList,getAccountBookStatisticList: Query_getAccountBookStatisticList,getAccountLastUpdatedDate: Query_getAccountLastUpdatedDate,getBucketListItemLastUpdatedDate: Query_getBucketListItemLastUpdatedDate,getBucketListLastUpdatedDate: Query_getBucketListLastUpdatedDate,getWoolBankPushStatus: Query_getWoolBankPushStatus,getWoolBankUnreadNotificationCount: Query_getWoolBankUnreadNotificationCount,mainInfo: Query_mainInfo,regularExpenditureGroupList: Query_regularExpenditureGroupList,weeklyBudget: Query_weeklyBudget,weeklyBudgetUsage: Query_weeklyBudgetUsage,woolBankNotification: Query_woolBankNotification,woolBankNotificationList: Query_woolBankNotificationList },
+      Mutation: { completeAccountExpiration: Mutation_completeAccountExpiration,completeBucketList: Mutation_completeBucketList,createAccount: Mutation_createAccount,createAccountBook: Mutation_createAccountBook,createAccountBookCategory: Mutation_createAccountBookCategory,createAccountBookList: Mutation_createAccountBookList,createBucketList: Mutation_createBucketList,createBucketListTodo: Mutation_createBucketListTodo,createDeposit: Mutation_createDeposit,createRegularExpenditure: Mutation_createRegularExpenditure,createWoolBankNotification: Mutation_createWoolBankNotification,deleteAccount: Mutation_deleteAccount,deleteAccountBook: Mutation_deleteAccountBook,deleteAccountBookCategory: Mutation_deleteAccountBookCategory,deleteBucketList: Mutation_deleteBucketList,deleteBucketListTodo: Mutation_deleteBucketListTodo,deleteRegularExpenditure: Mutation_deleteRegularExpenditure,markAllWoolBankNotificationRead: Mutation_markAllWoolBankNotificationRead,markWoolBankNotificationRead: Mutation_markWoolBankNotificationRead,saveWeeklyBudget: Mutation_saveWeeklyBudget,sendWoolBankTestPush: Mutation_sendWoolBankTestPush,subscribeWoolBankPush: Mutation_subscribeWoolBankPush,unsubscribeWoolBankPush: Mutation_unsubscribeWoolBankPush,updateAccountBook: Mutation_updateAccountBook,updateBucketList: Mutation_updateBucketList,updateBucketListTodoComplete: Mutation_updateBucketListTodoComplete,updateWoolBankPushSetting: Mutation_updateWoolBankPushSetting },
       
       Account: Account,
 AccountBook: AccountBook,
@@ -102,6 +107,8 @@ Statistic: Statistic,
 StatisticItem: StatisticItem,
 StatisticList: StatisticList,
 UserShareCode: UserShareCode,
+WeeklyBudget: WeeklyBudget,
+WeeklyBudgetUsage: WeeklyBudgetUsage,
 WoolBankNotification: WoolBankNotification,
 WoolBankNotificationList: WoolBankNotificationList,
 WoolBankPushSetting: WoolBankPushSetting,

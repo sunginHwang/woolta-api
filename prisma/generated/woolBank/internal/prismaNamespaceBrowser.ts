@@ -56,6 +56,7 @@ export const ModelName = {
   SavingType: 'SavingType',
   Account: 'Account',
   AccountBook: 'AccountBook',
+  WeeklyBudget: 'WeeklyBudget',
   AccountBookCategory: 'AccountBookCategory',
   Deposit: 'Deposit',
   AccountBookCategoryImage: 'AccountBookCategoryImage',
@@ -159,6 +160,17 @@ export const AccountBookScalarFieldEnum = {
 } as const
 
 export type AccountBookScalarFieldEnum = (typeof AccountBookScalarFieldEnum)[keyof typeof AccountBookScalarFieldEnum]
+
+
+export const WeeklyBudgetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WeeklyBudgetScalarFieldEnum = (typeof WeeklyBudgetScalarFieldEnum)[keyof typeof WeeklyBudgetScalarFieldEnum]
 
 
 export const AccountBookCategoryScalarFieldEnum = {

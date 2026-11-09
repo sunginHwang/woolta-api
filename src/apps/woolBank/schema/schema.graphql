@@ -42,6 +42,8 @@ extend type Mutation {
   createWoolBankNotification(input: CreateWoolBankNotificationInput!): WoolBankNotification!
   markWoolBankNotificationRead(input: MarkWoolBankNotificationReadInput!): WoolBankNotification!
   markAllWoolBankNotificationRead: Boolean!
+  """주간 예산 생성·수정(upsert). 공유코드 세션은 불가(requireRealUser)."""
+  saveWeeklyBudget(input: SaveWeeklyBudgetInput!): WeeklyBudget!
 }
 
 extend type Query {
@@ -76,6 +78,13 @@ extend type Query {
   """최신순. limitCount 기본 50"""
   woolBankNotificationList(limitCount: Int): WoolBankNotificationList!
   getWoolBankUnreadNotificationCount: Int!
+  """주간 예산 조회. 설정 안 되어 있으면 amount 0 으로 응답."""
+  weeklyBudget: WeeklyBudget!
+  """
+  해당 주차(월~일)의 예산 사용 현황. dateTime 생략 시 이번 주.
+  주의: is_disabled_budget=true(적금·보험 등 정기지출)와 수입(income)은 사용액에서 제외한다.
+  """
+  weeklyBudgetUsage(dateTime: DateTime): WeeklyBudgetUsage!
   #    users: [User!]!
   #    user(id: ID!): User
   #    userShareCodes: [UserShareCode!]!
@@ -302,6 +311,31 @@ type MainInfo {
   totalSavedAmountExceptCurrentMonth: Int!
   accounts: [Account!]!
   bucketList: [BucketListSummary!]!
+}
+
+type WeeklyBudget {
+  """한 주 예산 금액(원). 미설정이면 0."""
+  amount: Int!
+}
+
+input SaveWeeklyBudgetInput {
+  """한 주 예산 금액(원). 0 이상."""
+  amount: Int!
+}
+
+type WeeklyBudgetUsage {
+  """설정된 주간 예산(원). 미설정이면 0."""
+  budget: Int!
+  """해당 주차 사용액(원). 수입·예산제외 항목 제외."""
+  spent: Int!
+  """남은 예산(원). budget - spent. 음수 가능(초과 지출)."""
+  remaining: Int!
+  """예산 대비 사용 비율(%). 예산 0 이면 0. 반올림 정수."""
+  percentage: Int!
+  """해당 주차 시작일(월요일 00:00)."""
+  startDate: DateTime!
+  """해당 주차 종료일(일요일 23:59:59.999)."""
+  endDate: DateTime!
 }
 
 type BucketListSummary {

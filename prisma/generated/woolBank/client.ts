@@ -67,6 +67,11 @@ export type Account = Prisma.AccountModel
  */
 export type AccountBook = Prisma.AccountBookModel
 /**
+ * Model WeeklyBudget
+ * 
+ */
+export type WeeklyBudget = Prisma.WeeklyBudgetModel
+/**
  * Model AccountBookCategory
  * 
  */
