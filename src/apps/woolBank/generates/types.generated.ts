@@ -525,7 +525,7 @@ export type Query = {
   weeklyBudget: WeeklyBudget;
   /**
    * 해당 주차(월~일)의 예산 사용 현황. dateTime 생략 시 이번 주.
-   * 주의: is_disabled_budget=true(적금·보험 등 정기지출)와 수입(income)은 사용액에서 제외한다.
+   * 주의: 수입(income), is_disabled_budget=true, 정기지출 자동 등록분(is_regular_expenditure=true)은 사용액에서 제외한다.
    */
   weeklyBudgetUsage: WeeklyBudgetUsage;
   woolBankNotification?: Maybe<WoolBankNotification>;

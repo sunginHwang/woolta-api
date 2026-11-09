@@ -19,7 +19,8 @@ export const getAccountBookByIdAndUserId = async (id: number, userId: number) =>
   });
 };
 
-// 예산 집계용 — 기간 내 지출 합계. 수입(income)과 예산제외(is_disabled_budget=true, 적금·보험 등 정기지출)는 뺀다.
+// 예산 집계용 — 기간 내 지출 합계. 수입(income), 예산제외(is_disabled_budget=true),
+// 정기지출 자동 등록분(is_regular_expenditure=true, 적금·보험·구독 등)은 뺀다.
 // account_book 테이블은 이 서비스가 소유하므로 집계도 여기서 한다.
 export const getBudgetSpentAmount = async (
   userId: number,
@@ -32,6 +33,7 @@ export const getBudgetSpentAmount = async (
       userId,
       type: 'expenditure',
       isDisabledBudget: false,
+      isRegularExpenditure: false,
       registerDateTime: { gte: new Date(startDate), lte: new Date(endDate) },
     },
   });
